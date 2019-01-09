@@ -1,0 +1,11 @@
+/*
+/*/
+
+*.log
+
+!/.gitignore
+!/README.md
+!/FAQ.md
+
+!/app/
+/app/rsconnect/
