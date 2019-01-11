@@ -97,7 +97,7 @@ omitnasModal <- function(omitnas, data_type){
   invisible(gc())
 }
 
-plottingUtility <- function(data, type, samplelocusname, a=NULL){
+plottingUtility <- function(data, type, samplelocusname, b=NULL){
   initializeListJ()
   
   # for plotting: basic idea and some code snippets from:
@@ -110,13 +110,13 @@ plottingUtility <- function(data, type, samplelocusname, a=NULL){
   plotlistR <- plot.list()
   
   Map(function(f) {
-    plotname <- paste0(f, "_", gsub("[[:punct:]]", "", vec_cal[f]))
+    plotname <- paste0(gsub("[[:punct:]]", "", vec_cal[f]))
     
     # filname of temporary plot
     if (type == 1){
       filename <- paste0(plotdir, samplelocusname, "_", plotname, ".png")
     } else if (type == 2){
-      filename <- paste0(plotdir, a, "-", samplelocusname, "_", plotname, ".png")
+      filename <- paste0(plotdir, b, "-", samplelocusname, "_", plotname, ".png")
     }
     
     # Create a Progress object
@@ -144,3 +144,134 @@ plottingUtility <- function(data, type, samplelocusname, a=NULL){
     
   }, 1:length(vec_cal))
 }
+
+
+renderRegressionStatisticTable <- function(dt){
+  # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
+  t <- DT::datatable(dt, colnames = c("Name", "SSE (h)", "b", "y0", "y1", "  ", "SSE (c)", "ax³", "bx²", "cx", "d", "better_model"),
+                options = list(scrollX = TRUE, 
+                               pageLength = 20,
+                               columnDefs = list(list(targets = 12, visible = FALSE))
+                )) %>%
+    formatRound(columns=c(2:12), digits=3) %>%
+    formatStyle(columns = 2,
+                valueColumns = "better_model",
+                fontWeight = styleEqual(0, "bold")) %>%
+    formatStyle(columns = 2:5,
+                valueColumns = "better_model",
+                backgroundColor = styleEqual(0, "lawngreen")) %>%
+    formatStyle(columns = 7,
+                valueColumns = "better_model",
+                fontWeight = styleEqual(1, "bold")) %>%
+    formatStyle(columns = 7:11,
+                valueColumns = "better_model",
+                backgroundColor = styleEqual(1, "lawngreen")) %>%
+    formatStyle(columns = c(1:11), fontSize = "80%")
+  return(t)
+}
+
+
+# reset <- function(id) {
+#   # get the Shiny session
+#   session <- shinyjs:::getSession()
+#   
+#   # Make sure reset works with namespaces (shiny modules)
+#   nsName <- ""
+#   if (inherits(session, "session_proxy")) {
+#     id <- session$ns(id)
+#     nsName <- session$ns("")
+#   }
+#   
+#   print(paste("ID", id))
+#   print(paste("NS", nsName))
+#   
+#   # send a call to JavaScript to figure out what elements to reset and what
+#   # values to reset them to
+#   shinyInputId <- paste0("shinyjs-resettable-", id)
+#   shinyInputIdJs <- shinyInputId
+#   if (inherits(session, "session_proxy")) {
+#     shinyInputIdJs <- session$ns(shinyInputIdJs)
+#   }
+#   session$sendCustomMessage("shinyjs-reset", list(id = id,
+#                                                   shinyInputId = shinyInputIdJs))
+#   
+#   # listen for a response from javascript
+#   shiny::observeEvent(session$input[[shinyInputId]], once = TRUE, {
+#     messages <- session$input[[shinyInputId]]
+#     
+#     # go through each input element that javascript told us about and call
+#     # the corresponding shiny::updateFooInput() with the correct arguments
+#     lapply(
+#       names(messages),
+#       function(x) {
+#         type <- messages[[x]][['type']]
+#         value <- messages[[x]][['value']]
+#         
+#         # password inputs don't have an updatePass"wordInput, they use text
+#         if (type == "Password") {
+#           type <- "Text"
+#         }
+#         
+#         updateFunc <- sprintf("update%sInput", type)
+#         
+#         # Make sure reset works with namespecing (shiny modules)
+#         id <- x
+#         if (substring(id, 1, nchar(nsName)) == nsName) {
+#           id <- substring(id, nchar(nsName) + 1)
+#         }
+#         
+#         funcParams <- list(session, id)
+#         
+#         # checkbox values need to be manually converted to TRUE/FALSE
+#         if (type == "Checkbox") {
+#           value <- as.logical(value)
+#         }
+#         
+#         if (type == "Date") {
+#           if (value == "NA") {
+#             value <- NA
+#           }
+#         }
+#         
+#         # most input update functions use 'value' argument, some use 'selected',
+#         # DateRange uses 'start' and 'end'
+#         if (type == "RadioButtons") {
+#           funcParams[['selected']] <- value
+#         } else if (type == "CheckboxGroup" || type == "Select") {
+#           if (value == '""') {
+#             funcParams[['selected']] <- ""
+#           } else {
+#             funcParams[['selected']] <- jsonlite::fromJSON(value)
+#           }
+#         } else if (type == "Slider") {
+#           value <- unlist(strsplit(value, ","))
+#           funcParams[['value']] <- value
+#         } else if (type == "DateRange") {
+#           dates <- unlist(strsplit(value, ","))
+#           dates[dates == "NA"] <- NA
+#           funcParams[['start']] <- dates[1]
+#           funcParams[['end']] <- dates[2]
+#         } else {
+#           funcParams[['value']] <- value
+#         }
+#         
+#         # radio buttons don't follow the regular shiny input naming conventions
+#         if (type == "RadioButtons") {
+#           updateFunc <- sprintf("update%s", type)
+#         }
+#         
+#         # for colour inputs, need to use the colourpicker package
+#         if (type == "Colour") {
+#           updateFunc <- utils::getFromNamespace(updateFunc, "colourpicker")
+#         }
+#         
+#         print(paste("Func", updateFunc))
+#         print(paste("Params", funcParams))
+#         # update the input to its original values
+#         do.call(updateFunc, funcParams)
+#       }
+#     )
+#   })
+#   
+#   invisible(NULL)
+# }

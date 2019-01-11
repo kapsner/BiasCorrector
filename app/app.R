@@ -16,12 +16,11 @@ maxfilesize <- 100
 options(shiny.maxRequestSize = maxfilesize*1024^2)
 
 # define UI
-ui <- fluidPage (
+ui <- fluidPage(
   
-  useShinyjs(), # Include shinyjs in the UI
+  shinyjs::useShinyjs(), # Include shinyjs in the UI
   # https://stackoverflow.com/questions/25062422/restart-shiny-session
   extendShinyjs(script = "reset.js", functions = "reset"), # Add the js code to the page
-  
   
   # App title --> change for development
   titlePanel("BCv1"),
@@ -30,98 +29,96 @@ ui <- fluidPage (
   
   # Sidebar Layout with input and output definitions
   fluidRow(
-    div(id="mainpage",
     
-        # Sidebar Panel
-        sidebarPanel(
-          
-          h4(tags$b("Type of data")),
-          
-          # Radiobuttons: Type of data
-          radioButtons(inputId = "type_locus_sample", label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
-                       choices = list("One locus in many samples (e.g., pyrosequencing data)" = 1, 
-                                      "Many loci in one sample (e.g., next-gen seq or microarray data)" = 2),
-                       selected = character(0)),
-          
-          tags$hr(),
-          
-          conditionalPanel(
-            condition = "input.type_locus_sample == 1",
-            textInput("locusname",
-                      label = NULL,
-                      placeholder = "Locus name")
-          ),
-          
-          conditionalPanel(
-            condition = "input.type_locus_sample == 2",
-            textInput("samplename",
-                      label = NULL,
-                      placeholder = "Sample-ID")
-          ),
-          
-          tags$hr(id = "tag1"),
-          
-          
-          conditionalPanel(
-            condition = "input.type_locus_sample != null",
-            
-            verbatimTextOutput("samplelocus_out"),
-            
-            tags$hr(),
-            
-            h4(tags$b("Datainput")),
-            h5("Please upload the CSV files* containing the experimental data and the calibration data."),
-            
-            # Input: Select a file
-            fileInput("experimentalFile", "Experimental data: choose one CSV file containing the experimental data to be corrected",
-                      multiple = FALSE,
-                      accept = c(".csv", "text/csv")),
-            h6(paste("Max. filesize: ", maxfilesize, " MB")),
-            
-            h6("*For the specific CSV file requirements please refere to our FAQ!"),
-            
-            tags$hr(),
-            
-            conditionalPanel(
-              condition =  "output.experimental_data != null",
-              
-              uiOutput("fileInputCal"),
-              
-              # fileInput("calibrationFile", "Calibration data: choose one CSV file containing the calibration data",
-              #             multiple = rv$import_type2,
-              #             accept = c(".csv")),
-              
-              h6(paste("Max. filesize: ", maxfilesize, " MB")),
-              
-              tags$hr(id = "tag2"),
-              
-              
-              conditionalPanel(
-                condition = "output.calibration_data != null",
-                
-                # Actionbutton to start analysis
-                actionButton("run", "Run Analysis"),
-                
-                tags$hr(),
-                
-                # Restart session
-                actionButton("reset", "Reset App")
-              )
-            )
-          ),
-          # sidepanal width in fluidlayout -> max. 12 units
-          width = 3),
+    # Sidebar Panel
+    sidebarPanel(
+      
+      h4(tags$b("Type of data")),
+      
+      # Radiobuttons: Type of data
+      radioButtons(inputId = "type_locus_sample", label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
+                   choices = list("One locus in many samples (e.g., pyrosequencing data)" = 1, 
+                                  "Many loci in one sample (e.g., next-gen seq or microarray data)" = 2),
+                   selected = character(0)),
+      
+      tags$hr(),
+      
+      conditionalPanel(
+        condition = "input.type_locus_sample == 1",
+        textInput("locusname",
+                  label = NULL,
+                  placeholder = "Locus name")
+      ),
+      
+      conditionalPanel(
+        condition = "input.type_locus_sample == 2",
+        textInput("samplename",
+                  label = NULL,
+                  placeholder = "Sample-ID")
+      ),
+      
+      tags$hr(id = "tag1"),
+      
+      
+      conditionalPanel(
+        condition = "input.type_locus_sample != null",
         
-        mainPanel(
-          tabsetPanel(id = "tabs",
-                      tabPanel(title = "Experimental data", value = "panel_1",
-                               div(class="row", style="margin: 0.5%"),
-                               verbatimTextOutput("exp_samples"), 
-                               verbatimTextOutput("exp_samples_raw"), 
-                               dataTableOutput("experimental_data"),
-                               tags$hr())
+        verbatimTextOutput("samplelocus_out"),
+        
+        tags$hr(),
+        
+        h4(tags$b("Datainput")),
+        h5("Please upload the CSV files* containing the experimental data and the calibration data."),
+        
+        # Input: Select a file
+        fileInput("experimentalFile", "Experimental data: choose one CSV file containing the experimental data to be corrected",
+                  multiple = FALSE,
+                  accept = c(".csv", "text/csv")),
+        h6(paste("Max. filesize: ", maxfilesize, " MB")),
+        
+        h6("*For the specific CSV file requirements please refere to our FAQ!"),
+        
+        tags$hr(),
+        
+        conditionalPanel(
+          condition =  "output.experimental_data != null",
+          
+          uiOutput("fileInputCal"),
+          
+          # fileInput("calibrationFile", "Calibration data: choose one CSV file containing the calibration data",
+          #             multiple = rv$import_type2,
+          #             accept = c(".csv")),
+          
+          h6(paste("Max. filesize: ", maxfilesize, " MB")),
+          
+          tags$hr(id = "tag2"),
+          
+          
+          conditionalPanel(
+            condition = "output.calibration_data != null",
+            
+            # Actionbutton to start analysis
+            actionButton("run", "Run Analysis"),
+            
+            tags$hr(),
+            
+            # Restart session
+            actionButton("reset", "Reset App")
           )
         )
+      ),
+      # sidepanal width in fluidlayout -> max. 12 units
+      width = 3),
+    
+    mainPanel(
+      tabsetPanel(id = "tabs",
+                  tabPanel(title = "Experimental data", value = "panel_1",
+                           div(class="row", style="margin: 0.5%"),
+                           verbatimTextOutput("exp_samples"), 
+                           verbatimTextOutput("exp_samples_raw"), 
+                           dataTableOutput("experimental_data"),
+                           tags$hr())
+      )
     )
   )
 )
@@ -153,16 +150,15 @@ server <- function(input, output, session) {
   )
   
   observeEvent(input$dismiss_modal, {
+    writeLog("dismiss modal")
     rv$modal_closed <- T
-    shinyjs::reset(rv$modal_type)
-    removeModal()
     rv$modal_type <- NULL
+    removeModal()
     js$reset()
   })
   
   observeEvent(input$reset, {
     writeLog("restarting app")
-    shinyjs::reset(input$locusname)
     js$reset()
   })
   
@@ -520,7 +516,7 @@ server <- function(input, output, session) {
       openModal(filecheck)
     } else {
       
-      # store right formatted calibration data in reactive list
+      # store correct formatted calibration data in reactive list
       rv$fileimportCal <- filecheck
       removeUI(selector = "#calibration_data", immediate = T)
       
@@ -593,21 +589,22 @@ server <- function(input, output, session) {
         
         # else if type 2 data
       } else if (input$type_locus_sample == "2"){
+        
         if (isFALSE(rv$plotting_finished)){
-          
-          for (a in 1:length(rv$fileimportCal)){
+          a <- 1
+          for (b in names(rv$fileimportCal)){
             vec_cal <<- names(rv$fileimportCal[[a]])[-1]
             print(paste("Length vec_cal:", length(vec_cal)))
             
-            plottingUtility(rv$fileimportCal[[a]], type=2, samplelocusname=rv$sampleLocusName, a=a)
+            plottingUtility(rv$fileimportCal[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b))
             
             # save regression statistics to reactive value
-            rv$regStats[[a]] <- statisticsList(result_list)
+            rv$regStats[[b]] <- statisticsList(result_list)
+            a <- a + 1
           }
           # on finished
           rv$plotting_finished <- TRUE
           writeLog("Finished plotting")
-          View(rv$regStats)
         }
       }
     }
@@ -616,27 +613,31 @@ server <- function(input, output, session) {
   # when plotting has finished
   observe({
     req(rv$plotting_finished)
+    removeTab("tabs", "panel_4")
+    removeTab("tabs", "panel_5")
     
+    # append regression statistics tab
+    appendTab("tabs", tabPanel(title = "Regression statistics",  value = "panel_4",
+                               div(class="row", style="margin: 0.5%"),
+                               uiOutput("regression_statistics"),
+                               tags$hr()),
+              select = F)
+    # append tab for manual selection of regression model
+    appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
+                               div(class="row", style="margin: 0.5%"),
+                               uiOutput("reg_radios"),
+                               div(class="row",
+                                   div(class="col-sm-9", style="display: inline-block",
+                                       actionButton("results", "Calculate results for experimental data"),
+                                       style="text-align: center")),
+                               tags$hr()),
+              select = F)
+  })
+  
+  observe({
+    req(rv$plotting_finished)
     # type 1 data: 
     if (input$type_locus_sample == "1"){
-      # append regression statistics tab
-      appendTab("tabs", tabPanel(title = "Regression statistics",  value = "panel_4",
-                                 div(class="row", style="margin: 0.5%"),
-                                 dataTableOutput("regression_statistics"),
-                                 tags$hr(),
-                                 downloadButton("downloadRegStat", "Download regression statistics"),
-                                 tags$hr()),
-                select = F)
-      # append tab for manual selection of regression model
-      appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
-                                 div(class="row", style="margin: 0.5%"),
-                                 uiOutput("reg_radios"),
-                                 div(class="row",
-                                     div(class="col-sm-9", style="display: inline-block",
-                                         actionButton("results", "Calculate results for experimental data"),
-                                         style="text-align: center")),
-                                 tags$hr()),
-                select = F)
       
       # create a list of plotnames to populate selectInput
       plot_output_list <- lapply(1:length(vec_cal), function(g) {
@@ -674,29 +675,16 @@ server <- function(input, output, session) {
       )
       
       ###### Regression statistics tab
-      output$regression_statistics <- DT::renderDataTable({
-        dt <- rv$regStats
-        # use formatstyle to highlight lower SSE values
-        # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-        DT::datatable(dt, colnames = c("Name", "SSE (h)", "b", "y0", "y1", "  ", "SSE (c)", "ax³", "bx²", "cx", "d", "better_model"),
-                      options = list(scrollX = TRUE, 
-                                     pageLength = 20,
-                                     columnDefs = list(list(targets = 12, visible = FALSE))
-                      )) %>%
-          formatRound(columns=c(2:12), digits=3) %>%
-          formatStyle(columns = 2,
-                      valueColumns = "better_model",
-                      fontWeight = styleEqual(0, "bold")) %>%
-          formatStyle(columns = 2:5,
-                      valueColumns = "better_model",
-                      backgroundColor = styleEqual(0, "lawngreen")) %>%
-          formatStyle(columns = 7,
-                      valueColumns = "better_model",
-                      fontWeight = styleEqual(1, "bold")) %>%
-          formatStyle(columns = 7:11,
-                      valueColumns = "better_model",
-                      backgroundColor = styleEqual(1, "lawngreen")) %>%
-          formatStyle(columns = c(1:11), fontSize = "80%")
+      output$regression_statistics <- renderUI({
+        output$dt_reg <- DT::renderDataTable({
+          dt <- rv$regStats
+          # use formatstyle to highlight lower SSE values
+          renderRegressionStatisticTable(dt)
+        })
+        d <- DT::dataTableOutput("dt_reg")
+        
+        b <- downloadButton("downloadRegStat", "Download regression statistics")
+        do.call(tagList, list(d, tags$hr()))
       })
       
       # create download button for regression statistics
@@ -735,9 +723,86 @@ server <- function(input, output, session) {
         })
         do.call(tagList, radio_output_list) # needed to display properly.
       })
-    }
-    # type 2 data: 
-    if (input$type_locus_sample == "2"){
+      
+      
+    } else if (input$type_locus_sample == "2"){
+      # type 2 data: 
+      # TODO work here:
+        # TODO find out, why changing of loci is not possible
+        # TODO create 3 pages for selection of regression models
+      list_plot_locus <- list()
+      for (i in 1:length(rv$fileimportCal)){
+        list_plot_locus[[i]] <- names(rv$fileimportCal)[i]
+      }
+      
+      list_plot_cpg <- list()
+      for (i in 1:length(rv$fileimportCal)){
+        list_plot_cpg[[names(rv$fileimportCal)[i]]] <- names(rv$fileimportCal[[i]])[-1]
+      }
+      
+      selectPlotLocus <- reactive({
+        selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus)
+      })
+      
+      output$selectPlotInput <- renderUI({
+        s1 <- selectPlotLocus()
+        s2 <- uiOutput("s2PlotOutput")
+        b <- downloadButton("downloadPlots", "Download Plot")
+        do.call(tagList, list(s1, s2, b))
+      })
+      
+      cpg_output <- reactive({
+        if (!is.null(input$selectPlotLocus)){
+          print(list_plot_cpg[[input$selectPlotLocus]])
+          return(list_plot_cpg[input$selectPlotLocus])
+        }
+      })
+      cpg_output()
+      
+      output$s2PlotOutput <- renderUI({
+        selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output())
+      })
+      
+      # render plots from local temporary file
+      output$plots <- renderImage({
+        filename <- paste0(plotdir, gsub("[[:punct:]]", "", input$selectPlotLocus), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlotType2), ".png")
+        print(filename)
+        # Return a list containing the filename
+        list(src = filename)
+      }, deleteFile = FALSE)
+      
+      # create download button for each plot
+      output$downloadPlots <- downloadHandler(
+        filename = function(){paste0(gsub("[[:punct:]]", "", input$selectPlotLocus), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlotType2), ".png")},
+        content = function(file){
+          file.copy(paste0(plotdir, gsub("[[:punct:]]", "", input$selectPlotLocus), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlotType2), ".png"), file)
+        },
+        contentType = "image/png"
+      )
+      
+      # create reactive selectinput:
+      selInLocus <- reactive({
+        selectInput(inputId="selectRegStatsLocus", label = NULL, multiple = F, selectize = F, choices = names(rv$fileimportCal))
+      })
+      
+      # create reactive df-selection:
+      df_regs <- reactive({
+        dt <- rv$regStats[[input$selectRegStatsLocus]]
+      })
+      
+      # render head of page with selectInput and downloadbutton
+      # TODO align selectinput and button aside of each other
+      output$regression_statistics <- renderUI({
+        
+        output$dt_regs <- DT::renderDataTable({
+          dt <- df_regs()
+          renderRegressionStatisticTable(dt)
+        })
+        s1 <- selInLocus()
+        do.call(tagList, list(s1, DT::dataTableOutput("dt_regs")))
+      })
+      
+      
     }
   })
   

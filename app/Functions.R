@@ -1,12 +1,5 @@
 # setup
 setup <- function(){
-  library(shiny)
-  library(shinyjs)
-  library(DT)
-  library(data.table)
-  library(ggplot2)
-  library(magrittr)
-  library(polynom)
   
   # required packages:
   req_packages <- c("shiny",
@@ -16,6 +9,7 @@ setup <- function(){
                     "ggplot2",
                     "magrittr",
                     "polynom")
+  
   # check, if required packages are already installed, otherwise install them
   vec <- setdiff(req_packages, installed.packages()[,"Package"])
   if (length(vec) != 0){
