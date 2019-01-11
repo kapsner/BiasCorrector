@@ -1,34 +1,8 @@
 # setup
 setup <- function(){
-  
-  # required packages:
-  req_packages <- c("shiny",
-                    "shinyjs",
-                    "DT",
-                    "data.table",
-                    "ggplot2",
-                    "magrittr",
-                    "polynom")
-  
-  # check, if required packages are already installed, otherwise install them
-  vec <- setdiff(req_packages, installed.packages()[,"Package"])
-  if (length(vec) != 0){
-    for (i in vec){
-      cat("Installing required package: ", i, "\n\n")
-      suppressMessages(install.packages(i, repos = "https://ftp.fau.de/cran/"))
-    }
-  }
-  rm(vec)
-  # load all libraries
-  for (i in req_packages){
-    suppressMessages(library(i, character.only = T))
-  }
-  rm(req_packages)
-  
   # initialize logfile here
   logfilename <<- paste0("./biascorrector.log")
   suppressMessages(suppressWarnings(file.create(logfilename)))
-  invisible(gc())
 }
 
 

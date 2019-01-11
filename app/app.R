@@ -1,3 +1,11 @@
+library(shiny)
+library(shinyjs)
+library(DT)
+library(data.table)
+library(ggplot2)
+library(magrittr)
+library(polynom)
+
 # source functions
 source("Functions.R", echo = F, encoding = "UTF-8")
 source("App_Utilities.R", echo = F, encoding = "UTF-8")
