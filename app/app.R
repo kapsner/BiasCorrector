@@ -649,7 +649,7 @@ server <- function(input, output, session) {
       
       # create a list of plotnames to populate selectInput
       plot_output_list <- lapply(1:length(vec_cal), function(g) {
-        paste0(g, "_", gsub("[[:punct:]]", "", vec_cal[g]))
+        paste0(gsub("[[:punct:]]", "", vec_cal[g]))
       })
       names(plot_output_list) <- vec_cal 
       
@@ -668,16 +668,16 @@ server <- function(input, output, session) {
       
       # render plots from local temporary file
       output$plots <- renderImage({
-        filename <- paste0(plotdir, rv$sampleLocusName, "_", input$selectPlot, ".png")
+        filename <- paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png")
         # Return a list containing the filename
         list(src = filename)
       }, deleteFile = FALSE)
       
       # create download button for each plot
       output$downloadPlots <- downloadHandler(
-        filename = function(){paste0(rv$sampleLocusName, "_", input$selectPlot, ".png")},
+        filename = function(){paste0(rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png")},
         content = function(file){
-          file.copy(paste0(plotdir, rv$sampleLocusName, "_", input$selectPlot, ".png"), file)
+          file.copy(paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png"), file)
         },
         contentType = "image/png"
       )
