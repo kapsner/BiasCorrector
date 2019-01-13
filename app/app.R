@@ -605,7 +605,7 @@ server <- function(input, output, session) {
           a <- 1
           for (b in names(rv$fileimportCal)){
             vec_cal <<- names(rv$fileimportCal[[a]])[-1]
-            print(paste("Length vec_cal:", length(vec_cal)))
+            #print(paste("Length vec_cal:", length(vec_cal)))
             
             plottingUtility(rv$fileimportCal[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b))
             
@@ -650,6 +650,7 @@ server <- function(input, output, session) {
     # type 1 data: 
     if (input$type_locus_sample == "1"){
       
+      ### Plot tab ###
       # create a list of plotnames to populate selectInput
       plot_output_list <- lapply(1:length(vec_cal), function(g) {
         paste0(gsub("[[:punct:]]", "", vec_cal[g]))
@@ -660,6 +661,15 @@ server <- function(input, output, session) {
       selIn2 <- reactive({
         selectInput(inputId="selectPlot", label = NULL, multiple = F, selectize = F, choices = plot_output_list)
       })
+      
+      # create download button for each plot
+      output$downloadPlots <- downloadHandler(
+        filename = function(){paste0(rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png")},
+        content = function(file){
+          file.copy(paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png"), file)
+        },
+        contentType = "image/png"
+      )
       
       # render head of page with selectInput and downloadbutton
       # TODO align selectinput and button aside of each other
@@ -676,16 +686,8 @@ server <- function(input, output, session) {
         list(src = filename)
       }, deleteFile = FALSE)
       
-      # create download button for each plot
-      output$downloadPlots <- downloadHandler(
-        filename = function(){paste0(rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png")},
-        content = function(file){
-          file.copy(paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlot), ".png"), file)
-        },
-        contentType = "image/png"
-      )
       
-      ###### Regression statistics tab
+      ### Regression statistics tab ###
       output$regression_statistics <- renderUI({
         output$dt_reg <- DT::renderDataTable({
           dt <- rv$regStats
@@ -714,6 +716,8 @@ server <- function(input, output, session) {
         contentType = "text/csv"
       )
       
+      
+      ### model selection tab ###
       # render radio buttons for tab 5
       output$reg_radios <- renderUI({ 
         radio_output_list <- lapply(1:length(vec_cal), function(g) {
@@ -738,49 +742,42 @@ server <- function(input, output, session) {
       
     } else if (input$type_locus_sample == "2"){
       # type 2 data: 
-      # TODO work here:
-        # TODO find out, why changing of loci is not possible
-        # TODO create 3 pages for selection of regression models
+      
+      ### Plot tab ###
+      # create list of loci to populate selectInput "selectPlotLocus"
       list_plot_locus <- list()
       for (i in 1:length(rv$fileimportCal)){
         list_plot_locus[[i]] <- names(rv$fileimportCal)[i]
-      }
-      
-      list_plot_cpg <- list()
-      for (i in 1:length(rv$fileimportCal)){
-        list_plot_cpg[[names(rv$fileimportCal)[i]]] <- names(rv$fileimportCal[[i]])[-1]
       }
       
       selectPlotLocus <- reactive({
         selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus)
       })
       
-      output$selectPlotInput <- renderUI({
-        s1 <- selectPlotLocus()
-        s2 <- uiOutput("s2PlotOutput")
-        b <- downloadButton("downloadPlots", "Download Plot")
-        do.call(tagList, list(s1, s2, b))
-      })
       
+      # create list of cpg-sites for each locus to populate selectInput "selectPlotCpG"
+      list_plot_cpg <- list()
+      for (i in 1:length(rv$fileimportCal)){
+        list_plot_cpg[[names(rv$fileimportCal)[i]]] <- names(rv$fileimportCal[[i]])[-1]
+      }
+      
+      # only return list of CpG-sites for each locus, if there is already a selection of the locus in selectPlotLocus
       cpg_output <- reactive({
         if (!is.null(input$selectPlotLocus)){
-          print(list_plot_cpg[[input$selectPlotLocus]])
           return(list_plot_cpg[input$selectPlotLocus])
         }
       })
-      cpg_output()
       
-      output$s2PlotOutput <- renderUI({
+      # always wrap selectInput into reactive-function
+      selectPlotCpG <- reactive({
         selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output())
       })
       
-      # render plots from local temporary file
-      output$plots <- renderImage({
-        filename <- paste0(plotdir, gsub("[[:punct:]]", "", input$selectPlotLocus), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlotType2), ".png")
-        print(filename)
-        # Return a list containing the filename
-        list(src = filename)
-      }, deleteFile = FALSE)
+      # render second selectInput
+      output$s2PlotOutput <- renderUI({
+        s3 <- selectPlotCpG()
+        s3
+      })
       
       # create download button for each plot
       output$downloadPlots <- downloadHandler(
@@ -791,6 +788,24 @@ server <- function(input, output, session) {
         contentType = "image/png"
       )
       
+      # render Plot UI
+      output$selectPlotInput <- renderUI({
+        s1 <- selectPlotLocus()
+        s2 <- uiOutput("s2PlotOutput")
+        b <- downloadButton("downloadPlots", "Download Plot")
+        do.call(tagList, list(s1, s2, b))
+      })
+      
+      # render plot from local temporary file
+      output$plots <- renderImage({
+        filename <- paste0(plotdir, gsub("[[:punct:]]", "", input$selectPlotLocus), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input$selectPlotType2), ".png")
+        # print(filename)
+        # Return a list containing the filename
+        list(src = filename)
+      }, deleteFile = FALSE)
+      
+      
+      ### Regression statistics tab ###
       # create reactive selectinput:
       selInLocus <- reactive({
         selectInput(inputId="selectRegStatsLocus", label = NULL, multiple = F, selectize = F, choices = names(rv$fileimportCal))
@@ -813,6 +828,11 @@ server <- function(input, output, session) {
         do.call(tagList, list(s1, DT::dataTableOutput("dt_regs")))
       })
       
+      
+      ### model selection tab ###
+      
+      # TODO work here:
+      # TODO create 3 pages for selection of regression models
       
     }
   })

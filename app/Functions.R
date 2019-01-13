@@ -1,8 +1,8 @@
 # setup
 setup <- function(){
-  options(shiny.port = 1234)
-  options(shiny.host = "0.0.0.0")
-  options("shiny.launch.browser" = FALSE)
+  # options(shiny.port = 1234)
+  # options(shiny.host = "0.0.0.0")
+  # options(shiny.launch.browser = FALSE)
   
   # initialize logfile here
   logfilename <<- paste0("./biascorrector.log")
