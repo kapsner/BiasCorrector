@@ -462,28 +462,39 @@ statisticsList <- function(result_list){
 
 ### fit regression parameters to experimental data
 # create aggregated datatable for experimental data
-create_agg_df_exp <- function(datatable, index){
-  df <- datatable[,c("sample_id", index), with = F]
-  colnames(df)[2] <- "CpG"
-  return(df[, mean(CpG), by = sample_id][,CpG := V1][,V1 := NULL])
+create_agg_df_exp <- function(datatable, index, type){
+  if (type==1){
+    df <- datatable[,c("sample_id", index), with = F]
+    colnames(df)[2] <- "CpG"
+    df <- df[, mean(CpG), by = sample_id][,CpG := V1][,V1 := NULL]
+  } else if (type==2){
+    df <- datatable[,c("locus_id", index), with = F]
+    colnames(df)[2] <- "CpG"
+    df <- df[, mean(CpG), by = locus_id][,CpG := V1][,V1 := NULL]
+  }
+  return(df)
 }
 
 # solved hyperbolic equation
 hyperbolic_equation_solved <- function(y){
   return(((100 * y0) - (100 * y)) / ((y * b) - (y1 * b) + y0 - y))
-} 
+}
 
-# perform fitting of regressions to experimental data
-solving_equations <- function(datatable, regmethod){
-  writeLog("Entered 'solving_equations'-Function")
-  
-  # create results dataframe
-  results <- data.table(sample_id = datatable[,unique(sample_id)])
-  
-  substitutions <<- data.table(sample_id = character(), 
+substitutions_create <- function(){
+  substitutions <<- data.table(id = character(), 
                                CpG_site = character(),
                                original = character(),
                                replacement = character())
+}
+
+# perform fitting of regressions to experimental data
+solving_equations <- function(datatable, regmethod, type){
+  writeLog("Entered 'solving_equations'-Function")
+  
+  first_colname <- colnames(datatable)[1]
+  
+  # create results dataframe
+  results <- data.table(id = datatable[,unique(get(first_colname))])
   
   # loop through colnames aka. CpG-sites
   for (i in colnames(datatable)[-1]){
@@ -491,7 +502,7 @@ solving_equations <- function(datatable, regmethod){
     # initialize ouput-vector
     vector <- character()
     
-    df_agg_ex <<- create_agg_df_exp(datatable, i)
+    df_agg_ex <<- create_agg_df_exp(datatable, i, type)
     
     # if cubic regression has better sse-score (default), or
     # if user selects cubic regression for calculation manually in GUI
@@ -506,12 +517,12 @@ solving_equations <- function(datatable, regmethod){
       d <<- result_list[[i]][["Coef_cubic"]][["d"]]
       
       # loop through rows by samplenames
-      for (j in as.vector(df_agg_ex[,sample_id])){
+      for (j in as.vector(df_agg_ex[,get(first_colname)])){
         msg1 <- paste("Samplename:", j)
         
         # this is the required form of the coefficients for polynomial-function
-        coe <- c(d-df_agg_ex[sample_id==j,CpG], cx, bx2, ax3)
-        #print(coe)
+        coe <- c(d-df_agg_ex[get(first_colname)==j,CpG], cx, bx2, ax3)
+        print(coe)
         
         x_vec <- solve(polynomial(coe))               # polynom
         #x_vec <- cubic(rev(coe))                    # RConics
@@ -589,7 +600,7 @@ solving_equations <- function(datatable, regmethod){
             replacement = "NA"
           }
           
-          substitutions <<- rbind(substitutions, data.table(sample_id = j,
+          substitutions <<- rbind(substitutions, data.table(id = j,
                                                             CpG_site = i,
                                                             original = original,
                                                             replacement = replacement))
@@ -609,10 +620,10 @@ solving_equations <- function(datatable, regmethod){
       b <<- result_list[[i]][["Coef_hyper"]][["b"]]
       
       
-      for (j in as.vector(df_agg_ex[,sample_id])){
+      for (j in as.vector(df_agg_ex[,get(first_colname)])){
         msg1 <- paste("Samplename:", j)
         
-        h_solv <- as.numeric(as.character(hyperbolic_equation_solved(df_agg_ex[sample_id==j,CpG])))
+        h_solv <- as.numeric(as.character(hyperbolic_equation_solved(df_agg_ex[get(first_colname)==j,CpG])))
         print(h_solv)
         
         if (h_solv >= 0 & h_solv <= 100){
@@ -649,7 +660,7 @@ solving_equations <- function(datatable, regmethod){
             
           }
           
-          substitutions <<- rbind(substitutions, data.table(sample_id = j,
+          substitutions <<- rbind(substitutions, data.table(id = j,
                                                             CpG_site = i,
                                                             original = original,
                                                             replacement = replacement))

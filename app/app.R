@@ -157,7 +157,9 @@ server <- function(input, output, session) {
     sampleLocusName = NULL,
     type2cal_uploaded = FALSE,
     plotting_finished = FALSE,
-    substitutionsCalc = NULL
+    substitutions = NULL,
+    substitutionsCalc = NULL,
+    ype2CalcRes = NULL
   )
   
   observeEvent(input$dismiss_modal, {
@@ -603,6 +605,8 @@ server <- function(input, output, session) {
         
         if (isFALSE(rv$plotting_finished)){
           a <- 1
+          result_list_type2 <<- list()
+          
           for (b in names(rv$fileimportCal)){
             vec_cal <<- names(rv$fileimportCal[[a]])[-1]
             #print(paste("Length vec_cal:", length(vec_cal)))
@@ -611,6 +615,7 @@ server <- function(input, output, session) {
             
             # save regression statistics to reactive value
             rv$regStats[[b]] <- statisticsList(result_list)
+            result_list_type2[[b]] <<- result_list
             a <- a + 1
           }
           # on finished
@@ -633,16 +638,19 @@ server <- function(input, output, session) {
                                uiOutput("regression_statistics"),
                                tags$hr()),
               select = F)
-    # append tab for manual selection of regression model
-    appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
-                               div(class="row", style="margin: 0.5%"),
-                               uiOutput("reg_radios"),
-                               div(class="row",
-                                   div(class="col-sm-9", style="display: inline-block",
-                                       actionButton("results", "Calculate results for experimental data"),
-                                       style="text-align: center")),
-                               tags$hr()),
-              select = F)
+    
+    if (input$type_locus_sample == "1"){
+      # append tab for manual selection of regression model only in type 2 data
+      appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
+                                 div(class="row", style="margin: 0.5%"),
+                                 uiOutput("reg_radios"),
+                                 div(class="row",
+                                     div(class="col-sm-9", style="display: inline-block",
+                                         actionButton("results", "Calculate results for experimental data"),
+                                         style="text-align: center")),
+                                 tags$hr()),
+                select = F)
+    }
   })
   
   observe({
@@ -816,59 +824,102 @@ server <- function(input, output, session) {
         dt <- rv$regStats[[input$selectRegStatsLocus]]
       })
       
+      output$dt_regs <- DT::renderDataTable({
+        dt <- df_regs()
+        renderRegressionStatisticTable(dt)
+      })
+      
       # render head of page with selectInput and downloadbutton
       # TODO align selectinput and button aside of each other
       output$regression_statistics <- renderUI({
-        
-        output$dt_regs <- DT::renderDataTable({
-          dt <- df_regs()
-          renderRegressionStatisticTable(dt)
-        })
         s1 <- selInLocus()
-        do.call(tagList, list(s1, DT::dataTableOutput("dt_regs")))
+        dt <- DT::dataTableOutput("dt_regs")
+        db <- actionButton("results", "Calculate results for experimental data")
+        do.call(tagList, list(s1, dt, db))
       })
       
       
       ### model selection tab ###
       
       # TODO work here:
-      # TODO create 3 pages for selection of regression models
+      # TODO think about displaying of model selection in type 2 data... all in one page?
+      # modelSelectLocus <- reactive({
+      #   selectInput(inputId="modelSelectLocus", label = NULL, multiple = F, selectize = F, choices = names(rv$fileimportCal))
+      # })
+      # 
+      # selRad <- reactive({
+      #   if (!is.null(input$modelSelectLocus)){
+      #     vec_cal <- names(rv$fileimportCal[[input$modelSelectLocus]])[-1]
+      #     
+      #     return(lapply(1:length(vec_cal), function(g) {
+      #       
+      #       radioname <- paste0("radio", g)
+      #       div(class="row", style="margin: 0.5%",
+      #           div(class="row",
+      #               div(class="col-sm-4", style="text-align: center",
+      #                   h5(tags$b(paste0(vec_cal[g], ":")))),
+      #               div(class="col-sm-4",
+      #                   radioButtons(inputId = radioname, 
+      #                                label = "Regression type:", 
+      #                                choices = list("hyperbolic" = 0, "cubic" = 1),
+      #                                selected = as.character(rv$regStats[[input$modelSelectLocus]][Name==vec_cal[g], better_model]),
+      #                                inline = T)),
+      #               div(class="col-sm-3",
+      #                   verbatimTextOutput(paste0("text_", radioname)))),
+      #           tags$hr())
+      #     }))
+      #   }
+      # })
+      # 
+      # output$reg_radios <- renderUI({ 
+      #   s <- modelSelectLocus()
+      #   radio_output_list <- selRad()
+      #   do.call(tagList, list(s, radio_output_list)) # needed to display properly.
+      # })
       
+      # trigger claculation of results (bypass manual model selection)
+      shinyjs::click("results")
+      # TODO click() does not work... 17.1.19
     }
   })
   
   observe({
     if (input$tabs == "panel_5"){
       
-      lapply(1:length(vec_cal), function(h) {
-        radioname <- paste0("text_radio", h)
-        output[[radioname]] <- reactive({
-          paste("SSE:",
-                as.character(ifelse(input[[paste0("radio", h)]] == 1,
-                                    rv$regStats[Name==vec_cal[h], SSE_cubic],
-                                    rv$regStats[Name==vec_cal[h], SSE_hyperbolic]))
-          )
+      if (input$type_locus_sample == "1"){
+        
+        lapply(1:length(vec_cal), function(h) {
+          radioname <- paste0("text_radio", h)
+          output[[radioname]] <- reactive({
+            paste("SSE:",
+                  as.character(ifelse(input[[paste0("radio", h)]] == 1,
+                                      rv$regStats[Name==vec_cal[h], SSE_cubic],
+                                      rv$regStats[Name==vec_cal[h], SSE_hyperbolic]))
+            )
+          })
         })
-      })
-      
-      lapply(1:length(vec_cal), function(k) {
-        radioname <- paste0("radio", k)
-        if (!is.null(input[[radioname]])){
-          if (input[[radioname]] == "1") {
-            output[[paste0("text_", radioname)]] <- reactive({
-              paste("SSE:",
-                    as.character(rv$regStats[Name==vec_cal[k], round(SSE_cubic,3)])
-              )
-            })
-          } else if (input[[radioname]] == "0") {
-            output[[paste0("text_", radioname)]] <- reactive({
-              paste("SSE:",
-                    as.character(rv$regStats[Name==vec_cal[k], round(SSE_hyperbolic, 3)])
-              )
-            })
+        
+        lapply(1:length(vec_cal), function(k) {
+          radioname <- paste0("radio", k)
+          if (!is.null(input[[radioname]])){
+            if (input[[radioname]] == "1") {
+              output[[paste0("text_", radioname)]] <- reactive({
+                paste("SSE:",
+                      as.character(rv$regStats[Name==vec_cal[k], round(SSE_cubic,3)])
+                )
+              })
+            } else if (input[[radioname]] == "0") {
+              output[[paste0("text_", radioname)]] <- reactive({
+                paste("SSE:",
+                      as.character(rv$regStats[Name==vec_cal[k], round(SSE_hyperbolic, 3)])
+                )
+              })
+            }
           }
-        }
-      })
+        })
+      } else if (input$type_locus_sample == "2"){
+        # do nothing here
+      }
     }
   })
   
@@ -879,52 +930,115 @@ server <- function(input, output, session) {
     removeTab("tabs", "panel_7")
     
     # reset reactive value
+    # TODO why was this implemented here?
     rv$calculate_results <- NULL
     
     appendTab("tabs", tabPanel(title = "Corrected values", value = "panel_6",
                                div(class="row", style="margin: 0.5%"),
-                               dataTableOutput("corrected_data"),
-                               tags$hr(),
-                               downloadButton("downloadFinal", "Download corrected values"),
+                               uiOutput("corrected_data"),
                                tags$hr(),
                                uiOutput("substitutedOut"),
                                tags$hr()),
               select = T)
     
-    choices_list <- data.table("Name" = character(), "better_model" = numeric())
-    lapply(1:length(vec_cal), function(x) {
-      radioname <- paste0("radio", x)
-      choices_list <<- rbind(choices_list, cbind("Name" = vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input$", radioname))))))
-    })
-    print(choices_list)
+    if (input$type_locus_sample == "1"){
     
-    rv$finalResults <<- solving_equations(rv$fileimportExp, choices_list)
-    
-    # show corrected results for experimental data
-    output$corrected_data <- DT::renderDataTable({
-      # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-      DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
-        formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
-    })
-    
-    # Download corrected results
-    output$downloadFinal <- downloadHandler(
+      choices_list <- data.table("Name" = character(), "better_model" = numeric())
+      lapply(1:length(vec_cal), function(x) {
+        radioname <- paste0("radio", x)
+        choices_list <<- rbind(choices_list, cbind("Name" = vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input$", radioname))))))
+      })
+      print(choices_list)
       
-      filename = function(){
-        paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
-      },
-      content = function(file){
-        write.table(rv$finalResults, file, 
-                    row.names = F, 
-                    sep = ",", 
-                    dec = ".", 
-                    fileEncoding = "UTF-8")
-      },
-      contentType = "text/csv"
-    )
+      
+      substitutions_create()
+      rv$finalResults <<- solving_equations(rv$fileimportExp, choices_list, type = 1)
+      rv$substitutions <- substitutions
+      
+      output$dtfinal <- DT::renderDataTable({
+        # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
+        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
+      })
+      
+      # Download corrected results
+      output$downloadFinal <- downloadHandler(
+        
+        filename = function(){
+          paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+        },
+        content = function(file){
+          write.table(rv$finalResults, file, 
+                      row.names = F, 
+                      sep = ",", 
+                      dec = ".", 
+                      fileEncoding = "UTF-8")
+        },
+        contentType = "text/csv"
+      )
+      
+      # show corrected results for experimental data
+      output$corrected_data <- renderUI({
+        dt <- dataTableOutput("dtfinal")
+        db <- downloadButton("downloadFinal", "Download corrected values")
+        do.call(tagList, list(dt, tags$hr(), db))
+      })
+      
+      
+    } else if (input$type_locus_sample == "2"){
+
+      # initialize temp results
+      temp_results <<- list()
+      
+      substitutions_create()
+      for (b in names(rv$fileimportCal)){
+        result_list <<- result_list_type2[[b]]
+        expdata <- rv$fileimportExp[locus_id==b]
+        vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
+        temp_results[[b]] <<- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2)
+      }
+      rv$substitutions <- substitutions
+      
+      for (i in names(temp_results)){
+        rv$finalResults <- rbind(rv$finalResults, temp_results[[i]], use.names = T, fill = T)
+      }
+      
+      vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
+      rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F])
+      
+      # create df
+      output$dtfinal <- DT::renderDataTable({
+        # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
+        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
+      })
+      
+      # Download corrected results
+      output$downloadFinal <- downloadHandler(
+        
+        filename = function(){
+          paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+        },
+        content = function(file){
+          write.table(rv$finalResults, file, 
+                      row.names = F, 
+                      sep = ",", 
+                      dec = ".", 
+                      fileEncoding = "UTF-8")
+        },
+        contentType = "text/csv"
+      )
+      
+      # show corrected results for experimental data
+      output$corrected_data <- renderUI({
+        dt <- dataTableOutput("dtfinal")
+        db <- downloadButton("downloadFinal", "Download corrected values")
+        do.call(tagList, list(dt, tags$hr(), db))
+      })
+    }
     
     # present substitutions in extra tab (only if there were some)
-    if (nrow(substitutions) > 0){
+    if (nrow(rv$substitutions) > 0){
       rv$substitutionsCalc <- TRUE
     }
   })
@@ -951,7 +1065,7 @@ server <- function(input, output, session) {
       do.call(tagList, list(h, tags$hr(), t, b, tags$hr()))
     })
     # change colnames for better display
-    colnames(substitutions) <- c("Sample ID", "CpG site", "Original value", "Substituted value")
+    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Original value", "Substituted value")
     
     output$downloadSubstituted <- downloadHandler(
       
@@ -959,7 +1073,7 @@ server <- function(input, output, session) {
         paste0("Substitutions_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
       },
       content = function(file){
-        write.table(substitutions, file, 
+        write.table(rv$substitutions, file, 
                     row.names = F, 
                     sep = ",", 
                     dec = ".", 
@@ -969,16 +1083,16 @@ server <- function(input, output, session) {
     )
     
     output$substituted_values <- DT::renderDataTable({
-      DT::datatable(substitutions, options = list(scrollX = TRUE, pageLength = 20)) %>%
+      DT::datatable(rv$substitutions, options = list(scrollX = TRUE, pageLength = 20)) %>%
         formatRound(columns=c(2:ncol(rv$fileimportExp)), digits=3)
     })
     
     #msg2 <- "Please refer to the tab 'Substituted values' for further information."
     msg2 <- "Please scroll down to the section 'Substituted values' for further information."
-    if (nrow(substitutions) == 1){
+    if (nrow(rv$substitutions) == 1){
       msg1 <- "Substituted 1 value. "
     } else{
-      msg1 <- paste0("Substituted ", nrow(substitutions), " values.")
+      msg1 <- paste0("Substituted ", nrow(rv$substitutions), " values.")
     }
     
     # show modal here
