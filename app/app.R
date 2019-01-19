@@ -975,7 +975,9 @@ server <- function(input, output, session) {
       temp_results <<- list()
       
       substitutions_create()
-      for (b in names(rv$fileimportCal)){
+      # iterate over unique names in locus_id of experimental file (to correctly display
+      # decreasing order of CpG-sites in final results)
+      for (b in rv$fileimportExp[,unique(locus_id)]){
         result_list <<- result_list_type2[[b]]
         expdata <- rv$fileimportExp[locus_id==b]
         vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
@@ -988,7 +990,7 @@ server <- function(input, output, session) {
       }
       
       vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
-      rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F])
+      rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
       
       # create df
       output$dtfinal <- DT::renderDataTable({

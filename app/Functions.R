@@ -105,14 +105,17 @@ cleanDT <- function(datatable, description, type) {
   # count number of CpGs in type 2 data
   if (type == "2"){
     datatable[,CpG_count := rowSums(!is.na(datatable[, vec[-1], with=F]))]
-    # order by CpG-Count in decreasing order
-    datatable <- datatable[order(CpG_count, decreasing = T)]
     
     # requirements-check: does every repeated measurement of each locus id have 
     # the same number of CpG-sites specified?
     if (sum(duplicated(unique(datatable[,CpG_count,by=locus_id])$locus_id)) > 0){
       writeLog("### ERROR ###\nThe data provided contains locus ids with heterogeneous counts of CpG-sites.")
       return(NULL)
+    }
+    
+    if (description == "experimental"){
+      # order experimental data by CpG-Count in decreasing order
+      datatable <- datatable[order(CpG_count, decreasing = T)]
     }
   }
   
