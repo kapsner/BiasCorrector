@@ -111,7 +111,7 @@ cleanDT <- function(datatable, description, type) {
     # requirements-check: does every repeated measurement of each locus id have 
     # the same number of CpG-sites specified?
     if (sum(duplicated(unique(datatable[,CpG_count,by=locus_id])$locus_id)) > 0){
-      writeLog("### ERROR ###\nThe experimental data provided contains locus ids with heterogeneous counts of CpG-sites.")
+      writeLog("### ERROR ###\nThe data provided contains locus ids with heterogeneous counts of CpG-sites.")
       return(NULL)
     }
   }
