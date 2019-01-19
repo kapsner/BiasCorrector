@@ -105,6 +105,15 @@ cleanDT <- function(datatable, description, type) {
   # count number of CpGs in type 2 data
   if (type == "2"){
     datatable[,CpG_count := rowSums(!is.na(datatable[, vec[-1], with=F]))]
+    # order by CpG-Count in decreasing order
+    datatable <- datatable[order(CpG_count, decreasing = T)]
+    
+    # requirements-check: does every repeated measurement of each locus id have 
+    # the same number of CpG-sites specified?
+    if (sum(duplicated(unique(datatable[,CpG_count,by=locus_id])$locus_id)) > 0){
+      writeLog("### ERROR ###\nThe experimental data provided contains locus ids with heterogeneous counts of CpG-sites.")
+      return(NULL)
+    }
   }
   
   # check file requirements: missing values and remove rows containing missing values
@@ -279,7 +288,10 @@ hyperbolic_equation <- function(x, b = NULL){
     writeLog(paste0(message, "  \n", msg2))
   }
   
+  # old (16.01.2019)
   return((((y1 * b) - y0) * x + 100 * y0) / ((b * x) - x + 100))
+  # new (17.01.2019)
+  #return((((y1 * b) - y0) * x + y1 * y0) / ((b * x) - x + y1))
 }
 
 # find best parameters for hyperbolic regression

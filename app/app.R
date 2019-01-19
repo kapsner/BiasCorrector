@@ -961,22 +961,6 @@ server <- function(input, output, session) {
           formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
       })
       
-      # Download corrected results
-      output$downloadFinal <- downloadHandler(
-        
-        filename = function(){
-          paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
-        },
-        content = function(file){
-          write.table(rv$finalResults, file, 
-                      row.names = F, 
-                      sep = ",", 
-                      dec = ".", 
-                      fileEncoding = "UTF-8")
-        },
-        contentType = "text/csv"
-      )
-      
       # show corrected results for experimental data
       output$corrected_data <- renderUI({
         dt <- dataTableOutput("dtfinal")
@@ -1013,22 +997,6 @@ server <- function(input, output, session) {
           formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
       })
       
-      # Download corrected results
-      output$downloadFinal <- downloadHandler(
-        
-        filename = function(){
-          paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
-        },
-        content = function(file){
-          write.table(rv$finalResults, file, 
-                      row.names = F, 
-                      sep = ",", 
-                      dec = ".", 
-                      fileEncoding = "UTF-8")
-        },
-        contentType = "text/csv"
-      )
-      
       # show corrected results for experimental data
       output$corrected_data <- renderUI({
         dt <- dataTableOutput("dtfinal")
@@ -1036,6 +1004,22 @@ server <- function(input, output, session) {
         do.call(tagList, list(dt, tags$hr(), db))
       })
     }
+    
+    # Download corrected results
+    output$downloadFinal <- downloadHandler(
+      
+      filename = function(){
+        paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+      },
+      content = function(file){
+        write.table(rv$finalResults, file, 
+                    row.names = F, 
+                    sep = ",", 
+                    dec = ".", 
+                    fileEncoding = "UTF-8")
+      },
+      contentType = "text/csv"
+    )
     
     # present substitutions in extra tab (only if there were some)
     if (nrow(rv$substitutions) > 0){
