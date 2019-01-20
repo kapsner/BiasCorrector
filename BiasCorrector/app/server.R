@@ -1,141 +1,3 @@
-library(shiny)
-library(shinyjs)
-library(DT)
-library(data.table)
-library(ggplot2)
-library(magrittr)
-library(polynom)
-
-# source functions
-source("Functions.R", echo = F, encoding = "UTF-8")
-source("App_Utilities.R", echo = F, encoding = "UTF-8")
-
-setup()
-
-
-# TODO debugging of Jenyas errors
-  # TODO for regression results implement (if x < 0 then 0)
-# TODO implement algorithm for Type 2 data
-# TODO write file requirements FAQ (transform all constraints within this algorithm to human readable format)
-
-# maximum filesize in MB:
-maxfilesize <- 100
-
-options(shiny.maxRequestSize = maxfilesize*1024^2)
-
-# define UI
-ui <- fluidPage(
-  
-  shinyjs::useShinyjs(), # Include shinyjs in the UI
-  # https://stackoverflow.com/questions/25062422/restart-shiny-session
-  extendShinyjs(script = "reset.js", functions = "reset"), # Add the js code to the page
-  
-  div(id="mainpage",
-      
-      # App title --> change for development
-      titlePanel("BCv1"),
-      # titlePanel("BiasCorrector v0.0.1"),
-      # h5("based on Moskalev et al. 2011"),
-      
-      # Sidebar Layout with input and output definitions
-      fluidRow(
-        
-        # Sidebar Panel
-        sidebarPanel(
-          
-          h4(tags$b("Type of data")),
-          
-          # Radiobuttons: Type of data
-          radioButtons(inputId = "type_locus_sample", label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
-                       choices = list("One locus in many samples (e.g., pyrosequencing data)" = 1, 
-                                      "Many loci in one sample (e.g., next-gen seq or microarray data)" = 2),
-                       selected = character(0)),
-          
-          tags$hr(),
-          
-          conditionalPanel(
-            condition = "input.type_locus_sample == 1",
-            textInput("locusname",
-                      label = NULL,
-                      placeholder = "Locus name")
-          ),
-          
-          conditionalPanel(
-            condition = "input.type_locus_sample == 2",
-            textInput("samplename",
-                      label = NULL,
-                      placeholder = "Sample-ID")
-          ),
-          
-          tags$hr(id = "tag1"),
-          
-          
-          conditionalPanel(
-            condition = "input.type_locus_sample != null",
-            
-            verbatimTextOutput("samplelocus_out"),
-            
-            tags$hr(),
-            
-            h4(tags$b("Datainput")),
-            h5("Please upload the CSV files* containing the experimental data and the calibration data."),
-            
-            # Input: Select a file
-            fileInput("experimentalFile", "Experimental data: choose one CSV file containing the experimental data to be corrected",
-                      multiple = FALSE,
-                      accept = c(".csv", "text/csv")),
-            h6(paste("Max. filesize: ", maxfilesize, " MB")),
-            
-            h6("*For the specific CSV file requirements please refere to our FAQ!"),
-            
-            tags$hr(),
-            
-            conditionalPanel(
-              condition =  "output.experimental_data != null",
-              
-              uiOutput("fileInputCal"),
-              
-              # fileInput("calibrationFile", "Calibration data: choose one CSV file containing the calibration data",
-              #             multiple = rv$import_type2,
-              #             accept = c(".csv")),
-              
-              h6(paste("Max. filesize: ", maxfilesize, " MB")),
-              
-              tags$hr(id = "tag2"),
-              
-              
-              conditionalPanel(
-                condition = "output.calibration_data != null",
-                
-                # Actionbutton to start analysis
-                actionButton("run", "Run Analysis"),
-                
-                tags$hr(),
-                
-                # Restart session
-                actionButton("reset", "Reset App")
-              )
-            )
-          ),
-          # sidepanal width in fluidlayout -> max. 12 units
-          width = 3),
-        
-        mainPanel(
-          tabsetPanel(id = "tabs",
-                      tabPanel(title = "Experimental data", value = "panel_1",
-                               div(class="row", style="margin: 0.5%"),
-                               verbatimTextOutput("exp_samples"), 
-                               verbatimTextOutput("exp_samples_raw"), 
-                               dataTableOutput("experimental_data"),
-                               tags$hr())
-          )
-        )
-      )
-  )
-)
-
-
-
 server <- function(input, output, session) {
   
   onStart()
@@ -214,13 +76,13 @@ server <- function(input, output, session) {
         removeUI(selector = "#locusname", immediate = T)
       }
       
-    # if type 2 data
+      # if type 2 data
     } else if (input$type_locus_sample == "2"){
       # render fileInput with option "multiple = TRUE"
       output$fileInputCal <- renderUI({
         fileInput("calibrationFile", "Calibration data: choose at least 4 different CSV files containing the calibration data (one file per distinct calibration DNA sample; for specific file naming please refer to our FAQ)",
-                    multiple = TRUE,
-                    accept = c(".csv", "text/csv"))
+                  multiple = TRUE,
+                  accept = c(".csv", "text/csv"))
       })
       
       # check userinput of samplename
@@ -300,7 +162,7 @@ server <- function(input, output, session) {
           writeLog(message)
           message
         })
-      
+        
         # if type 2 data
       } else if (input$type_locus_sample == "2"){
         
@@ -315,7 +177,7 @@ server <- function(input, output, session) {
           writeLog(message)
           message
         })
-
+        
         output$exp_samples_raw <- reactive({
           len <- unique(rv$fileimportExp[,locus_id])
           message <- paste0("Unique locus IDs:\n", paste(len, collapse = ", "))
@@ -372,18 +234,18 @@ server <- function(input, output, session) {
           
           # try to check, if colnames of experimental data are same as those of calibration data
           tryCatch({
-              # check, if colnames of experimental and calibration data are equal:
-              if(!all.equal(colnames(rv$fileimportCal)[-1], colnames(rv$fileimportExp)[-1])){
-                # error handling fileimport
-                openModal("calibrationFile")
-              }
+            # check, if colnames of experimental and calibration data are equal:
+            if(!all.equal(colnames(rv$fileimportCal)[-1], colnames(rv$fileimportExp)[-1])){
+              # error handling fileimport
+              openModal("calibrationFile")
+            }
           }, error = function(e){
             print(e)
             # error handling fileimport
             openModal("calibrationFile")
           })
           
-        # if we have the value "NULL" in our file-variable; this happens, when cleanDT returns error
+          # if we have the value "NULL" in our file-variable; this happens, when cleanDT returns error
         } else {
           # error handling fileimport
           openModal("calibrationFile")
@@ -396,7 +258,7 @@ server <- function(input, output, session) {
           print(e)
         })
         
-      # else, if ending is no csv-file
+        # else, if ending is no csv-file
       } else {
         # error handling fileimport
         openModal("calibrationFile")
@@ -473,7 +335,7 @@ server <- function(input, output, session) {
         
         # if type 2 data
       } else if (input$type_locus_sample == "2"){
-      
+        
         # render assignment of calibration steps
         output$calibration_data <- renderUI({
           select_output_list <- lapply(1:nrow(calibr_steps), function(g) {
@@ -498,13 +360,13 @@ server <- function(input, output, session) {
                                                   style="text-align: center"))))
           do.call(tagList, select_output_list)
         })
-
+        
         output$cal_samples <- reactive({
           message <- paste0("Unique calibration samples: ", nrow(calibr_steps))
           writeLog(message)
           message
         })
-
+        
         output$cal_samples_raw <- reactive({
           message <- paste0("Unique calibration steps:\n", paste(levels(factor(calibr_steps[,step])), collapse = "\n"))
           writeLog(message)
@@ -942,7 +804,7 @@ server <- function(input, output, session) {
               select = T)
     
     if (input$type_locus_sample == "1"){
-    
+      
       choices_list <- data.table("Name" = character(), "better_model" = numeric())
       lapply(1:length(vec_cal), function(x) {
         radioname <- paste0("radio", x)
@@ -970,7 +832,7 @@ server <- function(input, output, session) {
       
       
     } else if (input$type_locus_sample == "2"){
-
+      
       # initialize temp results
       temp_results <<- list()
       
@@ -1088,5 +950,3 @@ server <- function(input, output, session) {
     ))
   })
 }
-
-shinyApp(ui, server)

@@ -7,8 +7,8 @@ onStart <- function(){
   
   # scientific purpose
   showModal(modalDialog(
-    "This program is only to be used for scientific purposes.",
-    title = "Confirmation of scientific use only.",
+    title = "This program is to be used for scientific research purposes only",
+    "I hereby confirm to use this program only for scientific research purposes.",
     footer = tagList(actionButton("dismiss_modal",label = "Cancel"),
                      modalButton("Confirm"))
   ))
