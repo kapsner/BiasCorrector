@@ -504,6 +504,8 @@ server <- function(input, output, session) {
     appendTab("tabs", tabPanel(title = "Regression statistics",  value = "panel_4",
                                div(class="row", style="margin: 0.5%"),
                                uiOutput("regression_statistics"),
+                               tags$hr(),
+                               div(class="row", style="text-align: center", downloadButton("downloadRegStat", "Download regression statistics")),
                                tags$hr()),
               select = F)
     
@@ -574,8 +576,7 @@ server <- function(input, output, session) {
           renderRegressionStatisticTable(dt)
         })
         d <- DT::dataTableOutput("dt_reg")
-        b <- div(class="row", style="text-align: center", downloadButton("downloadRegStat", "Download regression statistics"))
-        do.call(tagList, list(d, tags$hr(), b))
+        do.call(tagList, list(d))
       })
       
       # create download button for regression statistics
@@ -805,9 +806,10 @@ server <- function(input, output, session) {
     removeTab("tabs", "panel_6")
     removeTab("tabs", "panel_7")
     
-    # reset reactive value
+    # reset reactive values
     # TODO why was this implemented here?
     rv$calculate_results <- NULL
+    rv$finalResults <- NULL
     
     appendTab("tabs", tabPanel(title = "Corrected values", value = "panel_6",
                                div(class="row", style="margin: 0.5%"),

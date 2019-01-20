@@ -109,24 +109,28 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL){
   # calculate results (if this is run here, j must be resetted)
   plotlistR <- plot.list()
   
+  length_vector <- length(vec_cal)
+  
   Map(function(f) {
     plotname <- paste0(gsub("[[:punct:]]", "", vec_cal[f]))
     
     # filname of temporary plot
     if (type == 1){
       filename <- paste0(plotdir, samplelocusname, "_", plotname, ".png")
+      plotmessage <- paste("Creating plot No.", f)
     } else if (type == 2){
       filename <- paste0(plotdir, b, "-", samplelocusname, "_", plotname, ".png")
+      plotmessage <- paste("Locus ID:", b, "--> Creating plot No.", f)
     }
     
     # Create a Progress object
     progress <- shiny::Progress$new()
     # Make sure it closes when we exit this reactive, even if there's an error
     on.exit(progress$close())
-    progress$set(message = paste("Creating plot", f), value = 0)
+    progress$set(message = plotmessage, value = 0)
     
     # Increment the progress bar, and update the detail text.
-    progress$inc(1/1, detail = paste0("... working hard on plot ", f))
+    progress$inc(1/1, detail = paste("... working hard on plot", f, "of", length_vector))
     
     # store plots to local temporary file
     plotPNG({
@@ -142,7 +146,7 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL){
     height = 400, 
     width = 600)
     
-  }, 1:length(vec_cal))
+  }, 1:length_vector)
 }
 
 
