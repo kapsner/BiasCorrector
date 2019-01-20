@@ -2,6 +2,9 @@
 source("Functions.R", echo = F, encoding = "UTF-8")
 source("App_Utilities.R", echo = F, encoding = "UTF-8")
 
+# initialize logfile
+setup()
+
 server <- function(input, output, session) {
   
   onStart()
@@ -347,13 +350,14 @@ server <- function(input, output, session) {
             div(class="row",
                 div(class="col-sm-6", style="text-align: left",
                     h5(tags$b(paste0(calibr_steps[g, name], ":")))),
-                div(class="col-sm-6", style="text-align: right",
+                div(class="col-sm-6", style="text-align: center",
                     numericInput(inputId = selectname,
                                  min = 0,
                                  max = 100,
                                  label = NULL,
                                  step = 0.01,
-                                 value = calibr_steps[g, step])),
+                                 value = calibr_steps[g, step],
+                                 width = "100%")),
                 tags$hr(style="margin: 0.5%"))
           })
           select_output_list <- list(select_output_list, 
@@ -528,7 +532,7 @@ server <- function(input, output, session) {
       
       # create reactive selectinput:
       selIn2 <- reactive({
-        selectInput(inputId="selectPlot", label = NULL, multiple = F, selectize = F, choices = plot_output_list)
+        selectInput(inputId="selectPlot", label = NULL, multiple = F, selectize = F, choices = plot_output_list, width = "100%")
       })
       
       # create download button for each plot
@@ -548,8 +552,8 @@ server <- function(input, output, session) {
         
         do.call(tagList, list(
           div(class="row", 
-              div(class="col-sm-6", style="text-align: left", s),
-              div(class="col-sm-6", style="text-align: right", b)
+              div(class="col-sm-6", style="text-align: center", s),
+              div(class="col-sm-6", style="text-align: center", b)
           )
         ))
       })
@@ -625,7 +629,7 @@ server <- function(input, output, session) {
       }
       
       selectPlotLocus <- reactive({
-        selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus)
+        selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus, width = "100%")
       })
       
       
@@ -644,7 +648,7 @@ server <- function(input, output, session) {
       
       # always wrap selectInput into reactive-function
       selectPlotCpG <- reactive({
-        selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output())
+        selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output(), width = "100%")
       })
       
       # render second selectInput
@@ -669,9 +673,9 @@ server <- function(input, output, session) {
         b <- downloadButton("downloadPlots", "Download Plot")
         do.call(tagList, list(
           div(class="row", 
-              div(class="col-sm-4", style="text-align: left", s1),
+              div(class="col-sm-4", style="text-align: center", s1),
               div(class="col-sm-4", style="text-align: center", s2),
-              div(class="col-sm-4", style="text-align: right", b)
+              div(class="col-sm-4", style="text-align: center", b)
           )
         ))
       })
