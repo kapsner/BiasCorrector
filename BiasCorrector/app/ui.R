@@ -9,7 +9,7 @@ ui <- fluidPage(
   div(id="mainpage",
       
       # App title --> change for development
-      titlePanel("BCv1"),
+      titlePanel("BCv0.9"),
       # titlePanel("BiasCorrector v0.0.1"),
       # h5("based on Moskalev et al. 2011"),
       

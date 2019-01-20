@@ -9,8 +9,8 @@ library(polynom)
 # source functions
 source("Functions.R", echo = F, encoding = "UTF-8")
 source("App_Utilities.R", echo = F, encoding = "UTF-8")
-source("BCapp/ui.R", echo = F, encoding = "UTF-8")
-source("BCapp/server.R", echo = F, encoding = "UTF-8")
+source("app/ui.R", echo = F, encoding = "UTF-8")
+source("app/server.R", echo = F, encoding = "UTF-8")
 
 setup()
 
