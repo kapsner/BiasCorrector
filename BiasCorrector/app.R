@@ -6,18 +6,24 @@ library(ggplot2)
 library(magrittr)
 library(polynom)
 
-# source functions
-source("Functions.R", echo = F, encoding = "UTF-8")
-source("App_Utilities.R", echo = F, encoding = "UTF-8")
-source("app/ui.R", echo = F, encoding = "UTF-8")
-source("app/server.R", echo = F, encoding = "UTF-8")
+
+# setup
+setup <- function(){
+  # options(shiny.port = 1234)
+  # options(shiny.host = "0.0.0.0")
+  # options(shiny.launch.browser = FALSE)
+  
+  # initialize logfile here
+  logfilename <<- paste0("./biascorrector.log")
+  suppressMessages(suppressWarnings(file.create(logfilename)))
+}
 
 setup()
 
+
+# app entrypoint here
+shinyAppDir("app")
+
+
+# TODOs:
 # TODO write file requirements FAQ (transform all constraints within this algorithm to human readable format)
-
-# maximum filesize in MB:
-maxfilesize <- 100
-options(shiny.maxRequestSize = maxfilesize*1024^2)
-
-shinyApp(ui, server)

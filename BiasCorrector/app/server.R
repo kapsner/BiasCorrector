@@ -1,3 +1,7 @@
+# source functions
+source("Functions.R", echo = F, encoding = "UTF-8")
+source("App_Utilities.R", echo = F, encoding = "UTF-8")
+
 server <- function(input, output, session) {
   
   onStart()
@@ -157,7 +161,7 @@ server <- function(input, output, session) {
         })
         
         output$exp_samples_raw <- reactive({
-          len <- unique(rv$fileimportExp[,sample_id])
+          len <- sort(unique(rv$fileimportExp[,sample_id]))
           message <- paste0("Unique sample IDs:\n", paste(len, collapse = ", "))
           writeLog(message)
           message
@@ -179,7 +183,7 @@ server <- function(input, output, session) {
         })
         
         output$exp_samples_raw <- reactive({
-          len <- unique(rv$fileimportExp[,locus_id])
+          len <- sort(unique(rv$fileimportExp[,locus_id]))
           message <- paste0("Unique locus IDs:\n", paste(len, collapse = ", "))
           writeLog(message)
           message
@@ -340,24 +344,22 @@ server <- function(input, output, session) {
         output$calibration_data <- renderUI({
           select_output_list <- lapply(1:nrow(calibr_steps), function(g) {
             selectname <- paste0("select", g)
-            div(class="row", style="margin: 0.5%",
-                div(class="row",
-                    div(class="col-sm-6", style="text-align: left",
-                        h5(tags$b(paste0(calibr_steps[g, name], ":")))),
-                    div(class="col-sm-6",
-                        numericInput(inputId = selectname,
-                                     min = 0,
-                                     max = 100,
-                                     label = NULL,
-                                     step = 0.01,
-                                     value = calibr_steps[g, step]))),
+            div(class="row",
+                div(class="col-sm-6", style="text-align: left",
+                    h5(tags$b(paste0(calibr_steps[g, name], ":")))),
+                div(class="col-sm-6", style="text-align: right",
+                    numericInput(inputId = selectname,
+                                 min = 0,
+                                 max = 100,
+                                 label = NULL,
+                                 step = 0.01,
+                                 value = calibr_steps[g, step])),
                 tags$hr(style="margin: 0.5%"))
           })
           select_output_list <- list(select_output_list, 
-                                     list(div(class="row",
-                                              div(class="col-sm-12", style="display: inline-block",
-                                                  actionButton("confirm_steps", "Confirm assignment of calibration steps"),
-                                                  style="text-align: center"))))
+                                     div(class="row", style="text-align: center", 
+                                         actionButton("confirm_steps", "Confirm assignment of calibration steps")
+                                         ))
           do.call(tagList, select_output_list)
         })
         
@@ -506,10 +508,7 @@ server <- function(input, output, session) {
       appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
                                  div(class="row", style="margin: 0.5%"),
                                  uiOutput("reg_radios"),
-                                 div(class="row",
-                                     div(class="col-sm-9", style="display: inline-block",
-                                         actionButton("results", "Calculate results for experimental data"),
-                                         style="text-align: center")),
+                                 div(class="row", style="text-align: center", actionButton("results", "Calculate results for experimental data")),
                                  tags$hr()),
                 select = F)
     }
@@ -546,7 +545,13 @@ server <- function(input, output, session) {
       output$selectPlotInput <- renderUI({
         s <- selIn2()
         b <- downloadButton("downloadPlots", "Download Plot")
-        do.call(tagList, list(s, b))
+        
+        do.call(tagList, list(
+          div(class="row", 
+              div(class="col-sm-6", style="text-align: left", s),
+              div(class="col-sm-6", style="text-align: right", b)
+          )
+        ))
       })
       
       # render plots from local temporary file
@@ -565,9 +570,8 @@ server <- function(input, output, session) {
           renderRegressionStatisticTable(dt)
         })
         d <- DT::dataTableOutput("dt_reg")
-        
-        b <- downloadButton("downloadRegStat", "Download regression statistics")
-        do.call(tagList, list(d, tags$hr()))
+        b <- div(class="row", style="text-align: center", downloadButton("downloadRegStat", "Download regression statistics"))
+        do.call(tagList, list(d, tags$hr(), b))
       })
       
       # create download button for regression statistics
@@ -602,7 +606,7 @@ server <- function(input, output, session) {
                                    choices = list("hyperbolic" = 0, "cubic" = 1),
                                    selected = as.character(rv$regStats[Name==vec_cal[g], better_model]),
                                    inline = T)),
-                  div(class="col-sm-3",
+                  div(class="col-sm-4",
                       verbatimTextOutput(paste0("text_", radioname)))),
               tags$hr())
         })
@@ -663,7 +667,13 @@ server <- function(input, output, session) {
         s1 <- selectPlotLocus()
         s2 <- uiOutput("s2PlotOutput")
         b <- downloadButton("downloadPlots", "Download Plot")
-        do.call(tagList, list(s1, s2, b))
+        do.call(tagList, list(
+          div(class="row", 
+              div(class="col-sm-4", style="text-align: left", s1),
+              div(class="col-sm-4", style="text-align: center", s2),
+              div(class="col-sm-4", style="text-align: right", b)
+          )
+        ))
       })
       
       # render plot from local temporary file
@@ -696,7 +706,7 @@ server <- function(input, output, session) {
       output$regression_statistics <- renderUI({
         s1 <- selInLocus()
         dt <- DT::dataTableOutput("dt_regs")
-        db <- actionButton("results", "Calculate results for experimental data")
+        db <- div(class="row", style="text-align: center", actionButton("results", "Calculate results for experimental data"))
         do.call(tagList, list(s1, dt, db))
       })
       
@@ -826,7 +836,7 @@ server <- function(input, output, session) {
       # show corrected results for experimental data
       output$corrected_data <- renderUI({
         dt <- dataTableOutput("dtfinal")
-        db <- downloadButton("downloadFinal", "Download corrected values")
+        db <- div(class="row", style="text-align: center", downloadButton("downloadFinal", "Download corrected values"))
         do.call(tagList, list(dt, tags$hr(), db))
       })
       
@@ -864,7 +874,7 @@ server <- function(input, output, session) {
       # show corrected results for experimental data
       output$corrected_data <- renderUI({
         dt <- dataTableOutput("dtfinal")
-        db <- downloadButton("downloadFinal", "Download corrected values")
+        db <- div(class="row", style="text-align: center", downloadButton("downloadFinal", "Download corrected values"))
         do.call(tagList, list(dt, tags$hr(), db))
       })
     }
@@ -909,7 +919,7 @@ server <- function(input, output, session) {
       h <- div(class="row", style="text-align: center",
                h4("Substituted values"))
       t <- dataTableOutput("substituted_values")
-      b <- downloadButton("downloadSubstituted", "Download substitutions")
+      b <- div(class="row", style="text-align: center", downloadButton("downloadSubstituted", "Download substitutions"))
       do.call(tagList, list(h, tags$hr(), t, b, tags$hr()))
     })
     # change colnames for better display

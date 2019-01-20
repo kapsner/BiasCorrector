@@ -1,15 +1,3 @@
-# setup
-setup <- function(){
-  # options(shiny.port = 1234)
-  # options(shiny.host = "0.0.0.0")
-  # options(shiny.launch.browser = FALSE)
-  
-  # initialize logfile here
-  logfilename <<- paste0("./biascorrector.log")
-  suppressMessages(suppressWarnings(file.create(logfilename)))
-}
-
-
 # modify datatable
 cleanDT <- function(datatable, description, type) {
   writeLog("Entered 'cleanDT'-Function")
@@ -419,7 +407,7 @@ regression_type1 <- function(datatable, vec_cal){
       geom_point() + 
       ylab("% apparent methylation after PCR") + 
       xlab("% actual methylation") + 
-      ggtitle(paste("Variable:", vec_cal[i])) + 
+      ggtitle(paste("CpG-site:", vec_cal[i])) + 
       geom_text(data = data.frame(),
                 aes(x=-Inf, y=Inf),
                 label = paste("SSE cubic:", round(result_list[[vec_cal[i]]]$SSE_cubic, 3),
