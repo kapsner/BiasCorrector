@@ -715,6 +715,22 @@ server <- function(input, output, session) {
         do.call(tagList, list(s1, dt, db))
       })
       
+      # create download button for regression statistics
+      output$downloadRegStat <- downloadHandler(
+        filename = function(){
+          paste0("BCstats_", gsub("[[:punct:]]", "", input$selectRegStatsLocus), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
+                 gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
+        },
+        content = function(file){
+          write.table(rv$regStats[[input$selectRegStatsLocus]][,-12, with=F], file, 
+                      row.names = F, 
+                      sep = ",", 
+                      dec = ".", 
+                      fileEncoding = "UTF-8")
+        },
+        contentType = "text/csv"
+      )
+      
       
       ### model selection tab ###
       
