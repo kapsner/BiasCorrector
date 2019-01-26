@@ -285,15 +285,21 @@ hyperbolic_equation <- function(x, b = NULL){
     b <- result_list[[vec_cal[j]]][["Coef_hyper"]]$b
     y0 <- result_list[[vec_cal[j]]][["Coef_hyper"]]$y0
     y1 <- result_list[[vec_cal[j]]][["Coef_hyper"]]$y1
+    min_meth <- result_list[[vec_cal[j]]][["Coef_hyper"]]$min_meth
+    max_meth <- result_list[[vec_cal[j]]][["Coef_hyper"]]$max_meth
+    
     message <- paste0("# CpG-site: ", vec_cal[j])
     msg2 <- paste("Using bias_weight =", b, ", y0 =", y0, ", y1 =", y1)
     writeLog(paste0(message, "  \n", msg2))
   }
   
   # old (16.01.2019)
-  return((((y1 * b) - y0) * x + 100 * y0) / ((b * x) - x + 100))
+  #return((((y1 * b) - y0) * x + 100 * y0) / ((b * x) - x + 100))
   # new (17.01.2019)
-  #return((((y1 * b) - y0) * x + y1 * y0) / ((b * x) - x + y1))
+  return((((y1 * b) - y0) * (x - min_meth) + (max_meth - min_meth) * y0) / ((b - 1) * (x - min_meth) + (max_meth - min_meth)))
+  # experimental (26.01.2019)
+  #return((((y1 * b) - y0) * (x - min_meth) + (max_meth) * y0) / ((b - 1) * (x - min_meth + max_meth) + max_meth))
+  
 }
 
 # find best parameters for hyperbolic regression
@@ -305,6 +311,8 @@ hyperbolic_regression <- function(df_agg, vec){
   
   y0 <<- df_agg[true_methylation==df_agg[,min(true_methylation)], CpG]
   y1 <<- df_agg[true_methylation==df_agg[,max(true_methylation)], CpG]
+  min_meth <<- df_agg[,min(true_methylation)]
+  max_meth <<- df_agg[,max(true_methylation)]
   
   # true y-values
   true_levels <- df_agg[,true_methylation]
@@ -335,7 +343,9 @@ hyperbolic_regression <- function(df_agg, vec){
                               "SSE_hyper" = df_agg[,sum(squared_error)],
                               "Coef_hyper" = list("y0" = y0,
                                                   "y1" = y1,
-                                                  "b" = bias_factor))
+                                                  "b" = bias_factor,
+                                                  "min_meth" = min_meth,
+                                                  "max_meth" = max_meth))
   
   # delete fitted/squared_error
   df_agg[,c("fitted", "squared_error") := NULL]
