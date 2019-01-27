@@ -293,12 +293,12 @@ hyperbolic_equation <- function(x, b = NULL){
     writeLog(paste0(message, "  \n", msg2))
   }
   
-  # old (16.01.2019)
+  # old equation (16.01.2019)
   #return((((y1 * b) - y0) * x + 100 * y0) / ((b * x) - x + 100))
-  # new (17.01.2019)
+  # new equation (17.01.2019)
   return((((y1 * b) - y0) * (x - min_meth) + (max_meth - min_meth) * y0) / ((b - 1) * (x - min_meth) + (max_meth - min_meth)))
   # experimental (26.01.2019)
-  #return((((y1 * b) - y0) * (x - min_meth) + (max_meth) * y0) / ((b - 1) * (x - min_meth + max_meth) + max_meth))
+  #return((((y1 * b) - y0) * (x - min_meth) + (max_meth - min_meth) * y0) / ((b * (x - min_meth)) - (x - min_meth) + (max_meth - min_meth)))
   
 }
 
