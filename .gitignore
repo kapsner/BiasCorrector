@@ -11,3 +11,4 @@
 /BiasCorrector/rsconnect/
 !/BiasCorrector/app/
 .Rproj.user
+*.Rproj

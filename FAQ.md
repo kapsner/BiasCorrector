@@ -1,6 +1,10 @@
-Frequently asked questions
+# Frequently asked questions
 
-1) How need my input files to be formated?
+## Table of Contents
+
+[1) Do my input files need to be formated?](#1)
+
+## 1) Do my input files need to be formated?(#1)
 
 	- For bias correction of type "One locus in many samples (e.g., pyrosequencing data)":
 
@@ -11,4 +15,4 @@ Frequently asked questions
 	  -- Columns 2 to x contain the results of your methylation analysis for each CpG-side of your sample.
 
 
-2) 
+## 2) 
