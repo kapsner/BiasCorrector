@@ -2,9 +2,9 @@
 
 ## Table of Contents
 
-[1) Do my input files need to be formated?](#1)
+[1) Do my input files need to be formated?](#anchor1)
 
-## 1) Do my input files need to be formated?(#1)
+## 1) Do my input files need to be formated?{#anchor1}
 
 	- For bias correction of type "One locus in many samples (e.g., pyrosequencing data)":
 
