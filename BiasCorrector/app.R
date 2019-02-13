@@ -12,6 +12,5 @@ shinyAppDir("app")
 
 # TODOs:
 # TODO write file requirements FAQ (transform all constraints within this algorithm to human readable format)
-# TODO link readme and FAQ to github pages
-# TODO bundle all files/ plots for downloading a zip-file on last page
+# TODO link readme to github page
 # TODO in the end, generate markdown pdf with plots in temporary directory
