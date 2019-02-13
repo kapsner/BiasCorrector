@@ -12,3 +12,5 @@
 !/BiasCorrector/app/
 .Rproj.user
 *.Rproj
+.RData
+.Rhistory

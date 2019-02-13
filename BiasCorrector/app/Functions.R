@@ -727,3 +727,12 @@ writeLog <- function(message){
                         message, "  \n  \n")
   write(message_out, file = logfilename, append = T)
 }
+
+writeCSV <- function(table, filename){
+  return(write.table(x = table, 
+                     file = filename, 
+                     row.names = F, 
+                     sep = ",", 
+                     dec = ".", 
+                     fileEncoding = "UTF-8"))
+}

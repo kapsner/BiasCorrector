@@ -2,8 +2,9 @@
 onStart <- function(){
   writeLog("(app) starting..... running 'onStart'-Function")
   plotdir <<- paste0(tempdir(), "/plots/")
-  tmpdir <- paste0(tempdir(), "/")
+  csvdir <<- paste0(tempdir(), "/csv/")
   dir.create(plotdir)
+  dir.create(csvdir)
   
   # scientific purpose
   showModal(modalDialog(

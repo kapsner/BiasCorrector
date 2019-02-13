@@ -13,8 +13,8 @@ server <- function(input, output, session) {
     # on session end, remove plots and and all other files from tempdir
     do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
     unlink(plotdir, recursive = T)
-    do.call(file.remove, list(list.files(tmpdir, full.names = TRUE)))
-    unlink(tmpdir, recursive = T)
+    do.call(file.remove, list(list.files(csvdir, full.names = TRUE)))
+    unlink(csvdir, recursive = T)
   })
   
   rv <- reactiveValues(
@@ -585,15 +585,11 @@ server <- function(input, output, session) {
       # create download button for regression statistics
       output$downloadRegStat <- downloadHandler(
         filename = function(){
-          paste0("BCstats_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
+          paste0("BC_regression_stats_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          write.table(rv$regStats[,-12, with=F], file, 
-                      row.names = F, 
-                      sep = ",", 
-                      dec = ".", 
-                      fileEncoding = "UTF-8")
+          writeCSV(rv$regStats[,-12, with=F], file)
         },
         contentType = "text/csv"
       )
@@ -721,15 +717,11 @@ server <- function(input, output, session) {
       # create download button for regression statistics
       output$downloadRegStat <- downloadHandler(
         filename = function(){
-          paste0("BCstats_", gsub("[[:punct:]]", "", input$selectRegStatsLocus), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
+          paste0("BC_regression_stats_", gsub("[[:punct:]]", "", input$selectRegStatsLocus), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          write.table(rv$regStats[[input$selectRegStatsLocus]][,-12, with=F], file, 
-                      row.names = F, 
-                      sep = ",", 
-                      dec = ".", 
-                      fileEncoding = "UTF-8")
+          writeCSV(rv$regStats[[input$selectRegStatsLocus]][,-12, with=F], file)
         },
         contentType = "text/csv"
       )
@@ -887,29 +879,25 @@ server <- function(input, output, session) {
     output$corrected_data <- renderUI({
       dt <- dataTableOutput("dtfinal")
       db <- div(class="row", style="text-align: center", downloadButton("downloadFinal", "Download corrected values"))
-      dball <- div(class="row", style="text-align: center", downloadButton("downloadAllData", "Download all tables and plots"))
-      do.call(tagList, list(dt, tags$hr(), db, dball))
+      dball <- div(class="row", style="text-align: center", downloadButton("downloadAllData", "Download zip archive (tables and plots)"))
+      do.call(tagList, list(dt, tags$hr(), db, tags$hr(), dball))
     })
     
     # Download corrected results
     output$downloadFinal <- downloadHandler(
       
       filename = function(){
-        paste0("Results_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+        paste0("BC_corrected_values_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
       },
       content = function(file){
-        write.table(rv$finalResults, file, 
-                    row.names = F, 
-                    sep = ",", 
-                    dec = ".", 
-                    fileEncoding = "UTF-8")
+        writeCSV(rv$finalResults, file)
       },
       contentType = "text/csv"
     )
     
     
     output$downloadAllData <- downloadHandler(
-      filename = paste0("BC_allResults_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
+      filename = paste0("BC_all_results_", rv$sampleLocusName, "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
                gsub("\\:", "", substr(Sys.time(), 12, 16)), ".zip"),
       content = function(fname) {
         print(getwd())
@@ -919,30 +907,41 @@ server <- function(input, output, session) {
         setwd(tempdir())
         print(getwd())
         
-        fs <- c("BCstats.csv", "Results.csv", "Substitutions.csv")
-        write.table(rv$regStats[,-12, with=F], 
-                    file = paste0(tmpdir, "BCstats.csv"), 
-                    row.names = F, 
-                    sep = ",", 
-                    dec = ".", 
-                    fileEncoding = "UTF-8")
-        write.table(rv$finalResults, 
-                    file = paste0(tmpdir, "Results.csv"), 
-                    row.names = F, 
-                    sep = ",", 
-                    dec = ".", 
-                    fileEncoding = "UTF-8")
-        write.table(rv$substitutions, 
-                    file = paste0(tmpdir, "Substitutions.csv"), 
-                    row.names = F, 
-                    sep = ",", 
-                    dec = ".", 
-                    fileEncoding = "UTF-8")
-        print(fs)
+        # create files where is no difference in export between type 1 and 2
+        writeCSV(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
+        writeCSV(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
+        writeCSV(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
+        
+        # create other files
+        if (input$type_locus_sample == "1"){
+          writeCSV(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
+          writeCSV(rv$regStats[,-12, with=F], paste0(csvdir, "BC_regression_stats.csv"))
+          
+        } else if (input$type_locus_sample == "2"){
+          # regression stats
+          for (key in names(rv$fileimportCal)){
+            writeCSV(rv$regStats[[key]][,-12, with=F],
+                     paste0(csvdir, "BC_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
+          }
+          
+          # raw calibrations data
+          for (key in names(rv$fileimportCal)){
+            writeCSV(rv$fileimportCal[[key]],
+                     paste0(csvdir, "raw_calibration_data_", gsub("[[:punct:]]", "", key), ".csv"))
+          }
+        }
+        
+        
+        print(list.files(".csv/"))
         print(list.files(".plots/"))
         
-        zip(zipfile=fname, files=c(fs, paste0("plots/", list.files(".plots/"))))
-        if(file.exists(paste0(tmpdir, fname, ".zip"))) {file.rename(paste0(tmpdir, fname, ".zip"), fname)}
+        zip(zipfile=fname, files=c(paste0("csv/", list.files(".csv/")), 
+                                   paste0("plots/", list.files(".plots/"))
+                                   ))
+        
+        if(file.exists(paste0(tempdir(), "/", fname, ".zip"))){
+          file.rename(paste0(tempdir(), "/", fname, ".zip"), fname)
+        }
         
         # return to old wd
         setwd(oldwd)
@@ -975,23 +974,20 @@ server <- function(input, output, session) {
       h <- div(class="row", style="text-align: center",
                h4("Substituted values"))
       t <- dataTableOutput("substituted_values")
-      b <- div(class="row", style="text-align: center", downloadButton("downloadSubstituted", "Download substitutions"))
+      b <- div(class="row", style="text-align: center", downloadButton("downloadSubstituted", "Download substituted values"))
       do.call(tagList, list(h, tags$hr(), t, b, tags$hr()))
     })
     # change colnames for better display
     colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Original value", "Substituted value")
     
+    
     output$downloadSubstituted <- downloadHandler(
       
       filename = function(){
-        paste0("Substitutions_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+        paste0("BC_substituted_values_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
       },
       content = function(file){
-        write.table(rv$substitutions, file, 
-                    row.names = F, 
-                    sep = ",", 
-                    dec = ".", 
-                    fileEncoding = "UTF-8")
+        writeCSV(rv$substitutions, file)
       },
       contentType = "text/csv"
     )
