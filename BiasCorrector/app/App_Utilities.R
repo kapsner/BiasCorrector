@@ -1,8 +1,8 @@
 # run this function on start. it creates the temporary directory for the plots
-# TODO in the end, generate markdown pdf with plots in temporary directory
 onStart <- function(){
   writeLog("(app) starting..... running 'onStart'-Function")
   plotdir <<- paste0(tempdir(), "/plots/")
+  tmpdir <- paste0(tempdir(), "/")
   dir.create(plotdir)
   
   # scientific purpose

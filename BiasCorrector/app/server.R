@@ -10,8 +10,11 @@ server <- function(input, output, session) {
   onStart()
   
   session$onSessionEnded(function(){
+    # on session end, remove plots and and all other files from tempdir
     do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
     unlink(plotdir, recursive = T)
+    do.call(file.remove, list(list.files(tmpdir, full.names = TRUE)))
+    unlink(tmpdir, recursive = T)
   })
   
   rv <- reactiveValues(
@@ -848,21 +851,7 @@ server <- function(input, output, session) {
       substitutions_create()
       rv$finalResults <<- solving_equations(rv$fileimportExp, choices_list, type = 1)
       rv$substitutions <- substitutions
-      
-      output$dtfinal <- DT::renderDataTable({
-        # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
-          formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
-      })
-      
-      # show corrected results for experimental data
-      output$corrected_data <- renderUI({
-        dt <- dataTableOutput("dtfinal")
-        db <- div(class="row", style="text-align: center", downloadButton("downloadFinal", "Download corrected values"))
-        do.call(tagList, list(dt, tags$hr(), db))
-      })
-      
-      
+    
     } else if (input$type_locus_sample == "2"){
       
       # initialize temp results
@@ -886,20 +875,21 @@ server <- function(input, output, session) {
       vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
       rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
       
-      # create df
-      output$dtfinal <- DT::renderDataTable({
-        # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
-          formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
-      })
-      
-      # show corrected results for experimental data
-      output$corrected_data <- renderUI({
-        dt <- dataTableOutput("dtfinal")
-        db <- div(class="row", style="text-align: center", downloadButton("downloadFinal", "Download corrected values"))
-        do.call(tagList, list(dt, tags$hr(), db))
-      })
     }
+    
+    output$dtfinal <- DT::renderDataTable({
+      # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
+      DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
+        formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
+    })
+    
+    # show corrected results for experimental data
+    output$corrected_data <- renderUI({
+      dt <- dataTableOutput("dtfinal")
+      db <- div(class="row", style="text-align: center", downloadButton("downloadFinal", "Download corrected values"))
+      dball <- div(class="row", style="text-align: center", downloadButton("downloadAllData", "Download all tables and plots"))
+      do.call(tagList, list(dt, tags$hr(), db, dball))
+    })
     
     # Download corrected results
     output$downloadFinal <- downloadHandler(
@@ -915,6 +905,50 @@ server <- function(input, output, session) {
                     fileEncoding = "UTF-8")
       },
       contentType = "text/csv"
+    )
+    
+    
+    output$downloadAllData <- downloadHandler(
+      filename = paste0("BC_allResults_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
+               gsub("\\:", "", substr(Sys.time(), 12, 16)), ".zip"),
+      content = function(fname) {
+        print(getwd())
+        
+        # temporarily set tempdir as wd
+        oldwd <- getwd()
+        setwd(tempdir())
+        print(getwd())
+        
+        fs <- c("BCstats.csv", "Results.csv", "Substitutions.csv")
+        write.table(rv$regStats[,-12, with=F], 
+                    file = paste0(tmpdir, "BCstats.csv"), 
+                    row.names = F, 
+                    sep = ",", 
+                    dec = ".", 
+                    fileEncoding = "UTF-8")
+        write.table(rv$finalResults, 
+                    file = paste0(tmpdir, "Results.csv"), 
+                    row.names = F, 
+                    sep = ",", 
+                    dec = ".", 
+                    fileEncoding = "UTF-8")
+        write.table(rv$substitutions, 
+                    file = paste0(tmpdir, "Substitutions.csv"), 
+                    row.names = F, 
+                    sep = ",", 
+                    dec = ".", 
+                    fileEncoding = "UTF-8")
+        print(fs)
+        print(list.files(".plots/"))
+        
+        zip(zipfile=fname, files=c(fs, paste0("plots/", list.files(".plots/"))))
+        if(file.exists(paste0(tmpdir, fname, ".zip"))) {file.rename(paste0(tmpdir, fname, ".zip"), fname)}
+        
+        # return to old wd
+        setwd(oldwd)
+        print(getwd())
+      },
+      contentType = "application/zip"
     )
     
     # present substitutions in extra tab (only if there were some)
