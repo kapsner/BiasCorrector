@@ -66,7 +66,7 @@ ui <- fluidPage(
                       accept = c(".csv", "text/csv")),
             h6(paste("Max. filesize: ", maxfilesize, " MB")),
             
-            h6("*For the specific CSV file requirements please refere to our FAQ!"),
+            h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/BiasCorrector/blob/master/FAQ.md")),
             
             tags$hr(),
             
