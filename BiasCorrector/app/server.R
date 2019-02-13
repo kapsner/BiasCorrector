@@ -710,7 +710,7 @@ server <- function(input, output, session) {
       output$regression_statistics <- renderUI({
         s1 <- selInLocus()
         dt <- DT::dataTableOutput("dt_regs")
-        db <- div(class="row", style="text-align: center", actionButton("results", "Calculate results for experimental data"))
+        db <- div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))
         do.call(tagList, list(s1, dt, db))
       })
       
