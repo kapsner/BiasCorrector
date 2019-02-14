@@ -13,4 +13,5 @@ shinyAppDir("app")
 # TODOs:
 # TODO write file requirements FAQ (transform all constraints within this algorithm to human readable format)
 # TODO link readme to github page
+# TODO create dockerized shiny-server
 # TODO in the end, generate markdown pdf with plots in temporary directory
