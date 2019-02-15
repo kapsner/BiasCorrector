@@ -6,7 +6,7 @@
 !/.gitignore
 !/README.md
 !/FAQ.md
-
+!/docker/
 !/BiasCorrector/
 /BiasCorrector/rsconnect/
 !/BiasCorrector/app/
