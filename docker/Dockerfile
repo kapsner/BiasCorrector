@@ -67,18 +67,20 @@ RUN for package in $p; do \
     done
 
 # server configuration
-COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
+ADD shiny-server.conf /etc/shiny-server/shiny-server.conf
 
 # copy app
-COPY ../BiasCorrector/* /srv/shiny-server/
+ADD addfolder /srv/shiny-server/
 
+# fix permissions
+RUN chown -R shiny:shiny /srv/shiny-server/
 
 # make app available at port 80
 EXPOSE 80
 
 # copy server script
 # https://github.com/rocker-org/shiny/blob/master/shiny-server.sh
-COPY shiny-server.sh /usr/bin/shiny-server.sh 
+ADD shiny-server.sh /usr/bin/shiny-server.sh 
 RUN cd /usr/bin/ && chmod +x shiny-server.sh 
 
 CMD ["/usr/bin/shiny-server.sh"]

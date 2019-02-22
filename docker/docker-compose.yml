@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  shiny:
+    container_name: biascorrector_container
+    image: biascorrector
+    #restart: unless-stopped
+    ports:
+    - "80:80"
+    networks:
+    - biascorrectornet
+
+networks:
+  biascorrectornet: 

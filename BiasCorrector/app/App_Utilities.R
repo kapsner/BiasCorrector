@@ -3,6 +3,12 @@ onStart <- function(){
   writeLog("(app) starting..... running 'onStart'-Function")
   plotdir <<- paste0(tempdir(), "/plots/")
   csvdir <<- paste0(tempdir(), "/csv/")
+
+  if (dir.exists(plotdir)){
+    writeLog("(app) plotdir already exists")
+    cleanUp()
+  }
+
   dir.create(plotdir)
   dir.create(csvdir)
   
@@ -15,6 +21,14 @@ onStart <- function(){
   ))
 }
 
+cleanUp <- function(){
+    writeLog("entered 'cleanUp'-Function")
+    # on session end, remove plots and and all other files from tempdir
+    do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
+    unlink(plotdir, recursive = T)
+    do.call(file.remove, list(list.files(csvdir, full.names = TRUE)))
+    unlink(csvdir, recursive = T)
+}
 
 # requirements error + modal view
 requirementsError <- function(data_type){

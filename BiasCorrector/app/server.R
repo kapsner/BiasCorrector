@@ -6,16 +6,8 @@ source("App_Utilities.R", echo = F, encoding = "UTF-8")
 setup()
 
 server <- function(input, output, session) {
-  
+
   onStart()
-  
-  session$onSessionEnded(function(){
-    # on session end, remove plots and and all other files from tempdir
-    do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
-    unlink(plotdir, recursive = T)
-    do.call(file.remove, list(list.files(csvdir, full.names = TRUE)))
-    unlink(csvdir, recursive = T)
-  })
   
   rv <- reactiveValues(
     expFileReq = F,
@@ -44,6 +36,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$reset, {
     writeLog("restarting app")
+    cleanUp()
     js$reset()
   })
   
@@ -517,7 +510,7 @@ server <- function(input, output, session) {
       appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
                                  div(class="row", style="margin: 0.5%"),
                                  uiOutput("reg_radios"),
-                                 div(class="row", style="text-align: center", actionButton("results", "Calculate results for experimental data")),
+                                 div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data")),
                                  tags$hr()),
                 select = F)
     }
