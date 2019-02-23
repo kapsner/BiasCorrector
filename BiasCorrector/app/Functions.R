@@ -507,7 +507,7 @@ hyperbolic_equation_solved <- function(y){
 substitutions_create <- function(){
   substitutions <<- data.table(id = character(), 
                                CpG_site = character(),
-                               original = character(),
+                               corrected = character(),
                                replacement = character())
 }
 
@@ -626,7 +626,7 @@ solving_equations <- function(datatable, regmethod, type){
           
           substitutions <<- rbind(substitutions, data.table(id = j,
                                                             CpG_site = i,
-                                                            original = original,
+                                                            corrected = original,
                                                             replacement = replacement))
           
           writeLog(paste0(msg1, "  \n  \n", msg2, "  \n", msg3))
@@ -686,7 +686,7 @@ solving_equations <- function(datatable, regmethod, type){
           
           substitutions <<- rbind(substitutions, data.table(id = j,
                                                             CpG_site = i,
-                                                            original = original,
+                                                            corrected = original,
                                                             replacement = replacement))
           
           writeLog(paste0(msg1, "  \n  \n", msg2, "  \n", msg3))

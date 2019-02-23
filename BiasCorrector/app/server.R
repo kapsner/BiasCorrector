@@ -971,7 +971,7 @@ server <- function(input, output, session) {
       do.call(tagList, list(h, tags$hr(), t, b, tags$hr()))
     })
     # change colnames for better display
-    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Original value", "Substituted value")
+    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Corrected value", "Substituted value")
     
     
     output$downloadSubstituted <- downloadHandler(
