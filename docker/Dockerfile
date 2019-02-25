@@ -76,7 +76,7 @@ ADD addfolder /srv/shiny-server/
 RUN chown -R shiny:shiny /srv/shiny-server/
 
 # make app available at port 80
-EXPOSE 80
+EXPOSE 3838
 
 # copy server script
 # https://github.com/rocker-org/shiny/blob/master/shiny-server.sh

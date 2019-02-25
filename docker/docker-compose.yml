@@ -6,9 +6,15 @@ services:
     image: biascorrector
     #restart: unless-stopped
     ports:
-    - "80:80"
+    - "3838:3838"
     networks:
     - biascorrectornet
 
 networks:
   biascorrectornet: 
+
+# login into container:
+# docker exec -it biascorrector_container bash
+
+# monitor log-file in container:
+# tail -f /srv/shiny-server/app/biascorrector.log
