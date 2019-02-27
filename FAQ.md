@@ -1,18 +1,63 @@
-# Frequently asked questions
+# Frequently asked questions  
 
-## Table of Contents
+## Table of Contents  
 
-[1) Do my input files need to be formated?](#1-do-my-input-files-need-to-be-formated)
-
-## 1) Do my input files need to be formated?
-
-	- For bias correction of type "One locus in many samples (e.g., pyrosequencing data)":
-
-	  -- The first row contains the column-headers.
-	  -- The first column contains all the sample IDs. Sample IDs may occure more than once if you have 
-	     repeated measurements of the sample. In this case, the mean-values of the repeated measurements 
-	     will be calculated for bias correction.
-	  -- Columns 2 to x contain the results of your methylation analysis for each CpG-side of your sample.
+[Do my input files need to be formated?](#do-my-input-files-need-to-be-formated)  
+[What kind of data can be corrected?](#what-kind-of-data-can-be-corrected)   
+[Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
 
 
-## 2) 
+## Do my input files need to be in a special format?  
+
+Yes, BiasCorrector places very strict requirements on the file format. Below are the exact requirements for the two types of input data, which differ in several aspects. However, all uploaded files must  
+- be in CSV format  
+- contain the column headers in the first row  
+
+
+### Type 1: one locus in many samples (e.g. pyrosequencing data)  
+
+- Experimental data:  
+
+  -- the first column contains the sample IDs  
+  -- sample IDs may occure more than once (indicating repeated measurements of the same sample; in this case, the mean-values of the repeated measurements will be used for bias correction)   
+  -- all other columns contain the results of your methylation analysis for each CpG-side of your sample  
+  -- missing values are not allowed (rows containing empty cells [= missing values] will be removed during the data preprocessing step)  
+  
+- Calibration data:  
+  -- the first column contains the degrees of true methylation of the calibration sample (calibration steps)  
+  -- calibration steps may occure more than once (indicating repeated measurements of the same calibration sample; in this case, the mean-values of the repeated measurements will be used for calculation of the calibration curve)  
+  -- all other columns contain the results of the methylation analysis for each CpG-side of the calibration sample  
+  
+
+### Type 2: many loci in one sample (e.g. next-generation sequencing data or microarray data)  
+
+- Experimental data:  
+  
+  
+- Calibration data:  
+
+
+## What kind of data can be corrected?  
+
+- BiasCorrector can handle two types of input data:  
+  
+  -- Type 1: one locus in many samples (e.g. pyrosequencing data)  
+  -- Type 2: many loci in one sample (e.g. next-generation sequencing data or microarray data)
+
+
+## Are there any requirements for naming the files?  
+
+Files of the input data type 1 (one locus in many samples) do not place specific requirements for naming the files.  
+On the contrary, files of the input data type 2 (many loci in one sample), and in particular the files containing the calibration data, place very strict requirements on the file naming:  
+
+Every filname must be of the following pattern:  'anyfilename'_CS###.csv  
+
+The suffix '_CS###.csv'  
+- must begin with '_CS', otherwise the file is going to be rejected during the data preprocessing step (CS is the short form of 'calibration step')  
+- the placeholder '###' must be replaced with the respective degree of methylation of the calibration data contained in the specific file  
+-- it can be or an integer number between 0 and 100 (integers < 0 or > 100 will be rejected during the data preprocessing step)  
+-- or a numeric number between 0 an 100, indicated by an underscore ('_') as decimal seperator (e.g. '12_5' meaning '12.5')   
+
+Example: to upload a file for bias correction of type 2, that contains the calibration data for the calibration step '12.5' (true degree of calibration = 12.5) it need to be named the following:  
+  'anyfilename_CS12_5.csv'  
+

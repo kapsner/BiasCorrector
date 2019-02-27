@@ -27,8 +27,8 @@ ui <- fluidPage(
           
           # Radiobuttons: Type of data
           radioButtons(inputId = "type_locus_sample", label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
-                       choices = list("One locus in many samples (e.g., pyrosequencing data)" = 1, 
-                                      "Many loci in one sample (e.g., next-gen seq or microarray data)" = 2),
+                       choices = list("One locus in many samples (e.g. pyrosequencing data)" = 1, 
+                                      "Many loci in one sample (e.g. next-generation sequencing data or microarray data)" = 2),
                        selected = character(0)),
           
           tags$hr(),
