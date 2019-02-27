@@ -59,5 +59,5 @@ The suffix '_CS###.csv'
 -- or a numeric number between 0 an 100, indicated by an underscore ('_') as decimal seperator (e.g. '12_5' meaning '12.5')   
 
 Example: to upload a file for bias correction of type 2, that contains the calibration data for the calibration step '12.5' (true degree of calibration = 12.5) it need to be named the following:  
-  'anyfilename_CS12_5.csv'  
+  'my-calibrationfile_CS12_5.csv'  
 
