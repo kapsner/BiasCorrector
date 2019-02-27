@@ -2,10 +2,29 @@
 
 ## Table of Contents  
 
+[Where does the bias correction algorithm come from?](#where-does-the-bias-correction-algorithm-come-from) 
 [Do my input files need to be formated?](#do-my-input-files-need-to-be-formated)  
-[What kind of data can be corrected?](#what-kind-of-data-can-be-corrected)   
+[What kind of data can be corrected?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
 [Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
 
+
+## Where does the bias correction algorithm come from?  
+
+BiasCorrector is the user friendly implementation of the algorithms, described by Moskalev et. al in their article 'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression', published 2011 in *Nucleic acids research, Oxford University Press*.  
+
+Citation:  
+```
+@Article{Moskalev2011,
+  author        = {Moskalev, Evgeny A and Zavgorodnij, Mikhail G and Majorova, Svetlana P and Vorobjev, Ivan A and Jandaghi, Pouria and Bure, Irina V and Hoheisel, J{\"o}rg D},
+  title         = {Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression},
+  journaltitle  = {Nucleic acids research},
+  date          = {2011},
+  volume        = {39},
+  number        = {11},
+  pages         = {e77--e77},
+  publisher     = {Oxford University Press},
+}
+```
 
 ## Do my input files need to be in a special format?  
 
@@ -37,7 +56,7 @@ Yes, BiasCorrector places very strict requirements on the file format. Below are
 - Calibration data:  
 
 
-## What kind of data can be corrected?  
+## What kind of data can be corrected by BiasCorrector?  
 
 - BiasCorrector can handle two types of input data:  
   
@@ -59,5 +78,5 @@ The suffix '_CS###.csv'
 -- or a numeric number between 0 an 100, indicated by an underscore ('_') as decimal seperator (e.g. '12_5' meaning '12.5')   
 
 Example: to upload a file for bias correction of type 2, that contains the calibration data for the calibration step '12.5' (true degree of calibration = 12.5) it need to be named the following:  
-  'my-calibrationfile_CS12_5.csv'  
+  *'my-calibrationfile_CS12_5.csv'*  
 
