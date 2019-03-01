@@ -10,9 +10,9 @@
 
 ## Where does the bias correction algorithm come from?  
 
-BiasCorrector is the user friendly implementation of the algorithms, described by Moskalev et. al in their article 'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression', published 2011 in *Nucleic acids research, Oxford University Press*.  
+BiasCorrector is the user friendly implementation of the algorithms, described by Moskalev et. al in their article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press*.  
 
-Citation:  
+### Citation:  
 ```
 @article{10.1093/nar/gkr213,
     author = {Moskalev, Evgeny A. and Zavgorodnij, Mikhail G. and Majorova, Svetlana P. and Vorobjev, Ivan A. and Jandaghi, Pouria and Bure, Irina V. and Hoheisel, Jörg D.},
