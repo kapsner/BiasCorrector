@@ -6,6 +6,7 @@
 [Do my input files need to be formated?](#do-my-input-files-need-to-be-formated)  
 [What kind of data can be corrected?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
 [Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
+[What is exactly being checked during BiasCorrector's data preprocessing?](#what-is-exactly-being-checked-during-biascorrectors-data-preprocessing) 
 
 
 ## Where does the bias correction algorithm come from?  
@@ -33,7 +34,7 @@ BiasCorrector is the user friendly implementation of the algorithms, described b
 
 ## Do my input files need to be in a special format?  
 
-Yes, BiasCorrector places very strict requirements on the file format. Below are the exact requirements for the two types of input data, which differ in several aspects. However, all uploaded files must  
+Yes, BiasCorrector places very strict requirements on the file format. Below is a description of the exact requirements for the two types of input data, which differ in several aspects. However, all uploaded files must  
 - be in CSV format  
 - contain the column headers in the first row  
 
@@ -85,3 +86,25 @@ The suffix '_CS###.csv'
 Example: to upload a file for bias correction of type 2, that contains the calibration data for the calibration step '12.5' (true degree of calibration = 12.5) it need to be named the following:  
   *'my-calibrationfile_CS12_5.csv'*  
 
+## What is exactly being checked during BiasCorrector's data preprocessing?  
+
+Some of the preprocessing steps are applied to all uploaded files, some only to the experimental data, others only to type 2 input data. The following gives a structured overview over all preprocessing steps:  
+
+*All uploaded files:*  
+- the filename ends with '.csv' or '.CSV'  
+
+*Experimental data:*  
+
+- All files  
+
+- Type 1:  
+
+- Type 2:  
+
+*Calibration data:*  
+
+- All files  
+
+- Type 1:  
+
+- Type 2:  
