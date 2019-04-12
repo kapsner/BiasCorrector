@@ -31,8 +31,8 @@ server <- function(input, output, session) {
     y1 = NULL,
     b = NULL,
     omitnas = NULL,
-    min_meth = NULL,
-    max_meth = NULL,
+    m0 = NULL,
+    m1 = NULL,
     j = NULL,
     calibr_steps = NULL
   )
