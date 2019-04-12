@@ -1,16 +1,5 @@
-# setup
-setup <- function(){
-  # options(shiny.port = 1234)
-  # options(shiny.host = "0.0.0.0")
-  # options(shiny.launch.browser = FALSE)
-  
-  # initialize logfile here
-  logfilename <<- paste0("./biascorrector.log")
-  suppressMessages(suppressWarnings(file.create(logfilename)))
-}
-
 # modify datatable
-cleanDT <- function(datatable, description, type) {
+cleanDT <- function(datatable, description, type, rv) {
   writeLog("Entered 'cleanDT'-Function")
   
   # remove all columns that only contain empty cells
@@ -98,7 +87,7 @@ cleanDT <- function(datatable, description, type) {
   
   # make vec_cal global for type 1 data (many operations of the app rely on vec_cal)
   if (type == "1"){
-    vec_cal <<- names(datatable)[-1]
+    rv$vec_cal <- names(datatable)[-1]
   }
   
   # count number of CpGs in type 2 data
@@ -124,8 +113,8 @@ cleanDT <- function(datatable, description, type) {
       before <- nrow(datatable)
       datatable <- na.omit(datatable)
       after <- nrow(datatable)
-      omitnas <<- before - after
-      message <- paste0("Deleted ", omitnas, " row(s) containing missing values from '", description, " data'.")
+      rv$omitnas <- before - after
+      message <- paste0("Deleted ", rv$omitnas, " row(s) containing missing values from '", description, " data'.")
       writeLog(message)
     } 
     
@@ -142,7 +131,7 @@ cleanDT <- function(datatable, description, type) {
 
 
 # check type 2 file requirements
-type2FileReq <- function(filelist){
+type2FileReq <- function(filelist, rv){
   writeLog("Entered 'type2FileReq'-Function")
   
   if (length(filelist) < 4){
@@ -179,7 +168,7 @@ type2FileReq <- function(filelist){
         #numberby <- 100/(length(rv$fileimportCal)-1)
         #choicesseq <- seq(from = 0, to = 100.00, by = numberby) 
         pattern <- "(\\_CS\\d+(\\_\\d+)?(\\.csv|\\.CSV))$"
-        calibr_steps <<- data.table(name = character(), step = numeric())
+        calibr_steps <- data.table(name = character(), step = numeric())
         for (i in names(filelist)){
           message <- paste("Filename:", i)
           writeLog(message)
@@ -188,10 +177,10 @@ type2FileReq <- function(filelist){
             writeLog("### ERROR ###\nFilenaming of the calibration files must be done properly.\nEnd of filename must begin with '_CS' followd by a number, indicating the degree of true methylation.\nAs decimal seperator, '_' is required.")
             return("filename")
           } else {
-            calibr_steps <<- rbind(calibr_steps, data.table(name = i, step = as.numeric(gsub("\\_", ".", regmatches(match, regexpr("\\d+(\\_\\d+)?", match))))))
+            calibr_steps <- rbind(calibr_steps, data.table(name = i, step = as.numeric(gsub("\\_", ".", regmatches(match, regexpr("\\d+(\\_\\d+)?", match))))))
           }
         }
-        calibr_steps <<- calibr_steps[order(step, decreasing = F)]
+        calibr_steps <- calibr_steps[order(step, decreasing = F)]
         
         if (calibr_steps[,min(step)] < 0 | calibr_steps[,max(step)] > 100){
           writeLog("### ERROR ###\nCalibration steps must be in range '0 <= calibration step <= 100'.")
@@ -208,6 +197,7 @@ type2FileReq <- function(filelist){
             writeLog("### ERROR ###\nPlease specify an equal number of CpG-sites for each gene locus.")
             return("inconsistency")
           } else {
+            rv$calibr_steps <- calibr_steps
             return(TRUE) 
           }
         }
@@ -216,23 +206,23 @@ type2FileReq <- function(filelist){
   }
 }
 
-type2FileConfirm <- function(filelist, choiceslist){
+type2FileConfirm <- function(filelist, choiceslist, rv){
   writeLog("Entered 'type2FileConfirm'-Function")
   
-  calibr_steps <<- choiceslist[,step := as.numeric(step)][order(step, decreasing = F)]
+  rv$calibr_steps <- choiceslist[,step := as.numeric(step)][order(step, decreasing = F)]
   
-  if (calibr_steps[,min(step)] < 0 | calibr_steps[,max(step)] > 100){
+  if (rv$calibr_steps[,min(step)] < 0 | rv$calibr_steps[,max(step)] > 100){
     writeLog("### ERROR ###\nCalibration steps must be in range '0 <= calibration step <= 100'.")
     return("calibrange2")
-  } else if (calibr_steps[,sum(duplicated(step))] > 0){
+  } else if (rv$calibr_steps[,sum(duplicated(step))] > 0){
     writeLog("### ERROR ###\nThe calibration steps provided do not meet the file requirements!\nCalibration steps must be in range '0 <= calibration step <= 100'.\nEach calibration step may only be assigned once.")
     return("calibrange3")
   } else {
     
     # get unique gene names of first table (all tables must be equal, has been checked anywhere else??!)
-    gene_names <- unique(filelist[[calibr_steps[1,name]]][,.(locus_id, CpG_count)])
+    gene_names <- unique(filelist[[rv$calibr_steps[1,name]]][,.(locus_id, CpG_count)])
     # get list of colnames
-    col_names <- colnames(filelist[[calibr_steps[1,name]]])
+    col_names <- colnames(filelist[[rv$calibr_steps[1,name]]])
     # initialize final calibration_list
     final_calibs <- list()
     for (g in gene_names[,locus_id]){
@@ -246,10 +236,10 @@ type2FileConfirm <- function(filelist, choiceslist){
     
     # loop through provided calibration files, extract calibration data for each locus and 
     # rbind it to final_calibs for specific locus id
-    for (n in 1:nrow(calibr_steps)){
+    for (n in 1:nrow(rv$calibr_steps)){
       # get imported calibration data (step by step)
-      basefile <- filelist[[calibr_steps[n,name]]]
-      calstep <- calibr_steps[n,step]
+      basefile <- filelist[[rv$calibr_steps[n,name]]]
+      calstep <- rv$calibr_steps[n,step]
       vec <- colnames(basefile)
       
       # loop through loci in basefile and append results to final_calibs
@@ -277,20 +267,25 @@ create_agg_df <- function(datatable, index){
 ## method 1: hyperbolic regression
 
 # implementation of hyperbolic equation
-hyperbolic_equation <- function(x, b = NULL){
+hyperbolic_equation <- function(x, b = NULL, rv){
   
   # in optimization function, b != 0;
   # but afterwards, we hardcode b with the recently optimized value to calculate fits
-  if (is.null(b) == T) {
-    b <- result_list[[vec_cal[j]]][["Coef_hyper"]]$b
-    y0 <- result_list[[vec_cal[j]]][["Coef_hyper"]]$y0
-    y1 <- result_list[[vec_cal[j]]][["Coef_hyper"]]$y1
-    min_meth <- result_list[[vec_cal[j]]][["Coef_hyper"]]$min_meth
-    max_meth <- result_list[[vec_cal[j]]][["Coef_hyper"]]$max_meth
+  if (is.null(b)) {
+    b <- rv$result_list[[rv$vec_cal[rv$j]]][["Coef_hyper"]]$b
+    y0 <- rv$result_list[[rv$vec_cal[rv$j]]][["Coef_hyper"]]$y0
+    y1 <- rv$result_list[[rv$vec_cal[rv$j]]][["Coef_hyper"]]$y1
+    min_meth <- rv$result_list[[rv$vec_cal[rv$j]]][["Coef_hyper"]]$min_meth
+    max_meth <- rv$result_list[[rv$vec_cal[rv$j]]][["Coef_hyper"]]$max_meth
     
-    message <- paste0("# CpG-site: ", vec_cal[j])
+    message <- paste0("# CpG-site: ", rv$vec_cal[rv$j])
     msg2 <- paste("Using bias_weight =", b, ", y0 =", y0, ", y1 =", y1)
     writeLog(paste0(message, "  \n", msg2))
+  } else {
+    y0 <- rv$y0
+    y1 <- rv$y1
+    min_meth <- rv$min_meth
+    max_meth <- rv$max_meth
   }
   
   # old equation (16.01.2019)
@@ -303,34 +298,34 @@ hyperbolic_equation <- function(x, b = NULL){
 }
 
 # find best parameters for hyperbolic regression
-hyperbolic_regression <- function(df_agg, vec){
+hyperbolic_regression <- function(df_agg, vec, rv){
   writeLog("Entered 'hyperbolic_regression'-Function")
   
-  # y0 <<- df_agg[true_methylation==0, CpG]
-  # y1 <<- df_agg[true_methylation==100, CpG]
+  # y0 <- df_agg[true_methylation==0, CpG]
+  # y1 <- df_agg[true_methylation==100, CpG]
   
-  y0 <<- df_agg[true_methylation==df_agg[,min(true_methylation)], CpG]
-  y1 <<- df_agg[true_methylation==df_agg[,max(true_methylation)], CpG]
-  min_meth <<- df_agg[,min(true_methylation)]
-  max_meth <<- df_agg[,max(true_methylation)]
+  rv$y0 <- df_agg[true_methylation==df_agg[,min(true_methylation)], CpG]
+  rv$y1 <- df_agg[true_methylation==df_agg[,max(true_methylation)], CpG]
+  rv$min_meth <- df_agg[,min(true_methylation)]
+  rv$max_meth <- df_agg[,max(true_methylation)]
   
   # true y-values
   true_levels <- df_agg[,true_methylation]
   
   # implementation of optimization function
   fn <- function(bias){
-    fitted_vals <- hyperbolic_equation(true_levels, b = bias)
+    fitted_vals <- hyperbolic_equation(true_levels, b = bias, rv = rv)
     # optimize biasfactor with minimizing sum of squares error
     return(sum(I(df_agg[,CpG] - fitted_vals)^2))
   }
   
   # optimization function of built in R -> based on Nelder-Mead
   # by default, optim performs minimization
-  # bias_factor <<- optim(1, fn, method = "Nelder-Mead")$par
-  bias_factor <<- optim(1, fn, method = "Brent", lower = -10, upper = 10)$par # due to error with Nelder-Mead
-
+  # bias_factor <- optim(1, fn, method = "Nelder-Mead")$par
+  rv$b <- optim(1, fn, method = "Brent", lower = -10, upper = 10)$par # due to error with Nelder-Mead
+  
   # correct values, based on optimized b
-  fitted_values <- hyperbolic_equation(true_levels, bias_factor)
+  fitted_values <- hyperbolic_equation(true_levels, rv$b, rv = rv)
   
   # fitted values, extrapolated by true methylation and y0 and y1
   df_agg[, fitted := fitted_values]
@@ -339,13 +334,13 @@ hyperbolic_regression <- function(df_agg, vec){
   df_agg[,squared_error := I((CpG-fitted)^2)]
   
   # sum of squared errors
-  result_list[[vec]] <<- list("Var" = vec,
+  rv$result_list[[vec]] <- list("Var" = vec,
                               "SSE_hyper" = df_agg[,sum(squared_error)],
-                              "Coef_hyper" = list("y0" = y0,
-                                                  "y1" = y1,
-                                                  "b" = bias_factor,
-                                                  "min_meth" = min_meth,
-                                                  "max_meth" = max_meth))
+                              "Coef_hyper" = list("y0" = rv$y0,
+                                                  "y1" = rv$y1,
+                                                  "b" = rv$b,
+                                                  "min_meth" = rv$min_meth,
+                                                  "max_meth" = rv$max_meth))
   
   # delete fitted/squared_error
   df_agg[,c("fitted", "squared_error") := NULL]
@@ -355,36 +350,36 @@ hyperbolic_regression <- function(df_agg, vec){
 ## method 2: cubic regression
 
 # implementation of cubic equation
-cubic_equation <- function(x, c = NULL){
+cubic_equation <- function(x, c = NULL, rv){
   
   # in fitting function, c != NULL;
   # but afterwards, we hardcode b with the recently optimized value to calculate fits
   if (is.null(c) == T) {
-    c <- sapply(result_list[[vec_cal[j]]][["Coef_cubic"]], unlist)[c(4:1)]
-    #c <- sapply(result_list[[vec_cal[i]]][["Coef_cubic"]], `[`)[c(4:1)]
-    message <- paste0("# CpG-site: ", vec_cal[j])
+    c <- sapply(rv$result_list[[rv$vec_cal[rv$j]]][["Coef_cubic"]], unlist)[c(4:1)]
+    #c <- sapply(rv$result_list[[rv$vec_cal[i]]][["Coef_cubic"]], `[`)[c(4:1)]
+    message <- paste0("# CpG-site: ", rv$vec_cal[rv$j])
     msg2 <- paste("Using c =", paste(c, collapse = ", "))
     writeLog(paste0(message, "  \n", msg2))
     
     # increase j here, when hyperbolic regression has already been called
-    j <<- j + 1
+    rv$j <- rv$j + 1
   }
   return((c[4]*I(x^3) + c[3]*I(x^2) + c[2]*x + c[1]))
 }
 
 # find best parameters for cubic regression
-cubic_regression <- function(df_agg, vec) {
+cubic_regression <- function(df_agg, vec, rv) {
   writeLog("Entered 'cubic_regression'-Function")
   
   #pol_reg <- lm(true_methylation ~ poly(CpG, degree = 3, raw = T), data = df_agg)
-  pol_reg <<- lm(CpG ~ true_methylation + I(true_methylation^2) + I(true_methylation^3), data = df_agg)
+  pol_reg <- lm(CpG ~ true_methylation + I(true_methylation^2) + I(true_methylation^3), data = df_agg)
   cof <- coefficients(pol_reg)
   
   # true y-values
   true_levels <- df_agg[,true_methylation]
   
   # correct values
-  fitted_values <- cubic_equation(true_levels, c = cof)
+  fitted_values <- cubic_equation(true_levels, c = cof, rv = rv)
   
   # fitted values
   df_agg[, fitted := fitted_values]
@@ -393,36 +388,36 @@ cubic_regression <- function(df_agg, vec) {
   df_agg[,squared_error := I((CpG-fitted)^2)]
   
   # sum of squared errors
-  # result_list[Var==vec[i], SSE_cubic := df_agg[,sum(squared_error)]]
-  result_list[[vec]]["SSE_cubic"] <<- df_agg[,sum(squared_error)]
-  result_list[[vec]][["Coef_cubic"]] <<- list("ax3" = unname(cof[4]),
+  # rv$result_list[Var==vec[i], SSE_cubic := df_agg[,sum(squared_error)]]
+  rv$result_list[[vec]]["SSE_cubic"] <- df_agg[,sum(squared_error)]
+  rv$result_list[[vec]][["Coef_cubic"]] <- list("ax3" = unname(cof[4]),
                                               "bx2" = unname(cof[3]),
                                               "cx" = unname(cof[2]),
                                               "d" = unname(cof[1]))
 }
 
-initializeListJ <- function(){
+initializeListJ <- function(rv){
   # initialize result_list and j
   
   # save all goodness of fit statistics and for equation necessary parameters in list
-  result_list <<- list()
+  rv$result_list <- list()
   
   # "j" is necessary to get values for curve in equations
-  j <<- 1
+  rv$j <- 1
 }
 
 # perform regression with input data of type 1
-regression_type1 <- function(datatable, vec_cal){
+regression_type1 <- function(datatable, vec_cal, rv){
   writeLog("Entered 'regression_type1'-Function")
   
-  plot.listR <<- list()
+  plot.listR <- list()
   
   for (i in 1:length(vec_cal)){
     message <- paste0("# CpG-site: ", vec_cal[i])
     writeLog(message)
-    df_agg <<- create_agg_df(datatable, vec_cal[i])
-    hyperbolic_regression(df_agg, vec_cal[i])
-    cubic_regression(df_agg, vec_cal[i])
+    df_agg <- create_agg_df(datatable, vec_cal[i])
+    hyperbolic_regression(df_agg, vec_cal[i], rv = rv)
+    cubic_regression(df_agg, vec_cal[i], rv = rv)
     
     p <- ggplot(data=df_agg, aes(x = true_methylation, y = CpG)) + 
       geom_point() + 
@@ -431,17 +426,17 @@ regression_type1 <- function(datatable, vec_cal){
       ggtitle(paste("CpG-site:", vec_cal[i])) + 
       geom_text(data = data.frame(),
                 aes(x=-Inf, y=Inf),
-                label = paste("SSE cubic:", round(result_list[[vec_cal[i]]]$SSE_cubic, 3),
-                              "\nSSE hyperbolic:", round(result_list[[vec_cal[i]]]$SSE_hyper, 3)),
+                label = paste("SSE cubic:", round(rv$result_list[[vec_cal[i]]]$SSE_cubic, 3),
+                              "\nSSE hyperbolic:", round(rv$result_list[[vec_cal[i]]]$SSE_hyper, 3)),
                 hjust = 0, vjust = 1, size = 4)
-    plot.listR[[i]] <<- p
+    plot.listR[[i]] <- p
   }
   return(plot.listR)
 }
 
 # output of regression results
-statisticsList <- function(result_list){
-  dt_list <- data.table("Name" = names(result_list), 
+statisticsList <- function(resultlist){
+  dt_list <- data.table("Name" = names(resultlist), 
                         "SSE_hyperbolic" = NA, 
                         "b" = NA, 
                         "y0" = NA, 
@@ -453,29 +448,29 @@ statisticsList <- function(result_list){
                         "cx" = NA,
                         "d" = NA)
   
-  dt_list[, Name := names(result_list)]
+  dt_list[, Name := names(resultlist)]
   
   vec <- names(dt_list)[-1]
   dt_list[,(vec) := lapply(.SD, function(x){as.numeric(as.character(x))}), .SDcols = vec]
   
-  for (i in names(result_list)){
-    dt_list[Name == i, SSE_hyperbolic := result_list[[i]][["SSE_hyper"]]
+  for (i in names(resultlist)){
+    dt_list[Name == i, SSE_hyperbolic := resultlist[[i]][["SSE_hyper"]]
             ][
-              Name == i, b := result_list[[i]][["Coef_hyper"]][["b"]]
+              Name == i, b := resultlist[[i]][["Coef_hyper"]][["b"]]
               ][
-                Name == i, y0 := result_list[[i]][["Coef_hyper"]][["y0"]]
+                Name == i, y0 := resultlist[[i]][["Coef_hyper"]][["y0"]]
                 ][
-                  Name == i, y1 := result_list[[i]][["Coef_hyper"]][["y1"]]
+                  Name == i, y1 := resultlist[[i]][["Coef_hyper"]][["y1"]]
                   ][
-                    Name == i, SSE_cubic := result_list[[i]][["SSE_cubic"]]
+                    Name == i, SSE_cubic := resultlist[[i]][["SSE_cubic"]]
                     ][
-                      Name == i, "ax³" := result_list[[i]][["Coef_cubic"]][["ax3"]]
+                      Name == i, "ax³" := resultlist[[i]][["Coef_cubic"]][["ax3"]]
                       ][
-                        Name == i, "bx²" := result_list[[i]][["Coef_cubic"]][["bx2"]]
+                        Name == i, "bx²" := resultlist[[i]][["Coef_cubic"]][["bx2"]]
                         ][
-                          Name == i, cx := result_list[[i]][["Coef_cubic"]][["cx"]]
+                          Name == i, cx := resultlist[[i]][["Coef_cubic"]][["cx"]]
                           ][
-                            Name == i, d := result_list[[i]][["Coef_cubic"]][["d"]]
+                            Name == i, d := resultlist[[i]][["Coef_cubic"]][["d"]]
                             ]
   }
   # mark the better model: 1 = cubic, 0 = hyperbolic
@@ -500,19 +495,24 @@ create_agg_df_exp <- function(datatable, index, type){
 }
 
 # solved hyperbolic equation
-hyperbolic_equation_solved <- function(y){
+# TODO!!!! new hyperbolic equation needs to be solved
+hyperbolic_equation_solved <- function(y, rv){
+  b <- rv$b
+  y0 <- rv$y0
+  y1 <- rv$y1
+  
   return(((100 * y0) - (100 * y)) / ((y * b) - (y1 * b) + y0 - y))
 }
 
-substitutions_create <- function(){
-  substitutions <<- data.table(id = character(), 
+substitutions_create <- function(rv){
+  rv$substitutions <- data.table(id = character(), 
                                CpG_site = character(),
                                corrected = character(),
                                replacement = character())
 }
 
 # perform fitting of regressions to experimental data
-solving_equations <- function(datatable, regmethod, type){
+solving_equations <- function(datatable, regmethod, type, rv){
   writeLog("Entered 'solving_equations'-Function")
   
   first_colname <- colnames(datatable)[1]
@@ -526,7 +526,7 @@ solving_equations <- function(datatable, regmethod, type){
     # initialize ouput-vector
     vector <- character()
     
-    df_agg_ex <<- create_agg_df_exp(datatable, i, type)
+    df_agg_ex <- create_agg_df_exp(datatable, i, type)
     
     # if cubic regression has better sse-score (default), or
     # if user selects cubic regression for calculation manually in GUI
@@ -535,10 +535,10 @@ solving_equations <- function(datatable, regmethod, type){
       writeLog(message)
       
       # get parameters
-      ax3 <<- result_list[[i]][["Coef_cubic"]][["ax3"]]
-      bx2 <<- result_list[[i]][["Coef_cubic"]][["bx2"]]
-      cx <<- result_list[[i]][["Coef_cubic"]][["cx"]]
-      d <<- result_list[[i]][["Coef_cubic"]][["d"]]
+      ax3 <- rv$result_list[[i]][["Coef_cubic"]][["ax3"]]
+      bx2 <- rv$result_list[[i]][["Coef_cubic"]][["bx2"]]
+      cx <- rv$result_list[[i]][["Coef_cubic"]][["cx"]]
+      d <- rv$result_list[[i]][["Coef_cubic"]][["d"]]
       
       # loop through rows by samplenames
       for (j in as.vector(df_agg_ex[,get(first_colname)])){
@@ -624,7 +624,7 @@ solving_equations <- function(datatable, regmethod, type){
             replacement = "NA"
           }
           
-          substitutions <<- rbind(substitutions, data.table(id = j,
+          rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
                                                             CpG_site = i,
                                                             corrected = original,
                                                             replacement = replacement))
@@ -639,15 +639,15 @@ solving_equations <- function(datatable, regmethod, type){
       message <- paste("Solving hyperbolic regression for", i)
       writeLog(message)
       
-      y0 <<- result_list[[i]][["Coef_hyper"]][["y0"]]
-      y1 <<- result_list[[i]][["Coef_hyper"]][["y1"]]
-      b <<- result_list[[i]][["Coef_hyper"]][["b"]]
+      rv$y0 <- rv$result_list[[i]][["Coef_hyper"]][["y0"]]
+      rv$y1 <- rv$result_list[[i]][["Coef_hyper"]][["y1"]]
+      rv$b <- rv$result_list[[i]][["Coef_hyper"]][["b"]]
       
       
       for (j in as.vector(df_agg_ex[,get(first_colname)])){
         msg1 <- paste("Samplename:", j)
         
-        h_solv <- as.numeric(as.character(hyperbolic_equation_solved(df_agg_ex[get(first_colname)==j,CpG])))
+        h_solv <- as.numeric(as.character(hyperbolic_equation_solved(df_agg_ex[get(first_colname)==j,CpG], rv=rv)))
         print(h_solv)
         
         if (h_solv >= 0 & h_solv <= 100){
@@ -684,7 +684,7 @@ solving_equations <- function(datatable, regmethod, type){
             
           }
           
-          substitutions <<- rbind(substitutions, data.table(id = j,
+          rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
                                                             CpG_site = i,
                                                             corrected = original,
                                                             replacement = replacement))

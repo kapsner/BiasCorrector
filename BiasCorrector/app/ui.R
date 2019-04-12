@@ -1,7 +1,3 @@
-# maximum filesize in MB:
-maxfilesize <<- 100
-options(shiny.maxRequestSize = maxfilesize*1024^2)
-
 # define UI
 ui <- fluidPage(
   

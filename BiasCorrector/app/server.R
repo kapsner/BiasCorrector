@@ -1,13 +1,8 @@
-# source functions
-source("Functions.R", echo = F, encoding = "UTF-8")
-source("App_Utilities.R", echo = F, encoding = "UTF-8")
-
-# initialize logfile
-setup()
-
 server <- function(input, output, session) {
-
-  onStart()
+  
+  # source functions
+  source("Functions.R", echo = F, encoding = "UTF-8")
+  source("App_Utilities.R", echo = F, encoding = "UTF-8")
   
   rv <- reactiveValues(
     expFileReq = F,
@@ -23,8 +18,34 @@ server <- function(input, output, session) {
     plotting_finished = FALSE,
     substitutions = NULL,
     substitutionsCalc = NULL,
-    ype2CalcRes = NULL
+    type2CalcRes = NULL,
+    choices_list = NULL,
+    result_list_type2 = NULL,
+    result_list = NULL,
+    temp_results = NULL,
+    vec_cal = NULL,
+    plotdir = NULL,
+    csvdir = NULL,
+    tempdir = NULL,
+    y0 = NULL,
+    y1 = NULL,
+    b = NULL,
+    omitnas = NULL,
+    min_meth = NULL,
+    max_meth = NULL,
+    j = NULL,
+    calibr_steps = NULL
   )
+  
+  onStart()
+  
+  # scientific purpose
+  showModal(modalDialog(
+    title = "This program is to be used for scientific research purposes only",
+    "I hereby confirm to use this program only for scientific research purposes.",
+    footer = tagList(actionButton("dismiss_modal",label = "Cancel"),
+                     modalButton("Confirm"))
+  ))
   
   observeEvent(input$dismiss_modal, {
     writeLog("dismiss modal")
@@ -108,7 +129,7 @@ server <- function(input, output, session) {
                                    input$experimentalFile$datapath, 
                                    fread)
         tryCatch({
-          rv$fileimportExp <- cleanDT(file(), description = "experimental", type = input$type_locus_sample)
+          rv$fileimportExp <- cleanDT(file(), description = "experimental", type = input$type_locus_sample, rv=rv)
         }, error = function(e){
           print(e)
           # error handling fileimport
@@ -123,9 +144,9 @@ server <- function(input, output, session) {
         
         # check here, if there have been deleted rows containing missin values
         tryCatch({
-          omitnasModal(omitnas, "experimental")
+          omitnasModal(rv$omitnas, "experimental")
         }, error = function(e){
-          print(e)
+          writeLog(paste0("Errormessage: ", e))
         })
         
       } else {
@@ -225,7 +246,7 @@ server <- function(input, output, session) {
         
         # try to import file
         tryCatch({
-          rv$fileimportCal <- cleanDT(file(), "calibration", type = input$type_locus_sample)
+          rv$fileimportCal <- cleanDT(file(), "calibration", type = input$type_locus_sample, rv=rv)
         }, error = function(e){
           print(e)
           # error handling fileimport
@@ -256,7 +277,7 @@ server <- function(input, output, session) {
         
         # check here, if there have been deleted rows containing missin values
         tryCatch({
-          omitnasModal(omitnas, "calibration")
+          omitnasModal(rv$omitnas, "calibration")
         }, error = function(e){
           print(e)
         })
@@ -281,7 +302,7 @@ server <- function(input, output, session) {
                                    fread)
         
         if (ending[2] %in% c("csv", "CSV")){
-          rv$fileimportList[[input$calibrationFile$name[i]]] <- cleanDT(file(), "calibration", type = input$type_locus_sample)
+          rv$fileimportList[[input$calibrationFile$name[i]]] <- cleanDT(file(), "calibration", type = input$type_locus_sample, rv=rv)
           
         } else {
           # error handling fileimport
@@ -290,7 +311,7 @@ server <- function(input, output, session) {
       }
       
       # chech type 2 file requirements here
-      filecheck <- type2FileReq(rv$fileimportList)
+      filecheck <- type2FileReq(rv$fileimportList, rv)
       
       if (is.character(filecheck)){
         openModal(filecheck)
@@ -341,18 +362,18 @@ server <- function(input, output, session) {
         
         # render assignment of calibration steps
         output$calibration_data <- renderUI({
-          select_output_list <- lapply(1:nrow(calibr_steps), function(g) {
+          select_output_list <- lapply(1:nrow(rv$calibr_steps), function(g) {
             selectname <- paste0("select", g)
             div(class="row",
                 div(class="col-sm-6", style="text-align: left",
-                    h5(tags$b(paste0(calibr_steps[g, name], ":")))),
+                    h5(tags$b(paste0(rv$calibr_steps[g, name], ":")))),
                 div(class="col-sm-6", style="text-align: center",
                     numericInput(inputId = selectname,
                                  min = 0,
                                  max = 100,
                                  label = NULL,
                                  step = 0.01,
-                                 value = calibr_steps[g, step],
+                                 value = rv$calibr_steps[g, step],
                                  width = "100%")),
                 tags$hr(style="margin: 0.5%"))
           })
@@ -364,13 +385,13 @@ server <- function(input, output, session) {
         })
         
         output$cal_samples <- reactive({
-          message <- paste0("Unique calibration samples: ", nrow(calibr_steps))
+          message <- paste0("Unique calibration samples: ", nrow(rv$calibr_steps))
           writeLog(message)
           message
         })
         
         output$cal_samples_raw <- reactive({
-          message <- paste0("Unique calibration steps:\n", paste(levels(factor(calibr_steps[,step])), collapse = "\n"))
+          message <- paste0("Unique calibration steps:\n", paste(levels(factor(rv$calibr_steps[,step])), collapse = "\n"))
           writeLog(message)
           message
         })
@@ -380,15 +401,15 @@ server <- function(input, output, session) {
   
   # confirm-Button for Type2-Data
   observeEvent(input$confirm_steps, {
-    choices_list <- data.table("name" = character(), "step" = numeric())
-    lapply(1:nrow(calibr_steps), function(g) {
+    rv$choices_list <- data.table("name" = character(), "step" = numeric())
+    lapply(1:nrow(rv$calibr_steps), function(g) {
       selectname <- paste0("select", g)
-      choices_list <<- rbind(choices_list, cbind("name" = calibr_steps[g,name], "step" = as.numeric(eval(parse(text=paste0("input$", selectname))))))
+      rv$choices_list <- rbind(rv$choices_list, cbind("name" = rv$calibr_steps[g,name], "step" = as.numeric(eval(parse(text=paste0("input$", selectname))))))
     })
-    print(choices_list)
+    print(rv$choices_list)
     
     # assign rv$fileimportCal
-    filecheck <- type2FileConfirm(rv$fileimportList, choices_list)
+    filecheck <- type2FileConfirm(rv$fileimportList, rv$choices_list, rv)
     if (is.character(filecheck)){
       openModal(filecheck)
     } else {
@@ -454,14 +475,14 @@ server <- function(input, output, session) {
       if (input$type_locus_sample == "1"){
         if (isFALSE(rv$plotting_finished)){
           
-          plottingUtility(rv$fileimportCal, type=1, samplelocusname=rv$sampleLocusName)
+          plottingUtility(rv$fileimportCal, type=1, samplelocusname=rv$sampleLocusName, rv=rv)
           
           # on finished
           rv$plotting_finished <- TRUE
           writeLog("Finished plotting")
           
           # save regression statistics to reactive value
-          rv$regStats <- statisticsList(result_list)
+          rv$regStats <- statisticsList(rv$result_list)
         }
         
         # else if type 2 data
@@ -469,17 +490,17 @@ server <- function(input, output, session) {
         
         if (isFALSE(rv$plotting_finished)){
           a <- 1
-          result_list_type2 <<- list()
+          rv$result_list_type2 <- list()
           
           for (b in names(rv$fileimportCal)){
-            vec_cal <<- names(rv$fileimportCal[[a]])[-1]
-            #print(paste("Length vec_cal:", length(vec_cal)))
+            rv$vec_cal <- names(rv$fileimportCal[[a]])[-1]
+            #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
             
-            plottingUtility(rv$fileimportCal[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b))
+            plottingUtility(rv$fileimportCal[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b), rv=rv)
             
             # save regression statistics to reactive value
-            rv$regStats[[b]] <- statisticsList(result_list)
-            result_list_type2[[b]] <<- result_list
+            rv$regStats[[b]] <- statisticsList(rv$result_list)
+            rv$result_list_type2[[b]] <- rv$result_list
             a <- a + 1
           }
           # on finished
@@ -523,10 +544,10 @@ server <- function(input, output, session) {
       
       ### Plot tab ###
       # create a list of plotnames to populate selectInput
-      plot_output_list <- lapply(1:length(vec_cal), function(g) {
-        paste0(gsub("[[:punct:]]", "", vec_cal[g]))
+      plot_output_list <- lapply(1:length(rv$vec_cal), function(g) {
+        paste0(gsub("[[:punct:]]", "", rv$vec_cal[g]))
       })
-      names(plot_output_list) <- vec_cal 
+      names(plot_output_list) <- rv$vec_cal 
       
       # create reactive selectinput:
       selIn2 <- reactive({
@@ -591,17 +612,17 @@ server <- function(input, output, session) {
       ### model selection tab ###
       # render radio buttons for tab 5
       output$reg_radios <- renderUI({ 
-        radio_output_list <- lapply(1:length(vec_cal), function(g) {
+        radio_output_list <- lapply(1:length(rv$vec_cal), function(g) {
           radioname <- paste0("radio", g)
           div(class="row", style="margin: 0.5%",
               div(class="row",
                   div(class="col-sm-4", style="text-align: center",
-                      h5(tags$b(paste0(vec_cal[g], ":")))),
+                      h5(tags$b(paste0(rv$vec_cal[g], ":")))),
                   div(class="col-sm-4",
                       radioButtons(inputId = radioname, 
                                    label = "Regression type:", 
                                    choices = list("hyperbolic" = 0, "cubic" = 1),
-                                   selected = as.character(rv$regStats[Name==vec_cal[g], better_model]),
+                                   selected = as.character(rv$regStats[Name==rv$vec_cal[g], better_model]),
                                    inline = T)),
                   div(class="col-sm-4",
                       verbatimTextOutput(paste0("text_", radioname)))),
@@ -730,20 +751,20 @@ server <- function(input, output, session) {
       # 
       # selRad <- reactive({
       #   if (!is.null(input$modelSelectLocus)){
-      #     vec_cal <- names(rv$fileimportCal[[input$modelSelectLocus]])[-1]
+      #     rv$vec_cal <- names(rv$fileimportCal[[input$modelSelectLocus]])[-1]
       #     
-      #     return(lapply(1:length(vec_cal), function(g) {
+      #     return(lapply(1:length(rv$vec_cal), function(g) {
       #       
       #       radioname <- paste0("radio", g)
       #       div(class="row", style="margin: 0.5%",
       #           div(class="row",
       #               div(class="col-sm-4", style="text-align: center",
-      #                   h5(tags$b(paste0(vec_cal[g], ":")))),
+      #                   h5(tags$b(paste0(rv$vec_cal[g], ":")))),
       #               div(class="col-sm-4",
       #                   radioButtons(inputId = radioname, 
       #                                label = "Regression type:", 
       #                                choices = list("hyperbolic" = 0, "cubic" = 1),
-      #                                selected = as.character(rv$regStats[[input$modelSelectLocus]][Name==vec_cal[g], better_model]),
+      #                                selected = as.character(rv$regStats[[input$modelSelectLocus]][Name==rv$vec_cal[g], better_model]),
       #                                inline = T)),
       #               div(class="col-sm-3",
       #                   verbatimTextOutput(paste0("text_", radioname)))),
@@ -769,30 +790,30 @@ server <- function(input, output, session) {
       
       if (input$type_locus_sample == "1"){
         
-        lapply(1:length(vec_cal), function(h) {
+        lapply(1:length(rv$vec_cal), function(h) {
           radioname <- paste0("text_radio", h)
           output[[radioname]] <- reactive({
             paste("SSE:",
                   as.character(ifelse(input[[paste0("radio", h)]] == 1,
-                                      rv$regStats[Name==vec_cal[h], SSE_cubic],
-                                      rv$regStats[Name==vec_cal[h], SSE_hyperbolic]))
+                                      rv$regStats[Name==rv$vec_cal[h], SSE_cubic],
+                                      rv$regStats[Name==rv$vec_cal[h], SSE_hyperbolic]))
             )
           })
         })
         
-        lapply(1:length(vec_cal), function(k) {
+        lapply(1:length(rv$vec_cal), function(k) {
           radioname <- paste0("radio", k)
           if (!is.null(input[[radioname]])){
             if (input[[radioname]] == "1") {
               output[[paste0("text_", radioname)]] <- reactive({
                 paste("SSE:",
-                      as.character(rv$regStats[Name==vec_cal[k], round(SSE_cubic,3)])
+                      as.character(rv$regStats[Name==rv$vec_cal[k], round(SSE_cubic,3)])
                 )
               })
             } else if (input[[radioname]] == "0") {
               output[[paste0("text_", radioname)]] <- reactive({
                 paste("SSE:",
-                      as.character(rv$regStats[Name==vec_cal[k], round(SSE_hyperbolic, 3)])
+                      as.character(rv$regStats[Name==rv$vec_cal[k], round(SSE_hyperbolic, 3)])
                 )
               })
             }
@@ -825,36 +846,34 @@ server <- function(input, output, session) {
     
     if (input$type_locus_sample == "1"){
       
-      choices_list <- data.table("Name" = character(), "better_model" = numeric())
-      lapply(1:length(vec_cal), function(x) {
+      rv$choices_list <- data.table("Name" = character(), "better_model" = numeric())
+      lapply(1:length(rv$vec_cal), function(x) {
         radioname <- paste0("radio", x)
-        choices_list <<- rbind(choices_list, cbind("Name" = vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input$", radioname))))))
+        rv$choices_list <- rbind(rv$choices_list, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input$", radioname))))))
       })
-      print(choices_list)
+      print(rv$choices_list)
       
       
-      substitutions_create()
-      rv$finalResults <<- solving_equations(rv$fileimportExp, choices_list, type = 1)
-      rv$substitutions <- substitutions
+      substitutions_create(rv)
+      rv$finalResults <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
     
     } else if (input$type_locus_sample == "2"){
       
       # initialize temp results
-      temp_results <<- list()
+      rv$temp_results <- list()
       
-      substitutions_create()
+      substitutions_create(rv)
       # iterate over unique names in locus_id of experimental file (to correctly display
       # decreasing order of CpG-sites in final results)
       for (b in rv$fileimportExp[,unique(locus_id)]){
-        result_list <<- result_list_type2[[b]]
+        rv$result_list <- rv$result_list_type2[[b]]
         expdata <- rv$fileimportExp[locus_id==b]
         vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
-        temp_results[[b]] <<- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2)
+        rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
       }
-      rv$substitutions <- substitutions
       
-      for (i in names(temp_results)){
-        rv$finalResults <- rbind(rv$finalResults, temp_results[[i]], use.names = T, fill = T)
+      for (i in names(rv$temp_results)){
+        rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
       }
       
       vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]

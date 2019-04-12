@@ -1,35 +1,3 @@
-# run this function on start. it creates the temporary directory for the plots
-onStart <- function(){
-  writeLog("(app) starting..... running 'onStart'-Function")
-  plotdir <<- paste0(tempdir(), "/plots/")
-  csvdir <<- paste0(tempdir(), "/csv/")
-
-  if (dir.exists(plotdir)){
-    writeLog("(app) plotdir already exists")
-    cleanUp()
-  }
-
-  dir.create(plotdir)
-  dir.create(csvdir)
-  
-  # scientific purpose
-  showModal(modalDialog(
-    title = "This program is to be used for scientific research purposes only",
-    "I hereby confirm to use this program only for scientific research purposes.",
-    footer = tagList(actionButton("dismiss_modal",label = "Cancel"),
-                     modalButton("Confirm"))
-  ))
-}
-
-cleanUp <- function(){
-    writeLog("entered 'cleanUp'-Function")
-    # on session end, remove plots and and all other files from tempdir
-    do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
-    unlink(plotdir, recursive = T)
-    do.call(file.remove, list(list.files(csvdir, full.names = TRUE)))
-    unlink(csvdir, recursive = T)
-}
-
 # requirements error + modal view
 requirementsError <- function(data_type){
   
@@ -107,27 +75,25 @@ omitnasModal <- function(omitnas, data_type){
     message,
     title = "Missing values deleted"
   ))
-  # remove global omitnas variable
-  rm(omitnas, pos = ".GlobalEnv")
   invisible(gc())
 }
 
-plottingUtility <- function(data, type, samplelocusname, b=NULL){
-  initializeListJ()
+plottingUtility <- function(data, type, samplelocusname, b=NULL, rv){
+  initializeListJ(rv)
   
   # for plotting: basic idea and some code snippets from:
   # https://gist.github.com/wch/5436415/
   plot.list <- reactive({
-    regression_type1(data, vec_cal)
+    regression_type1(data, rv$vec_cal, rv)
   })
   
   # calculate results (if this is run here, j must be resetted)
   plotlistR <- plot.list()
   
-  length_vector <- length(vec_cal)
+  length_vector <- length(rv$vec_cal)
   
   Map(function(f) {
-    plotname <- paste0(gsub("[[:punct:]]", "", vec_cal[f]))
+    plotname <- paste0(gsub("[[:punct:]]", "", rv$vec_cal[f]))
     
     # filname of temporary plot
     if (type == 1){
@@ -151,10 +117,10 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL){
     plotPNG({
       # add plot and plot statistics here, "j" is necessary to get values for curve in equations
       # always reset j to f
-      j <<- f
+      rv$j <- f
       return(print(plotlistR[[f]] +
-                     stat_function(fun = hyperbolic_equation, geom = "line", aes(colour = "Hyperbolic")) +
-                     stat_function(fun = cubic_equation, geom = "line", aes(colour = "Cubic")) +
+                     stat_function(fun = hyperbolic_equation, args = list(rv=rv), geom = "line", aes(colour = "Hyperbolic")) +
+                     stat_function(fun = cubic_equation, args = list(rv=rv), geom = "line", aes(colour = "Cubic")) +
                      scale_colour_manual("Regression:", values = c("red", "green"))))
     },
     filename = filename,
