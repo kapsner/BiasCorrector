@@ -87,8 +87,11 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv){
     regression_type1(data, rv$vec_cal, rv)
   })
   
-  # calculate results (if this is run here, j must be resetted)
-  plotlistR <- plot.list()
+  withProgress(message = "Calculating calibration curves", value = 0, {
+    incProgress(1/1, detail = "... working on calculations ...")
+    # calculate results (if this is run here, j must be resetted)
+    plotlistR <- plot.list()
+  })
   
   length_vector <- length(rv$vec_cal)
   

@@ -96,7 +96,7 @@ server <- function(input, output, session) {
     if (input$type_locus_sample == "1"){
       # render fileInput with option "multiple = F"
       output$fileInputCal <- renderUI({
-        fileInput("calibrationFile", "Calibration data: choose one CSV file containing the calibration DNA samples",
+        fileInput("calibrationFile", "Please choose one CSV file containing the calibration DNA samples.",
                   multiple = FALSE,
                   accept = c(".csv", "text/csv"))
       })
@@ -115,7 +115,7 @@ server <- function(input, output, session) {
     } else if (input$type_locus_sample == "2"){
       # render fileInput with option "multiple = TRUE"
       output$fileInputCal <- renderUI({
-        fileInput("calibrationFile", "Calibration data: choose at least 4 different CSV files containing the calibration data (one file per distinct calibration DNA sample; for specific file naming please refer to our FAQ)",
+        fileInput("calibrationFile", "Please choose at least 4 different CSV files containing the calibration data (one file per distinct calibration DNA sample; for specific file naming please refer to our FAQ).",
                   multiple = TRUE,
                   accept = c(".csv", "text/csv"))
       })
@@ -141,6 +141,12 @@ server <- function(input, output, session) {
                                    fread)
         tryCatch({
           rv$fileimportExp <- cleanDT(file(), description = "experimental", type = input$type_locus_sample, rv=rv)
+          output$menu <- renderMenu({
+            sidebarMenu(
+              menuItem("Experimental Data", tabName = "panel_1", icon = icon("table"))
+            )
+          })
+          updateTabItems(session, "tabs", "panel_1")
         }, error = function(e){
           print(e)
           # error handling fileimport
@@ -227,15 +233,14 @@ server <- function(input, output, session) {
   
   observeEvent(input$calibrationFile, {
     # error handling, when uploading new data in same session
-    removeTab("tabs", "panel_2")
-    appendTab("tabs", tabPanel(title = "Calibration data", value = "panel_2",
-                               div(class="row", style="margin: 0.5%"),
-                               verbatimTextOutput("cal_samples"),
-                               verbatimTextOutput("cal_samples_raw"),
-                               uiOutput("calibration_data"),
-                               uiOutput("calibration_data2"),
-                               tags$hr()),
-              select = T)
+    output$menu <- renderMenu({
+      sidebarMenu(
+        menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
+        menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
+        actionButton("run", "Run Analysis", width = "80%")
+      )
+    })
+    updateTabItems(session, "tabs", "panel_2")
   })
   
   
@@ -391,7 +396,7 @@ server <- function(input, output, session) {
           select_output_list <- list(select_output_list, 
                                      div(class="row", style="text-align: center", 
                                          actionButton("confirm_steps", "Confirm assignment of calibration steps")
-                                         ))
+                                     ))
           do.call(tagList, select_output_list)
         })
         
@@ -461,19 +466,16 @@ server <- function(input, output, session) {
   ###### Run Analysis
   observeEvent(input$run, {
     if (!is.null(rv$fileimportCal)){
-      removeTab("tabs", "panel_3")
-      removeTab("tabs", "panel_4")
-      removeTab("tabs", "panel_5")
-      removeTab("tabs", "panel_6")
-      removeTab("tabs", "panel_7")
+      
+      output$menu <- renderMenu({
+        sidebarMenu(
+          menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
+          menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
+          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"))
+        )
+      })
+      updateTabItems(session, "tabs", "panel_3")
       shinyjs::disable("run")
-      removeUI(selector = "#tag2", immediate = T)
-      appendTab("tabs", tabPanel(title = "Regression plots",  value = "panel_3", 
-                                 div(class="row", style="margin: 0.5%"),
-                                 uiOutput("selectPlotInput"),
-                                 imageOutput("plots"),
-                                 tags$hr()),
-                select = T)
     }
   })
   
@@ -525,27 +527,28 @@ server <- function(input, output, session) {
   # when plotting has finished
   observe({
     req(rv$plotting_finished)
-    removeTab("tabs", "panel_4")
-    removeTab("tabs", "panel_5")
-    
-    # append regression statistics tab
-    appendTab("tabs", tabPanel(title = "Regression statistics",  value = "panel_4",
-                               div(class="row", style="margin: 0.5%"),
-                               uiOutput("regression_statistics"),
-                               tags$hr(),
-                               div(class="row", style="text-align: center", downloadButton("downloadRegStat", "Download regression statistics")),
-                               tags$hr()),
-              select = F)
     
     if (input$type_locus_sample == "1"){
-      # append tab for manual selection of regression model only in type 2 data
-      appendTab("tabs", tabPanel(title = "Select regression model",  value = "panel_5",
-                                 div(class="row", style="margin: 0.5%"),
-                                 uiOutput("reg_radios"),
-                                 div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data")),
-                                 tags$hr()),
-                select = F)
+      output$menu <- renderMenu({
+        sidebarMenu(
+          menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
+          menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
+          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+          menuItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
+        )
+      })
+    } else {
+      output$menu <- renderMenu({
+        sidebarMenu(
+          menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
+          menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
+          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line"))
+        )
+      })
     }
+    updateTabItems(session, "tabs", "panel_3")
   })
   
   observe({
@@ -562,7 +565,7 @@ server <- function(input, output, session) {
       
       # create reactive selectinput:
       selIn2 <- reactive({
-        selectInput(inputId="selectPlot", label = NULL, multiple = F, selectize = F, choices = plot_output_list, width = "100%")
+        selectInput(inputId="selectPlot", label = NULL, multiple = F, selectize = F, choices = plot_output_list, width = "50%")
       })
       
       # create download button for each plot
@@ -579,13 +582,7 @@ server <- function(input, output, session) {
       output$selectPlotInput <- renderUI({
         s <- selIn2()
         b <- downloadButton("downloadPlots", "Download Plot")
-        
-        do.call(tagList, list(
-          div(class="row", 
-              div(class="col-sm-6", style="text-align: center", s),
-              div(class="col-sm-6", style="text-align: center", b)
-          )
-        ))
+        do.call(tagList, list(s, b))
       })
       
       # render plots from local temporary file
@@ -625,21 +622,25 @@ server <- function(input, output, session) {
       output$reg_radios <- renderUI({ 
         radio_output_list <- lapply(1:length(rv$vec_cal), function(g) {
           radioname <- paste0("radio", g)
-          div(class="row", style="margin: 0.5%",
-              div(class="row",
-                  div(class="col-sm-4", style="text-align: center",
-                      h5(tags$b(paste0(rv$vec_cal[g], ":")))),
-                  div(class="col-sm-4",
-                      radioButtons(inputId = radioname, 
-                                   label = "Regression type:", 
-                                   choices = list("hyperbolic" = 0, "cubic" = 1),
-                                   selected = as.character(rv$regStats[Name==rv$vec_cal[g], better_model]),
-                                   inline = T)),
-                  div(class="col-sm-4",
+          div(class="row",
+              div(class="row", style = "margin: 0.5%;",
+                  div(class="col-sm-3", style="text-align: left",
+                      h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
+                  div(class="col-sm-3",
+                      div(class = "row", style = "margin: 0.5%;",
+                          radioButtons(inputId = radioname, 
+                                       label = NULL,
+                                       choices = list("hyperbolic" = 0, "cubic" = 1),
+                                       selected = as.character(rv$regStats[Name==rv$vec_cal[g], better_model]),
+                                       inline = TRUE))
+                  ),
+                  div(class="col-sm-3",
                       verbatimTextOutput(paste0("text_", radioname)))),
               tags$hr())
         })
-        do.call(tagList, radio_output_list) # needed to display properly.
+        do.call(tagList, list(radio_output_list, 
+                              div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))
+        )) # needed to display properly.
       })
       
       
@@ -654,7 +655,7 @@ server <- function(input, output, session) {
       }
       
       selectPlotLocus <- reactive({
-        selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus, width = "100%")
+        selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus, width = "50%")
       })
       
       
@@ -673,7 +674,7 @@ server <- function(input, output, session) {
       
       # always wrap selectInput into reactive-function
       selectPlotCpG <- reactive({
-        selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output(), width = "100%")
+        selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output(), width = "50%")
       })
       
       # render second selectInput
@@ -696,13 +697,7 @@ server <- function(input, output, session) {
         s1 <- selectPlotLocus()
         s2 <- uiOutput("s2PlotOutput")
         b <- downloadButton("downloadPlots", "Download Plot")
-        do.call(tagList, list(
-          div(class="row", 
-              div(class="col-sm-4", style="text-align: center", s1),
-              div(class="col-sm-4", style="text-align: center", s2),
-              div(class="col-sm-4", style="text-align: center", b)
-          )
-        ))
+        do.call(tagList, list(s1, s2, b))
       })
       
       # render plot from local temporary file
@@ -791,8 +786,7 @@ server <- function(input, output, session) {
       # })
       
       # trigger claculation of results (bypass manual model selection)
-      shinyjs::click("results")
-      # TODO click() does not work... 17.1.19
+      #shinyjs::click("results")
     }
   })
   
@@ -830,8 +824,6 @@ server <- function(input, output, session) {
             }
           }
         })
-      } else if (input$type_locus_sample == "2"){
-        # do nothing here
       }
     }
   })
@@ -839,21 +831,35 @@ server <- function(input, output, session) {
   
   # Calculate results for experimental data
   observeEvent(input$results, {
-    removeTab("tabs", "panel_6")
-    removeTab("tabs", "panel_7")
+    
+    if (input$type_locus_sample == "1"){
+      output$menu <- renderMenu({
+        sidebarMenu(
+          menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
+          menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
+          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+          menuItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line")),
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
+        )
+      })
+    } else {
+      output$menu <- renderMenu({
+        sidebarMenu(
+          menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
+          menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
+          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
+        )
+      })
+    }
+    updateTabItems(session, "tabs", "panel_6")
     
     # reset reactive values
     # TODO why was this implemented here?
     rv$calculate_results <- NULL
     rv$finalResults <- NULL
-    
-    appendTab("tabs", tabPanel(title = "Corrected values", value = "panel_6",
-                               div(class="row", style="margin: 0.5%"),
-                               uiOutput("corrected_data"),
-                               tags$hr(),
-                               uiOutput("substitutedOut"),
-                               tags$hr()),
-              select = T)
     
     if (input$type_locus_sample == "1"){
       
@@ -866,8 +872,13 @@ server <- function(input, output, session) {
       
       
       substitutions_create(rv)
-      rv$finalResults <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
-    
+      # calculating final results
+      withProgress(message = "BiasCorrecting experimental data", value = 0, {
+        incProgress(1/1, detail = "... working on BiasCorrection ...")
+        rv$finalResults <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+      })
+      
+      
     } else if (input$type_locus_sample == "2"){
       
       # initialize temp results
@@ -876,20 +887,25 @@ server <- function(input, output, session) {
       substitutions_create(rv)
       # iterate over unique names in locus_id of experimental file (to correctly display
       # decreasing order of CpG-sites in final results)
-      for (b in rv$fileimportExp[,unique(locus_id)]){
-        rv$result_list <- rv$result_list_type2[[b]]
-        expdata <- rv$fileimportExp[locus_id==b]
-        vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
-        rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
-      }
       
-      for (i in names(rv$temp_results)){
-        rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
-      }
-      
-      vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
-      rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
-      
+      # calculating final results
+      withProgress(message = "BiasCorrecting experimental data", value = 0, {
+        incProgress(1/1, detail = "... working on BiasCorrection ...")
+        
+        for (b in rv$fileimportExp[,unique(locus_id)]){
+          rv$result_list <- rv$result_list_type2[[b]]
+          expdata <- rv$fileimportExp[locus_id==b]
+          vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
+          rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
+        }
+        
+        for (i in names(rv$temp_results)){
+          rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
+        }
+        
+        vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
+        rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
+      })
     }
     
     output$dtfinal <- DT::renderDataTable({
@@ -921,7 +937,7 @@ server <- function(input, output, session) {
     
     output$downloadAllData <- downloadHandler(
       filename = paste0("BC_all_results_", rv$sampleLocusName, "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
-               gsub("\\:", "", substr(Sys.time(), 12, 16)), ".zip"),
+                        gsub("\\:", "", substr(Sys.time(), 12, 16)), ".zip"),
       content = function(fname) {
         print(getwd())
         
@@ -960,7 +976,7 @@ server <- function(input, output, session) {
         
         zip(zipfile=fname, files=c(paste0("csv/", list.files(".csv/")), 
                                    paste0("plots/", list.files(".plots/"))
-                                   ))
+        ))
         
         if(file.exists(paste0(tempdir(), "/", fname, ".zip"))){
           file.rename(paste0(tempdir(), "/", fname, ".zip"), fname)
