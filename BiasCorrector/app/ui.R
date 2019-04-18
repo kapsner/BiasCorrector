@@ -79,9 +79,9 @@ ui <- dashboardPage(skin = "black",
                                       width = 5)
                                   ),
                                   
-                                  
+                                  # calibration fileupload box
                                   conditionalPanel(
-                                    condition =  "output.experimental_data != null",
+                                    condition =  "output.fileUploaded",
                                     
                                     box(
                                       h4(tags$b("Datainput: Calibraration Data")),
@@ -190,7 +190,7 @@ ui <- dashboardPage(skin = "black",
                                   box(
                                     title = "Log",
                                     verbatimTextOutput("log_out"),
-                                    tags$head(tags$style("#log_out{overflow-y:scroll; max-height: 500px; background: ghostwhite;}")),
+                                    tags$head(tags$style("#log_out{overflow-y:scroll; max-height: 80vh; background: ghostwhite;}")),
                                     width = 6
                                   ))
                         )

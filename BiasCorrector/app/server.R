@@ -146,7 +146,7 @@ server <- function(input, output, session) {
               menuItem("Experimental Data", tabName = "panel_1", icon = icon("table"))
             )
           })
-          updateTabItems(session, "tabs", "panel_1")
+          #updateTabItems(session, "tabs", "panel_1")
         }, error = function(e){
           print(e)
           # error handling fileimport
@@ -159,12 +159,21 @@ server <- function(input, output, session) {
           openModal("experimentalFile")
         }
         
-        # check here, if there have been deleted rows containing missin values
+        # check here, if there have been deleted rows containing missing values
         tryCatch({
           omitnasModal(rv$omitnas, "experimental")
         }, error = function(e){
           writeLog(paste0("Errormessage: ", e))
         })
+        
+        # disable upload possibility of experimental file
+        shinyjs::disable("experimentalFile")
+        
+        # workaround to tell ui, that experimental file is there
+        output$fileUploaded <- reactive({
+          return(TRUE)
+        })
+        outputOptions(output, 'fileUploaded', suspendWhenHidden=FALSE)
         
       } else {
         # error handling fileimport
@@ -178,9 +187,6 @@ server <- function(input, output, session) {
     if (!is.null(rv$fileimportExp)) TRUE
     else return()}, {
       writeLog("(app) Entered observeEvent after fileimport of experimental file")
-      
-      # disable upload possibility of experimental file
-      shinyjs::disable("experimentalFile")
       
       # if type 1 data
       if (input$type_locus_sample == "1"){
