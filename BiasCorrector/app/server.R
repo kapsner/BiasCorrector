@@ -34,7 +34,8 @@ server <- function(input, output, session) {
     m0 = NULL,
     m1 = NULL,
     j = NULL,
-    calibr_steps = NULL
+    calibr_steps = NULL,
+    logfile = NULL
   )
   
   onStart()
@@ -71,6 +72,16 @@ server <- function(input, output, session) {
     requirementsError(description)
   }
   
+  # logfileviewer
+  observe({
+    file <- reactiveFileReader(500, session,
+                               logfilename, 
+                               readLines)
+    rv$logfile <- file()
+  })
+  output$log_out <- reactive({
+    paste(paste0(rv$logfile, collapse = "\n"))
+  })
   
   
   

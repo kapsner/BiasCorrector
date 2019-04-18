@@ -98,12 +98,16 @@ ui <- fluidPage(
         
         mainPanel(
           tabsetPanel(id = "tabs",
+                      tabPanel(title = "Log", value = "panel_9",
+                               verbatimTextOutput("log_out"),
+                               tags$head(tags$style("#log_out{overflow-y:scroll; max-height: 500px; background: ghostwhite;}"))),
                       tabPanel(title = "Experimental data", value = "panel_1",
                                div(class="row", style="margin: 0.5%"),
                                verbatimTextOutput("exp_samples"), 
                                verbatimTextOutput("exp_samples_raw"), 
                                dataTableOutput("experimental_data"),
-                               tags$hr())
+                               tags$hr()),
+                      selected = "panel_1"
           )
         )
       )
