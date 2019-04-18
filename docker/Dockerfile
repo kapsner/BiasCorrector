@@ -56,6 +56,7 @@ RUN wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION 
 # install necessary r-packages
 ARG p="shiny \
     shinyjs \
+    shinydashboard \
     DT \
     data.table \
     ggplot2 \
