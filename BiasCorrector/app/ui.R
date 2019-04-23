@@ -31,7 +31,7 @@ ui <- dashboardPage(skin = "black",
                                 fluidRow(
                                   # type of data box
                                   box(
-                                    h4(tags$b("Type of Data")),
+                                    title = "Type of Data",
                                     
                                     # Radiobuttons: Type of data
                                     radioButtons(inputId = "type_locus_sample", label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
@@ -66,7 +66,7 @@ ui <- dashboardPage(skin = "black",
                                     condition = "input.type_locus_sample != null",
                                     
                                     box(
-                                      h4(tags$b("Datainput: Experimental Data")),
+                                      title = "Datainput: Experimental Data",
                                       h5("Please upload the CSV files* containing the experimental data."),
                                       
                                       # Input: Select a file
@@ -84,7 +84,7 @@ ui <- dashboardPage(skin = "black",
                                     condition =  "output.fileUploaded",
                                     
                                     box(
-                                      h4(tags$b("Datainput: Calibraration Data")),
+                                      title = "Datainput: Calibraration Data",
                                       h5("Please upload the CSV files* containing the calibration data."),
                                       
                                       uiOutput("fileInputCal"),
