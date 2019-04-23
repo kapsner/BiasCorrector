@@ -57,6 +57,7 @@ RUN wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION 
 ARG p_base="shiny \
     shinyjs \
     shinydashboard \
+    shinyWidgets \
     DT \
     data.table \
     ggplot2"
