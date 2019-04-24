@@ -3,8 +3,8 @@
 ## Table of Contents  
 
 [Where does the bias correction algorithm come from?](#where-does-the-bias-correction-algorithm-come-from) 
-[Do my input files need to be formated?](#do-my-input-files-need-to-be-formated)  
 [What kind of data can be corrected?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
+[Do my input files need to be formated?](#do-my-input-files-need-to-be-formated)  
 [Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
 [What is exactly being checked during BiasCorrector's data preprocessing?](#what-is-exactly-being-checked-during-biascorrectors-data-preprocessing) 
 
@@ -32,42 +32,59 @@ BiasCorrector is the user friendly implementation of the algorithms, described b
 }
 ```
 
+
+## What kind of data can be corrected by BiasCorrector?  
+
+BiasCorrector can handle two types of input data:  
+  
+- Type 1: one locus in many samples (e.g. pyrosequencing data)  
+- Type 2: many loci in one sample (e.g. next-generation sequencing data or microarray data)
+
+
 ## Do my input files need to be in a special format?  
 
 Yes, BiasCorrector places very strict requirements on the file format. Below is a description of the exact requirements for the two types of input data, which differ in several aspects. However, all uploaded files must  
-- be in CSV format  
+- be in CSV format [file endings: *.csv and *.CSV] 
 - contain the column headers in the first row  
+- the number of CpG-sites per locus ID is equal in every provided file 
 
 
 ### Type 1: one locus in many samples (e.g. pyrosequencing data)  
 
 - Experimental data:  
 
-  -- the first column contains the sample IDs  
+  -- the first column contains the sample IDs (alphanumeric)  
   -- sample IDs may occure more than once (indicating repeated measurements of the same sample; in this case, the mean-values of the repeated measurements will be used for bias correction)   
-  -- all other columns contain the results of your methylation analysis for each CpG-side of your sample  
+  -- all other columns contain the results of your methylation analysis for each CpG-side of the respective sample  
   -- missing values are not allowed (rows containing empty cells [= missing values] will be removed during the data preprocessing step)  
   
 - Calibration data:  
-  -- the first column contains the degrees of true methylation of the calibration sample (calibration steps)  
+
+  -- the first column contains the degrees of true methylation of the calibration sample (calibration steps, numeric)  
   -- calibration steps may occure more than once (indicating repeated measurements of the same calibration sample; in this case, the mean-values of the repeated measurements will be used for calculation of the calibration curve)  
-  -- all other columns contain the results of the methylation analysis for each CpG-side of the calibration sample  
+  -- all other columns contain the results of the methylation analysis for each CpG-side of the respective calibration sample  
+  -- missing values are not allowed (rows containing empty cells [= missing values] will be removed during the data preprocessing step)  
+  -- a minimum of four distinct calibration steps are provided  
+  -- the calibration steps (CS) must be in the range 0 <= CS <= 100  
   
 
 ### Type 2: many loci in one sample (e.g. next-generation sequencing data or microarray data)  
 
-- Experimental data:  
-  
+- Experimental data: 
+
+  -- the first column contains the locus IDs (alphanumeric)  
+  -- locus IDs may occure more than once (indicating repeated measurements of the same locus; in this case, the mean-values of the repeated measurements will be used for bias correction)
+  -- all other columns contain the results of your methylation analysis for each CpG-side of the respective locus  
   
 - Calibration data:  
 
-
-## What kind of data can be corrected by BiasCorrector?  
-
-- BiasCorrector can handle two types of input data:  
-  
-  -- Type 1: one locus in many samples (e.g. pyrosequencing data)  
-  -- Type 2: many loci in one sample (e.g. next-generation sequencing data or microarray data)
+  -- the first column contains the locus IDs (alphanumeric)  
+  -- locus IDs may occure more than once (indicating repeated measurements of the same locus; in this case, the mean-values of the repeated measurements will be used for bias correction)
+  -- all other columns contain the results of your methylation analysis for each CpG-side of the respective locus  
+  -- for bias correction of type 2 data, you need to provide one separate calibration file for each degree of methylation  
+  -- a minimum of four calibration data files (four distinct calibration steps) are provided  
+  -- all provided calibration files have equal dimensions (number of rows * number of columns), equal column names and equal locus IDs  
+  -- the calibration steps (CS) must be in the range 0 <= CS <= 100  
 
 
 ## Are there any requirements for naming the files?  
@@ -81,30 +98,14 @@ The suffix '_CS###.csv'
 - must begin with '_CS', otherwise the file is going to be rejected during the data preprocessing step (CS is the short form of 'calibration step')  
 - the placeholder '###' must be replaced with the respective degree of methylation of the calibration data contained in the specific file  
 -- it can be or an integer number between 0 and 100 (integers < 0 or > 100 will be rejected during the data preprocessing step)  
--- or a numeric number between 0 an 100, indicated by an underscore ('_') as decimal seperator (e.g. '12_5' meaning '12.5')   
+-- or a numeric number between 0 an 100, indicated by an underscore ('_') as decimal separator (e.g. '12_5' meaning '12.5')   
 
 Example: to upload a file for bias correction of type 2, that contains the calibration data for the calibration step '12.5' (true degree of calibration = 12.5) it need to be named the following:  
   *'my-calibrationfile_CS12_5.csv'*  
 
-## What is exactly being checked during BiasCorrector's data preprocessing?  
 
-Some of the preprocessing steps are applied to all uploaded files, some only to the experimental data, others only to type 2 input data. The following gives a structured overview over all preprocessing steps:  
+## What is exactly done during BiasCorrector's data preprocessing?  
 
-*All uploaded files:*  
-- the filename ends with '.csv' or '.CSV'  
+During the preprocessing, all requirements on the input files as stated in [Do my input files need to be formated?](#do-my-input-files-need-to-be-formated) are checked. Furhtermore, the rowmeans of all CpG-columns are calculated for every provided file. 
 
-*Experimental data:*  
-
-- All files  
-
-- Type 1:  
-
-- Type 2:  
-
-*Calibration data:*  
-
-- All files  
-
-- Type 1:  
-
-- Type 2:  
+If any of the abovementioned file requirements is not met, an error will occur, e.g. if any calibration step is not within the range of 0 <= CS <= 100 or if you provided less then four calibration steps with your input data. 

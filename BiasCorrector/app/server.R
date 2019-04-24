@@ -15,6 +15,7 @@ server <- function(input, output, session) {
     finalResults = NULL,
     sampleLocusName = NULL,
     type2cal_uploaded = FALSE,
+    type1cal_uploaded = FALSE,
     plotting_finished = FALSE,
     substitutions = NULL,
     substitutionsCalc = NULL,
@@ -297,12 +298,20 @@ server <- function(input, output, session) {
           openModal("calibrationFile")
         }
         
-        # check here, if there have been deleted rows containing missin values
-        tryCatch({
-          omitnasModal(rv$omitnas, "calibration")
-        }, error = function(e){
-          print(e)
-        })
+        # check here, if there are calibration steps outside the range 0 <= CS <= 100
+        if (rv$fileimportCal[,min(as.numeric(as.character(true_methylation)))] < 0 || rv$fileimportCal[,max(as.numeric(as.character(true_methylation)))] > 100){
+          openModal("calibrange")
+        } else {
+        
+          # check here, if there have been deleted rows containing missin values
+          tryCatch({
+            omitnasModal(rv$omitnas, "calibration")
+          }, error = function(e){
+            print(e)
+          })
+          
+          rv$type1cal_uploaded <- TRUE
+        }
         
         # else, if ending is no csv-file
       } else {
@@ -346,7 +355,7 @@ server <- function(input, output, session) {
   
   # error handling with fileimport
   observeEvent({
-    if (isTRUE(rv$type2cal_uploaded) | !is.null(rv$fileimportCal)) TRUE
+    if (isTRUE(rv$type2cal_uploaded) | isTRUE(rv$type1cal_uploaded)) TRUE
     else return()}, {
       writeLog("(app) Entered observeEvent after fileimport of calibration file")
       

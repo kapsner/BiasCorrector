@@ -36,14 +36,18 @@ requirementsError <- function(data_type){
     title = title_filereq
     message = "The files provided do not meet the file requirements! Filenaming of the calibration files must be done properly. Please upload new files! For the specific CSV file requirements please refere to our FAQ."
     footer = footer_dis
+  } else if (data_type == "calibrange"){
+    title = title_filereq
+    message = "The file provided does not meet the file requirements! Calibration steps must be in range '0 <= calibration step <= 100'. Please upload a new file! For the specific CSV file requirements please refere to our FAQ."
+    footer = footer_dis
   } else if (data_type == "calibrange2"){
     title = title_filereq
     message = "The files provided do not meet the file requirements! Calibration steps must be in range '0 <= calibration step <= 100'. Please upload new files! For the specific CSV file requirements please refere to our FAQ."
-    footer = NULL
+    footer = footer_dis
   } else if (data_type == "calibrange3"){
     title = title_filereq
     message = "The calibration steps provided do not meet the file requirements! Calibration steps must be in range '0 <= calibration step <= 100'. Each calibration step may only be assigned once. Please upload new files! For the specific CSV file requirements please refere to our FAQ."
-    footer = NULL
+    footer = modalButton("OK")
   } else if (data_type == "inconsistency"){
     title = title_filereq
     message = "The files provided do not meet the file requirements! Please specify an equal number of CpG-sites for each gene locus. Please upload new files! For the specific CSV file requirements please refere to our FAQ."
