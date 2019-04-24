@@ -1,6 +1,7 @@
 # required packages:
 req_packages <- c("shiny", 
                   "shinyjs", 
+                  "shinydashboard",
                   "DT", 
                   "data.table", 
                   "ggplot2", 
