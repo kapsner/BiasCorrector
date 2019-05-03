@@ -33,3 +33,23 @@ maxfilesize <- 100
 
 # set shiny option here
 options(shiny.maxRequestSize = maxfilesize*1024^2)
+
+
+# include modules
+source("./_modules/moduleFileupload.R", encoding = "UTF-8")
+source("./_modules/moduleExperimentalFile.R", encoding = "UTF-8")
+source("./_modules/moduleCalibrationFile.R", encoding = "UTF-8")
+source("./_modules/modulePlotting.R", encoding = "UTF-8")
+source("./_modules/moduleStatistics.R", encoding = "UTF-8")
+source("./_modules/moduleModelSelection.R", encoding = "UTF-8")
+source("./_modules/moduleResults.R", encoding = "UTF-8")
+
+# include global functions
+source("Functions.R", echo = F, encoding = "UTF-8")
+source("App_Utilities.R", echo = F, encoding = "UTF-8")
+
+openModal <- function(description, rv){
+  rv$modal_closed <- F
+  rv$modal_type <- description
+  requirementsError(description)
+}

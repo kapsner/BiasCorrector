@@ -15,5 +15,4 @@ shinyAppDir("app")
 # TODO write file requirements FAQ (transform all constraints within this algorithm to human readable format)
 # TODO maybe remove rowmeans from plots, when CpG sites = 1
 # TODO link readme to github page
-# TODO create dockerized shiny-server
 # TODO in the end, generate markdown pdf with plots in temporary directory

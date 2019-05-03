@@ -1,0 +1,211 @@
+moduleResultsServer <- function(input, output, session, rv, input_re){
+  
+  observe({
+    req(rv$calculate_results)
+    
+    if (rv$calculate_results){
+      cat("\nCalculate results\n")
+      
+      if (rv$type_locus_sample == "1"){
+        
+        rv$choices_list <- data.table("Name" = character(), "better_model" = numeric())
+        lapply(1:length(rv$vec_cal), function(x) {
+          radioname <- paste0("radio", x)
+          rv$choices_list <- rbind(rv$choices_list, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
+        })
+        print(rv$choices_list)
+        
+        
+        substitutions_create(rv)
+        # calculating final results
+        withProgress(message = "BiasCorrecting experimental data", value = 0, {
+          incProgress(1/1, detail = "... working on BiasCorrection ...")
+          rv$finalResults <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+        })
+        
+        
+      } else if (rv$type_locus_sample == "2"){
+        
+        # initialize temp results
+        rv$temp_results <- list()
+        
+        substitutions_create(rv)
+        # iterate over unique names in locus_id of experimental file (to correctly display
+        # decreasing order of CpG-sites in final results)
+        
+        # calculating final results
+        withProgress(message = "BiasCorrecting experimental data", value = 0, {
+          incProgress(1/1, detail = "... working on BiasCorrection ...")
+          
+          for (b in rv$fileimportExp[,unique(locus_id)]){
+            rv$result_list <- rv$result_list_type2[[b]]
+            expdata <- rv$fileimportExp[locus_id==b]
+            vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
+            rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
+          }
+          
+          for (i in names(rv$temp_results)){
+            rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
+          }
+          
+          vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
+          rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
+        })
+      }
+      
+      output$dtfinal <- DT::renderDataTable({
+        # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
+        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
+      })
+      
+      # show corrected results for experimental data
+      output$corrected_data <- renderUI({
+        dt <- dataTableOutput("moduleResults-dtfinal")
+        db <- div(class="row", style="text-align: center", downloadButton("moduleResults-downloadFinal", "Download corrected values"))
+        dball <- div(class="row", style="text-align: center", downloadButton("moduleResults-downloadAllData", "Download zip archive (tables and plots)"))
+        do.call(tagList, list(dt, tags$hr(), db, tags$hr(), dball))
+      })
+      
+      # Download corrected results
+      output$downloadFinal <- downloadHandler(
+        
+        filename = function(){
+          paste0("BC_corrected_values_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+        },
+        content = function(file){
+          writeCSV(rv$finalResults, file)
+        },
+        contentType = "text/csv"
+      )
+      
+      
+      output$downloadAllData <- downloadHandler(
+        filename = paste0("BC_all_results_", rv$sampleLocusName, "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_", 
+                          gsub("\\:", "", substr(Sys.time(), 12, 16)), ".zip"),
+        content = function(fname) {
+          print(getwd())
+          
+          # temporarily set tempdir as wd
+          oldwd <- getwd()
+          setwd(tempdir())
+          print(getwd())
+          
+          # create files where is no difference in export between type 1 and 2
+          writeCSV(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
+          writeCSV(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
+          writeCSV(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
+          
+          # create other files
+          if (rv$type_locus_sample == "1"){
+            writeCSV(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
+            writeCSV(rv$regStats[,-12, with=F], paste0(csvdir, "BC_regression_stats.csv"))
+            
+          } else if (rv$type_locus_sample == "2"){
+            # regression stats
+            for (key in names(rv$fileimportCal)){
+              writeCSV(rv$regStats[[key]][,-12, with=F],
+                       paste0(csvdir, "BC_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
+            }
+            
+            # raw calibrations data
+            for (key in names(rv$fileimportCal)){
+              writeCSV(rv$fileimportCal[[key]],
+                       paste0(csvdir, "raw_calibration_data_", gsub("[[:punct:]]", "", key), ".csv"))
+            }
+          }
+          
+          
+          print(list.files(".csv/"))
+          print(list.files(".plots/"))
+          
+          zip(zipfile=fname, files=c(paste0("csv/", list.files(".csv/")), 
+                                     paste0("plots/", list.files(".plots/"))
+          ))
+          
+          if(file.exists(paste0(tempdir(), "/", fname, ".zip"))){
+            file.rename(paste0(tempdir(), "/", fname, ".zip"), fname)
+          }
+          
+          # return to old wd
+          setwd(oldwd)
+          print(getwd())
+        },
+        contentType = "application/zip"
+      )
+      
+      # present substitutions in extra tab (only if there were some)
+      if (nrow(rv$substitutions) > 0){
+        rv$substitutionsCalc <- TRUE
+      }
+      
+      rv$calculate_results <- FALSE
+    }
+  })
+  
+  # Presentation of substituted values
+  observe({
+    req(rv$substitutionsCalc)
+    
+    # this workaround is related to this issue:
+    # TODO issue: https://github.com/rstudio/shiny/issues/2116
+    output$substitutedOut <- renderUI({
+      h <- div(class="row", style="text-align: center",
+               h4("Substituted values"))
+      t <- dataTableOutput("moduleResults-substituted_values")
+      b <- div(class="row", style="text-align: center", downloadButton("moduleResults-downloadSubstituted", "Download substituted values"))
+      do.call(tagList, list(h, tags$hr(), t, b, tags$hr()))
+    })
+    # change colnames for better display
+    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Corrected value", "Substituted value")
+    
+    
+    output$downloadSubstituted <- downloadHandler(
+      
+      filename = function(){
+        paste0("BC_substituted_values_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+      },
+      content = function(file){
+        writeCSV(rv$substitutions, file)
+      },
+      contentType = "text/csv"
+    )
+    
+    output$substituted_values <- DT::renderDataTable({
+      DT::datatable(rv$substitutions, options = list(scrollX = TRUE, pageLength = 20)) %>%
+        formatRound(columns=c(2:ncol(rv$fileimportExp)), digits=3)
+    })
+    
+    #msg2 <- "Please refer to the tab 'Substituted values' for further information."
+    msg2 <- "Please scroll down to the section 'Substituted values' for further information."
+    if (nrow(rv$substitutions) == 1){
+      msg1 <- "Substituted 1 value. "
+    } else{
+      msg1 <- paste0("Substituted ", nrow(rv$substitutions), " values.")
+    }
+    
+    # show modal here
+    showModal(modalDialog(
+      paste(msg1, msg2),
+      title = "Substituted values"
+    ))
+  })
+}
+
+
+moduleResultsUI <- function(id){
+  ns <- NS(id)
+  
+  tagList(
+    fluidRow(
+      box(
+        title = "BiasCorrected Results",
+        div(class="row", style="margin: 0.5%"),
+        uiOutput(ns("corrected_data")),
+        tags$hr(),
+        uiOutput(ns("substitutedOut")),
+        tags$hr(),
+        width = 12
+      ))
+  )
+}
