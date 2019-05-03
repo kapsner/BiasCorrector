@@ -62,6 +62,7 @@ git clone https://github.com/kapsner/BiasCorrector.git
 - To build the Docker image, you need to navigate into the folder 'docker' and execute the bash script 'build_image.sh' (to execute bash scipts on a windows host, you need to install e.g. [Git for Windows](https://gitforwindows.org/)):  
 ```
 cd docker/
+chmod +x build_image.sh
 ./build_image.sh
 ```
 
