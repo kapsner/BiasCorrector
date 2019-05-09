@@ -10,9 +10,9 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
           radioname <- paste0("radio", g)
           div(class="row",
               div(class="row", style = "margin: 0.5%;",
-                  div(class="col-sm-3", style="text-align: left",
+                  div(class="col-sm-4", style="text-align: left",
                       h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
-                  div(class="col-sm-3",
+                  div(class="col-sm-4",
                       div(class = "row", style = "margin: 0.5%;",
                           radioButtons(inputId = radioname,
                                        label = NULL,
@@ -20,7 +20,7 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
                                        selected = as.character(rv$regStats[Name==rv$vec_cal[g], better_model]),
                                        inline = TRUE))
                   ),
-                  div(class="col-sm-3",
+                  div(class="col-sm-4",
                       verbatimTextOutput(paste0("moduleModelSelection-text_", radioname)))),
               tags$hr())
         })

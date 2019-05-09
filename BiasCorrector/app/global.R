@@ -1,24 +1,4 @@
-onStart <- function(){
-  
-  if (dir.exists(plotdir)){
-    cleanUp()
-  }
-  
-  # create directories
-  dir.create(plotdir)
-  dir.create(csvdir)
-  
-  # initialize logfile here
-  suppressMessages(suppressWarnings(file.create(logfilename)))
-}
-
-cleanUp <- function(){
-  # on session end, remove plots and and all other files from tempdir
-  do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
-  unlink(plotdir, recursive = T)
-  do.call(file.remove, list(list.files(csvdir, full.names = TRUE)))
-  unlink(csvdir, recursive = T)
-}
+# define global variables here
 
 # directories
 tempdir <- tempdir()
@@ -34,7 +14,6 @@ maxfilesize <- 100
 # set shiny option here
 options(shiny.maxRequestSize = maxfilesize*1024^2)
 
-
 # include modules
 source("./_modules/moduleFileupload.R", encoding = "UTF-8")
 source("./_modules/moduleExperimentalFile.R", encoding = "UTF-8")
@@ -45,11 +24,19 @@ source("./_modules/moduleModelSelection.R", encoding = "UTF-8")
 source("./_modules/moduleResults.R", encoding = "UTF-8")
 
 # include global functions
-source("Functions.R", echo = F, encoding = "UTF-8")
-source("App_Utilities.R", echo = F, encoding = "UTF-8")
+source("./R/cleanDT.R", echo = F, encoding = "UTF-8")
+source("./R/type2Files.R", echo = F, encoding = "UTF-8")
+source("./R/create_aggregated.R", echo = F, encoding = "UTF-8")
+source("./R/hyperbolic.R", echo = F, encoding = "UTF-8")
+source("./R/cubic.R", echo = F, encoding = "UTF-8")
+source("./R/utils.R", echo = F, encoding = "UTF-8")
+source("./R/initializeListJ.R", echo = F, encoding = "UTF-8")
+source("./R/regression.R", echo = F, encoding = "UTF-8")
+source("./R/solving_equations.R", echo = F, encoding = "UTF-8")
+source("./R/statisticsList.R", echo = F, encoding = "UTF-8")
+source("./R/app_requirementsError.R", echo = F, encoding = "UTF-8")
+source("./R/app_omitnasModal.R", echo = F, encoding = "UTF-8")
+source("./R/app_plottingUtility.R", echo = F, encoding = "UTF-8")
+source("./R/app_renderRegressionStatistic.R", echo = F, encoding = "UTF-8")
+source("./R/app_utils.R", echo = F, encoding = "UTF-8")
 
-openModal <- function(description, rv){
-  rv$modal_closed <- F
-  rv$modal_type <- description
-  requirementsError(description)
-}

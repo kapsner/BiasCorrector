@@ -1,6 +1,7 @@
 server <- function(input, output, session) {
   
   rv <- reactiveValues(
+    start = NULL,
     expFileReq = F,
     type_locus_sampe = NULL,
     fileimportExp = NULL,
@@ -37,7 +38,9 @@ server <- function(input, output, session) {
     logfile = NULL
   )
   
+  # run start function
   onStart()
+  
   
   # scientific purpose
   showModal(modalDialog(

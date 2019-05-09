@@ -12,7 +12,6 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         #   DT::datatable(rv$fileimportCal, options = list(scrollX = TRUE, pageLength = 20)) %>%
         #     formatRound(columns=c(2:ncol(rv$fileimportCal)), digits=3)
         # })
-        print(head(rv$fileimportCal))
         
         output$calibration_data <- renderUI({
           # the prefix "moduleCalibrationFile" is necessary, otherwise, one is not able to load the datatable here

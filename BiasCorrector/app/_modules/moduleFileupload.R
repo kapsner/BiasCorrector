@@ -1,60 +1,71 @@
 moduleFileuploadServer <- function(input, output, session, rv, input_re){
   
+  # workaround, to reset radiobuttons on start
+  observeEvent({
+    if (isFALSE(rv$start)) TRUE
+    else return()}, {
+      updateRadioButtons(session, inputId = input[["moduleFileupload-type_locus_sample"]], selected = character(0))
+    })
+  
   # observe Radiobuttonevents 
   observeEvent(input_re()[["moduleFileupload-type_locus_sample"]], {
     rv$type_locus_sample <- input_re()[["moduleFileupload-type_locus_sample"]]
+    rv$start <- TRUE
   })
   
   
   # Experimental file
   observe({
     req(input_re()[["moduleFileupload-experimentalFile"]])
-    writeLog("(app) Entered observation for experimental file.")
-    # check file ending
-    ending <- strsplit(input_re()[["moduleFileupload-experimentalFile"]]$name, ".", fixed = T)[[1]]
     
-    # if type 1 data
-    if (rv$type_locus_sample == "1"){
-      # render fileInput with option "multiple = F"
-      output$fileInputCal <- renderUI({
-        fileInput("calibrationFile", "Please choose one CSV file containing the calibration DNA samples.",
-                  multiple = FALSE,
-                  accept = c(".csv", "text/csv"))
-      })
+    if (isFALSE(rv$expFileReq)){
+      writeLog("(app) Entered observation for experimental file.")
+      # check file ending
+      ending <- strsplit(input_re()[["moduleFileupload-experimentalFile"]]$name, ".", fixed = T)[[1]]
       
-      # check userinput of locusname
-      if (input_re()[["moduleFileupload-locusname"]] == ""){
-        openModal("locusname", rv)
-      } else {
-        rv$expFileReq = T
-        rv$sampleLocusName = handleTextInput(input_re()[["moduleFileupload-locusname"]])
-        writeLog(paste0("Locus name: ", input_re()[["moduleFileupload-locusname"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
-        #shinyjs::disable("moduleFileupload-locusname")
-        #removeUI(selector = "#locusname", immediate = T)
-      }
-      
-      # if type 2 data
-    } else if (rv$type_locus_sample == "2"){
-      # render fileInput with option "multiple = TRUE"
-      output$fileInputCal <- renderUI({
-        fileInput("calibrationFile", "Please choose at least 4 different CSV files containing the calibration data (one file per distinct calibration DNA sample; for specific file naming please refer to our FAQ).",
-                  multiple = TRUE,
-                  accept = c(".csv", "text/csv"))
-      })
-      
-      # check userinput of samplename
-      if (input_re()[["moduleFileupload-samplename"]] == ""){
-        openModal("samplename", rv)
-      } else {
-        rv$expFileReq = T
-        rv$sampleLocusName = handleTextInput(input_re()[["moduleFileupload-samplename"]])
-        writeLog(paste0("Sample name: ", input_re()[["moduleFileupload-samplename"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
-        #shinyjs::disable("moduleFileupload-samplename")
-        #removeUI(selector = "#samplename", immediate = T)
+      # if type 1 data
+      if (rv$type_locus_sample == "1"){
+        # render fileInput with option "multiple = F"
+        output$fileInputCal <- renderUI({
+          fileInput("calibrationFile", "Please choose one CSV file containing the calibration DNA samples.",
+                    multiple = FALSE,
+                    accept = c(".csv", "text/csv"))
+        })
+        
+        # check userinput of locusname
+        if (input_re()[["moduleFileupload-locusname"]] == ""){
+          openModal("locusname", rv)
+        } else {
+          rv$expFileReq = T
+          rv$sampleLocusName = handleTextInput(input_re()[["moduleFileupload-locusname"]])
+          writeLog(paste0("Locus name: ", input_re()[["moduleFileupload-locusname"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
+          #shinyjs::disable("moduleFileupload-locusname")
+          #removeUI(selector = "#locusname", immediate = T)
+        }
+        
+        # if type 2 data
+      } else if (rv$type_locus_sample == "2"){
+        # render fileInput with option "multiple = TRUE"
+        output$fileInputCal <- renderUI({
+          fileInput("calibrationFile", "Please choose at least 4 different CSV files containing the calibration data (one file per distinct calibration DNA sample; for specific file naming please refer to our FAQ).",
+                    multiple = TRUE,
+                    accept = c(".csv", "text/csv"))
+        })
+        
+        # check userinput of samplename
+        if (input_re()[["moduleFileupload-samplename"]] == ""){
+          openModal("samplename", rv)
+        } else {
+          rv$expFileReq = T
+          rv$sampleLocusName = handleTextInput(input_re()[["moduleFileupload-samplename"]])
+          writeLog(paste0("Sample name: ", input_re()[["moduleFileupload-samplename"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
+          #shinyjs::disable("moduleFileupload-samplename")
+          #removeUI(selector = "#samplename", immediate = T)
+        }
       }
     }
     
-    if (rv$expFileReq == T){
+    if (rv$expFileReq == T && is.null(rv$fileimportExp)){
       #removeUI(selector = "#tag1", immediate = T)
       #shinyjs::disable("moduleFileupload-type_locus_sample")
       
@@ -104,36 +115,23 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
   observe({
     req(input_re()[["calibrationFile"]])
     
-    # if calibration file is of data type 1
-    if (rv$type_locus_sample == "1"){
-      
-      # check file ending
-      ending <- strsplit(input_re()[["calibrationFile"]]$name, ".", fixed = T)[[1]]
-      
-      # if ending suggests it might be a csv file
-      if (ending[2] %in% c("csv", "CSV")){
-        file <- reactiveFileReader(1000, session,
-                                   input_re()[["calibrationFile"]]$datapath, 
-                                   fread)
+    if (is.null(rv$fileimportCal) | is.null(rv$fileimportList)){
+      # if calibration file is of data type 1
+      if (rv$type_locus_sample == "1"){
         
-        # try to import file
-        tryCatch({
-          rv$fileimportCal <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
-        }, error = function(e){
-          print(e)
-          # error handling fileimport
-          openModal("calibrationFile", rv)
-        })
+        # check file ending
+        ending <- strsplit(input_re()[["calibrationFile"]]$name, ".", fixed = T)[[1]]
         
-        # go on, if we imported valid file
-        if (!is.null(rv$fileimportCal)){
+        # if ending suggests it might be a csv file
+        if (ending[2] %in% c("csv", "CSV")){
+          file <- reactiveFileReader(1000, session,
+                                     input_re()[["calibrationFile"]]$datapath, 
+                                     fread)
           
-          # try to check, if colnames of experimental data are same as those of calibration data
+          # try to import file
           tryCatch({
-            # check, if colnames of experimental and calibration data are equal:
-            if(!all.equal(colnames(rv$fileimportCal)[-1], colnames(rv$fileimportExp)[-1])){
-              # error handling fileimport
-              openModal("calibrationFile", rv)
+            if (is.null(rv$fileimportCal)){
+              rv$fileimportCal <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
             }
           }, error = function(e){
             print(e)
@@ -141,62 +139,78 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
             openModal("calibrationFile", rv)
           })
           
-          # if we have the value "NULL" in our file-variable; this happens, when cleanDT returns error
+          # go on, if we imported valid file
+          if (!is.null(rv$fileimportCal)){
+            
+            # try to check, if colnames of experimental data are same as those of calibration data
+            tryCatch({
+              # check, if colnames of experimental and calibration data are equal:
+              if(!all.equal(colnames(rv$fileimportCal)[-1], colnames(rv$fileimportExp)[-1])){
+                # error handling fileimport
+                openModal("calibrationFile", rv)
+              }
+            }, error = function(e){
+              print(e)
+              # error handling fileimport
+              openModal("calibrationFile", rv)
+            })
+            
+            # check here, if there are calibration steps outside the range 0 <= CS <= 100
+            if (rv$fileimportCal[,min(as.numeric(as.character(true_methylation)))] < 0 || rv$fileimportCal[,max(as.numeric(as.character(true_methylation)))] > 100){
+              openModal("calibrange", rv)
+            } else {
+              
+              # check here, if there have been deleted rows containing missin values
+              tryCatch({
+                omitnasModal(rv$omitnas, "calibration")
+              }, error = function(e){
+                print(e)
+              })
+              
+              rv$type1cal_uploaded <- TRUE
+            }
+            
+            # if we have the value "NULL" in our file-variable; this happens, when cleanDT returns error
+          } else {
+            # error handling fileimport
+            openModal("calibrationFile", rv)
+          }
+          
+          # else, if ending is no csv-file
         } else {
           # error handling fileimport
           openModal("calibrationFile", rv)
         }
         
-        # check here, if there are calibration steps outside the range 0 <= CS <= 100
-        if (rv$fileimportCal[,min(as.numeric(as.character(true_methylation)))] < 0 || rv$fileimportCal[,max(as.numeric(as.character(true_methylation)))] > 100){
-          openModal("calibrange", rv)
-        } else {
+        
+        # if calibration file is of data type 2
+      } else if (rv$type_locus_sample == "2"){
+        
+        # loop through calibration files
+        for (i in 1:nrow(input_re()[["calibrationFile"]])){
+          # check file ending
+          ending <- strsplit(input_re()[["calibrationFile"]]$name[i], ".", fixed = T)[[1]]
           
-          # check here, if there have been deleted rows containing missin values
-          tryCatch({
-            omitnasModal(rv$omitnas, "calibration")
-          }, error = function(e){
-            print(e)
-          })
+          file <- reactiveFileReader(1000, session,
+                                     input_re()[["calibrationFile"]]$datapath[i], 
+                                     fread)
           
-          rv$type1cal_uploaded <- TRUE
+          if (ending[2] %in% c("csv", "CSV")){
+            rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
+          } else {
+            # error handling fileimport
+            openModal("csv", rv)
+          }
         }
         
-        # else, if ending is no csv-file
-      } else {
-        # error handling fileimport
-        openModal("calibrationFile", rv)
-      }
-      
-      
-      # if calibration file is of data type 2
-    } else if (rv$type_locus_sample == "2"){
-      
-      # loop through calibration files
-      for (i in 1:nrow(input_re()[["calibrationFile"]])){
-        # check file ending
-        ending <- strsplit(input_re()[["calibrationFile"]]$name[i], ".", fixed = T)[[1]]
+        # chech type 2 file requirements here
+        filecheck <- type2FileReq(rv$fileimportList, rv)
         
-        file <- reactiveFileReader(1000, session,
-                                   input_re()[["calibrationFile"]]$datapath[i], 
-                                   fread)
-        
-        if (ending[2] %in% c("csv", "CSV")){
-          rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
-          
-        } else {
-          # error handling fileimport
-          openModal("csv", rv)
+        if (is.character(filecheck)){
+          openModal(filecheck, rv)
+        } else if (isTRUE(filecheck)){
+          rv$type2cal_uploaded <- TRUE
         }
-      }
-      
-      # chech type 2 file requirements here
-      filecheck <- type2FileReq(rv$fileimportList, rv)
-      
-      if (is.character(filecheck)){
-        openModal(filecheck, rv)
-      } else if (isTRUE(filecheck)){
-        rv$type2cal_uploaded <- TRUE
       }
     }
   })

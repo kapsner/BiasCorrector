@@ -2,7 +2,7 @@
 ui <- dashboardPage(skin = "black",
                     
                     # App title --> change for development
-                    dashboardHeader(title = "BiasCorrector v0.9.5"),
+                    dashboardHeader(title = "BiasCorrector"),
                     # h5("based on Moskalev et al. 2011"),
                     
                     # Sidebar Layout with input and output definitions
