@@ -90,7 +90,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         s <- selIn2()
         b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
         c <- downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot")
-        do.call(tagList, list(s, b, c))
+        do.call(tagList, list(s, b, tags$hr(), c))
       })
       
       # for debugging
