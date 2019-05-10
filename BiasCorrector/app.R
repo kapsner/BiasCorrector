@@ -16,3 +16,7 @@ shinyAppDir("app")
 # TODO maybe remove rowmeans from plots, when CpG sites = 1
 # TODO link readme to github page
 # TODO in the end, generate markdown pdf with plots in temporary directory
+
+
+# for package:
+# imports: ggplot2, data.table

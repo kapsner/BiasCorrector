@@ -49,7 +49,7 @@ solving_equations <- function(datatable, regmethod, type, rv){
         coe <- c(d-df_agg_ex[get(first_colname)==j,CpG], cx, bx2, ax3)
         print(coe)
         
-        x_vec <- solve(polynomial(coe))               # polynom
+        x_vec <- solve(polynom::polynomial(coe))               # polynom
         #x_vec <- cubic(rev(coe))                    # RConics
         
         #print(paste(x_vec, class(x_vec)))
