@@ -8,23 +8,22 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
       output$reg_radios <- renderUI({
         radio_output_list <- lapply(1:length(rv$vec_cal), function(g) {
           radioname <- paste0("radio", g)
-          div(class="row",
-              div(class="row", style = "margin: 0.5%;",
-                  div(class="col-sm-4", style="text-align: left",
-                      h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
-                  div(class="col-sm-4",
-                      div(class = "row", style = "margin: 0.5%;",
-                          radioButtons(inputId = radioname,
-                                       label = NULL,
-                                       choices = list("hyperbolic" = 0, "cubic" = 1),
-                                       selected = as.character(rv$regStats[Name==rv$vec_cal[g], better_model]),
-                                       inline = TRUE))
-                  ),
-                  div(class="col-sm-4",
-                      verbatimTextOutput(paste0("moduleModelSelection-text_", radioname)))),
-              tags$hr())
+          div(class="row", style = "margin: 0.5%; text-align: center;",
+              div(class="col-sm-4", style="text-align: left;",
+                  h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
+              div(class="col-sm-4", style = "text-align: center;",
+                  div(class = "row", style = "text-align: center;",
+                      radioButtons(inputId = radioname,
+                                   label = NULL,
+                                   choices = list("hyperbolic" = 0, "cubic" = 1),
+                                   selected = as.character(rv$regStats[Name==rv$vec_cal[g], better_model]),
+                                   inline = TRUE))
+              ),
+              div(class="col-sm-4",
+                  verbatimTextOutput(paste0("moduleModelSelection-text_", radioname)))
+              )
         })
-        do.call(tagList, list(radio_output_list,
+        do.call(tagList, list(radio_output_list, tags$hr(),
                               div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))
         )) # needed to display properly.
       })

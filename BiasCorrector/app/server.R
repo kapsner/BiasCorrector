@@ -1,7 +1,6 @@
 server <- function(input, output, session) {
   
   rv <- reactiveValues(
-    start = NULL,
     expFileReq = F,
     type_locus_sampe = NULL,
     fileimportExp = NULL,
@@ -113,10 +112,6 @@ server <- function(input, output, session) {
   observeEvent(
     if (isTRUE(rv$type2cal_uploaded) | isTRUE(rv$type1cal_uploaded)) TRUE
     else return(), {
-      
-      cat("\nSome UI Stuff: disable calibrationFile\n")
-      # disable upload possibility of calibration file
-      shinyjs::disable("calibrationFile")
       # error handling, when uploading new data in same session
       output$menu <- renderMenu({
         sidebarMenu(
@@ -126,6 +121,10 @@ server <- function(input, output, session) {
         )
       })
       updateTabItems(session, "tabs", "panel_2")
+      
+      cat("\nSome UI Stuff: disable calibrationFile\n")
+      # disable upload possibility of calibration file
+      shinyjs::disable("calibrationFile")
     })
   
   

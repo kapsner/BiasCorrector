@@ -8,6 +8,14 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
       # if type 1 data
       if (rv$type_locus_sample == "1"){
         
+        # check here, if there have been deleted rows containing missin values
+        tryCatch({
+          omitnasModal(rv$omitnas, "calibration")
+          rv$omitnas <- NULL
+        }, error = function(e){
+          print(e)
+        })
+        
         # output$dt1 <- DT::renderDataTable({
         #   DT::datatable(rv$fileimportCal, options = list(scrollX = TRUE, pageLength = 20)) %>%
         #     formatRound(columns=c(2:ncol(rv$fileimportCal)), digits=3)

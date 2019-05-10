@@ -53,6 +53,7 @@ requirementsError <- function(data_type){
     message = "The files provided do not meet the file requirements! Please specify an equal number of CpG-sites for each gene locus. Please upload new files! For the specific CSV file requirements please refere to our FAQ."
     footer = footer_dis
   }
+  logjs(message)
   # show modal here
   showModal(modalDialog(
     message,

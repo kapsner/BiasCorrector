@@ -1,16 +1,8 @@
 moduleFileuploadServer <- function(input, output, session, rv, input_re){
   
-  # workaround, to reset radiobuttons on start
-  observeEvent({
-    if (isFALSE(rv$start)) TRUE
-    else return()}, {
-      updateRadioButtons(session, inputId = input[["moduleFileupload-type_locus_sample"]], selected = character(0))
-    })
-  
   # observe Radiobuttonevents 
   observeEvent(input_re()[["moduleFileupload-type_locus_sample"]], {
     rv$type_locus_sample <- input_re()[["moduleFileupload-type_locus_sample"]]
-    rv$start <- TRUE
   })
   
   
@@ -92,6 +84,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
         # check here, if there have been deleted rows containing missing values
         tryCatch({
           omitnasModal(rv$omitnas, "experimental")
+          rv$omitnas <- NULL
         }, error = function(e){
           writeLog(paste0("Errormessage: ", e))
         })
@@ -160,12 +153,13 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
               openModal("calibrange", rv)
             } else {
               
-              # check here, if there have been deleted rows containing missin values
-              tryCatch({
-                omitnasModal(rv$omitnas, "calibration")
-              }, error = function(e){
-                print(e)
-              })
+              # # check here, if there have been deleted rows containing missin values
+              # tryCatch({
+              #   omitnasModal(rv$omitnas, "calibration")
+              #   rv$omitnas <- NULL
+              # }, error = function(e){
+              #   print(e)
+              # })
               
               rv$type1cal_uploaded <- TRUE
             }
