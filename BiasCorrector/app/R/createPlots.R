@@ -37,8 +37,8 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv){
       
       for (j in c("SSE_hyperbolic", "SSE_cubic")){
         regtype <- ifelse(j == "SSE_hyperbolic", "Hyperbolic Regression", "Cubic Regression")
-        dt <- rbind(dt, cbind(timepoint = "biased", value = stats_pre[Name==vec_cal[i],get(j)], regressiontype = regtype))
-        dt <- rbind(dt, cbind(timepoint = "unbiased", value = stats_post[Name==vec_cal[i],get(j)], regressiontype = regtype))
+        dt <- rbind(dt, cbind(timepoint = "biased", value = round(stats_pre[Name==vec_cal[i],get(j)], 3), regressiontype = regtype))
+        dt <- rbind(dt, cbind(timepoint = "unbiased", value = round(stats_post[Name==vec_cal[i],get(j)], 3), regressiontype = regtype))
       }
       
       plotPNG({
