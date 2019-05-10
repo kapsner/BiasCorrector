@@ -41,12 +41,13 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv){
         dt <- rbind(dt, cbind(timepoint = "unbiased", value = round(stats_post[Name==vec_cal[i],get(j)], 3), regressiontype = regtype))
       }
       
+      # TODO fix unordered bars
+      
       plotPNG({
         # print whole plot in return, otherwise it will fail
         return(print(ggplot(dt, aes(x = timepoint, y=value, fill=regressiontype)) + 
-                       geom_col() +
-                       facet_wrap(~ regressiontype) + 
-                       scale_fill_manual(values = c("red", "green")) +
+                       geom_col(position="dodge") +
+                       scale_fill_manual(values = c("Cubic Regression" = "red", "Hyperbolic Regression" = "green")) +
                        ylab("SSE") +
                        labs(title = paste0("Comparison of SSE for ", vec_cal[i])) +
                        theme(legend.position = "none", axis.title.x = element_blank())))
