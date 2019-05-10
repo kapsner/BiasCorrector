@@ -9,12 +9,13 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
           
           plottingUtility(rv$fileimportCal, type=1, samplelocusname=rv$sampleLocusName, rv=rv)
           
+          # save regression statistics to reactive value
+          rv$regStats <- statisticsList(rv$result_list)
+          
           # on finished
           rv$plotting_finished <- TRUE
           writeLog("Finished plotting")
           
-          # save regression statistics to reactive value
-          rv$regStats <- statisticsList(rv$result_list)
         }
         
         # else if type 2 data

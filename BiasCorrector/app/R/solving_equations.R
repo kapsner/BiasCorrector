@@ -13,7 +13,7 @@ hyperbolic_equation_solved <- function(y, rv){
 }
 
 # perform fitting of regressions to experimental data
-solving_equations <- function(datatable, regmethod, type, rv){
+solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
   writeLog("Entered 'solving_equations'-Function")
   
   first_colname <- colnames(datatable)[1]
@@ -27,7 +27,11 @@ solving_equations <- function(datatable, regmethod, type, rv){
     # initialize ouput-vector
     vector <- character()
     
-    df_agg_ex <- create_agg_df_exp(datatable, i, type)
+    if (is.null(mode)){
+      df_agg_ex <- create_agg_df_exp(datatable, i, type)
+    } else if (mode == "corrected"){
+      df_agg_ex <- create_agg_df(datatable, i)
+    }
     
     # if cubic regression has better sse-score (default), or
     # if user selects cubic regression for calculation manually in GUI
@@ -125,10 +129,12 @@ solving_equations <- function(datatable, regmethod, type, rv){
             replacement = "NA"
           }
           
-          rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
-                                                            CpG_site = i,
-                                                            corrected = original,
-                                                            replacement = replacement))
+          if (is.null(mode)){
+            rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
+                                                                   CpG_site = i,
+                                                                   corrected = original,
+                                                                   replacement = replacement))
+          }
           
           writeLog(paste0(msg1, "  \n  \n", msg2, "  \n", msg3))
         }
@@ -185,10 +191,12 @@ solving_equations <- function(datatable, regmethod, type, rv){
             
           }
           
-          rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
-                                                            CpG_site = i,
-                                                            corrected = original,
-                                                            replacement = replacement))
+          if (is.null(mode)){
+            rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
+                                                                   CpG_site = i,
+                                                                   corrected = original,
+                                                                   replacement = replacement))
+          }
           
           writeLog(paste0(msg1, "  \n  \n", msg2, "  \n", msg3))
         }
@@ -202,6 +210,7 @@ solving_equations <- function(datatable, regmethod, type, rv){
       results <- results[, (paste0(i, "_h")) := vector]
     }
   }
+  results[,(colnames(results)[-1]):=lapply(.SD, function(x){as.numeric(as.character(x))}), .SDcols=colnames(results)[-1]]
   return(results)
 }
 

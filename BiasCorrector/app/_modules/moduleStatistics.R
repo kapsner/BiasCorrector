@@ -7,6 +7,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       output$regression_statistics <- renderUI({
         output$dt_reg <- DT::renderDataTable({
           dt <- rv$regStats
+          stats_debug <<- dt
           # use formatstyle to highlight lower SSE values
           renderRegressionStatisticTable(dt)
         })

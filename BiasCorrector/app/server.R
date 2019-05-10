@@ -34,7 +34,12 @@ server <- function(input, output, session) {
     m1 = NULL,
     j = NULL,
     calibr_steps = NULL,
-    logfile = NULL
+    logfile = NULL,
+    corrected_finished = FALSE,
+    fileimportCal_corrected = NULL,
+    regStats_corrected = NULL,
+    result_list_type2_corrected = NULL,
+    temp_results_corrected = NULL
   )
   
   # run start function
@@ -145,6 +150,12 @@ server <- function(input, output, session) {
       })
       updateTabItems(session, "tabs", "panel_3")
       shinyjs::disable("run")
+    } else if (rv$type_locus_sample == "2"){
+      showModal(modalDialog(
+        "Please confirm the assignment of the calibration steps.",
+        title = "Confirmation needed",
+        footer = modalButton("OK")
+      ))
     }
   })
   
@@ -198,17 +209,19 @@ server <- function(input, output, session) {
           menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
           menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
           menuItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line")),
-          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist")),
+          menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
         )
       })
-    } else {
+    } else if (rv$type_locus_sample == "2"){
       output$menu <- renderMenu({
         sidebarMenu(
           menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
           menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
           menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))#,
+          #menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
         )
       })
     }
@@ -221,4 +234,8 @@ server <- function(input, output, session) {
   
   ###### Calcluate Results
   callModule(moduleResultsServer, "moduleResults", rv=rv, input_re=reactive({input}))
+  
+  
+  ###### Plot Corrected Results
+  callModule(moduleCorrectedPlotsServer, "moduleCorrectedPlots", rv=rv, input_re=reactive({input}))
 }

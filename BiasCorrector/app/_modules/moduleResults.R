@@ -20,7 +20,13 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         # calculating final results
         withProgress(message = "BiasCorrecting experimental data", value = 0, {
           incProgress(1/1, detail = "... working on BiasCorrection ...")
+          
+          # Experimental data 
           rv$finalResults <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+          
+          # Calibration Data (to show corrected calibration curves)
+          rv$fileimportCal_corrected <- solving_equations(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected")
+          colnames(rv$fileimportCal_corrected) <- colnames(rv$fileimportCal)
         })
         
         
@@ -37,19 +43,44 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         withProgress(message = "BiasCorrecting experimental data", value = 0, {
           incProgress(1/1, detail = "... working on BiasCorrection ...")
           
+          # Experimental data
           for (b in rv$fileimportExp[,unique(locus_id)]){
             rv$result_list <- rv$result_list_type2[[b]]
             expdata <- rv$fileimportExp[locus_id==b]
             vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
             rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
           }
-          
           for (i in names(rv$temp_results)){
-            rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
+            if (is.null(rv$finalResults)){
+              rv$finalResults <- rv$temp_results[[i]]
+            } else {
+              rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
+            }
           }
-          
           vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
           rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
+          
+          # TODO 
+          # Calibration Data (to show corrected calibration curves)
+          # for (a in 1:length(rv$fileimportCal)){
+          #   for (b in rv$fileimportCal[[a]][,unique(true_methylation)]){
+          #     rv$result_list <- rv$result_list_type2[[b]]
+          #     caldata <- rv$fileimportCal[[a]][true_methylation==b]
+          #     vec <- c("true_methylation", colnames(caldata)[2:(caldata[,min(CpG_count)]+1)], "rowmeans")
+          #     rv$temp_results_corrected[[b]] <- solving_equations(caldata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")
+          #   }
+          #   
+          #   for (i in names(rv$temp_results_corrected)){
+          #     if (is.null(rv$fileimportCal_corrected)){
+          #       rv$fileimportCal_corrected <- list()
+          #       rv$fileimportCal_corrected[[a]] <- rv$temp_results_corrected[[i]]
+          #     } else {
+          #       rv$fileimportCal_corrected[[a]] <- rbind(rv$fileimportCal_corrected[[a]], rv$temp_results_corrected[[i]], use.names = T, fill = T)
+          #     }
+          #   }
+          #   vec <- colnames(rv$fileimportCal_corrected)[grepl("rowmeans", colnames(rv$fileimportCal_corrected))]
+          #   rv$fileimportCal_corrected <- cbind(rv$fileimportCal_corrected[,-vec, with=F], rv$fileimportCal_corrected[,vec,with=F], CpG_sites = unique(rv$fileimportCal[,CpG_count,by=true_methylation])$CpG_count)
+          # }
         })
       }
       

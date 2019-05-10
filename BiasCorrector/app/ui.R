@@ -60,6 +60,11 @@ ui <- dashboardPage(skin = "black",
                                 moduleResultsUI("moduleResults")
                         ),
                         
+                        # select regression model
+                        tabItem(tabName = "panel_7",
+                                moduleCorrectedPlotsUI("moduleCorrectedPlots")
+                        ),
+                        
                         tabItem(tabName = "panel_9",
                                 fluidRow(
                                   box(
