@@ -4,10 +4,10 @@ createPlots <- function(plotlist, f, rv, filename){
     # always reset j to f
     rv$j <- f
     return(print(plotlist +
-                   geom_abline(aes(slope = 1, intercept = 0, color = "unbiased"), linetype="dashed", size=1.05) +
-                   stat_function(fun = hyperbolic_equation, args = list(rv=rv), geom = "line", aes(color = "Hyperbolic")) +
-                   stat_function(fun = cubic_equation, args = list(rv=rv), geom = "line", aes(color = "Cubic")) +
-                   scale_colour_manual("Regression:", values = c(Cubic = "red", Hyperbolic = "green", unbiased = "lightblue"))
+                   geom_abline(aes(slope = 1, intercept = 0, color = "unbiased"), linetype="dashed", size=1.04) +
+                   stat_function(fun = hyperbolic_equation, args = list(rv=rv), geom = "line", aes(color = "Hyperbolic"), size=1.06) +
+                   stat_function(fun = cubic_equation, args = list(rv=rv), geom = "line", aes(color = "Cubic"), size=1.06) +
+                   scale_colour_manual("Regression:", values = c(Cubic = "indianred1", Hyperbolic = "mediumspringgreen", unbiased = "lightblue"))
     ))
   },
   filename = filename,
@@ -38,19 +38,20 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv){
       for (j in c("SSE_hyperbolic", "SSE_cubic")){
         regtype <- ifelse(j == "SSE_hyperbolic", "Hyperbolic Regression", "Cubic Regression")
         dt <- rbind(dt, cbind(timepoint = "biased", value = round(stats_pre[Name==vec_cal[i],get(j)], 3), regressiontype = regtype))
-        dt <- rbind(dt, cbind(timepoint = "unbiased", value = round(stats_post[Name==vec_cal[i],get(j)], 3), regressiontype = regtype))
+        dt <- rbind(dt, cbind(timepoint = "corrected", value = round(stats_post[Name==vec_cal[i],get(j)], 3), regressiontype = regtype))
       }
       
-      # TODO fix unordered bars
-      
       plotPNG({
+        p <- ggplot(dt, aes(x = factor(regressiontype), y=as.numeric(as.character(value)), fill=factor(regressiontype))) +
+          scale_fill_manual(values = c("Cubic Regression" = "indianred1", "Hyperbolic Regression" = "mediumspringgreen")) + 
+          geom_col()+
+          geom_text(aes(label = as.character(value), y=as.numeric(as.character(value))),  vjust = 3) +
+          facet_wrap(~ timepoint) +
+          ylab("SSE") +
+          labs(title = paste0("Comparison of SSE for ", vec_cal[i])) +
+          theme(legend.position = "none", axis.title.x = element_blank())
         # print whole plot in return, otherwise it will fail
-        return(print(ggplot(dt, aes(x = timepoint, y=value, fill=regressiontype)) + 
-                       geom_col(position="dodge") +
-                       scale_fill_manual(values = c("Cubic Regression" = "red", "Hyperbolic Regression" = "green")) +
-                       ylab("SSE") +
-                       labs(title = paste0("Comparison of SSE for ", vec_cal[i])) +
-                       theme(legend.position = "none", axis.title.x = element_blank())))
+        return(print(p))
       },
       filename = filename,
       height = 400, 

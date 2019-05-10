@@ -7,14 +7,17 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       if (rv$type_locus_sample == "1"){
         if (isFALSE(rv$corrected_finished)){
           
-          plottingUtility(rv$fileimportCal_corrected, type=1, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected")
+          withProgress(message = "Plotting BiasCorrected results", value = 0, {
+            incProgress(1/1, detail = "... working hard ...")
+            plottingUtility(rv$fileimportCal_corrected, type=1, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected")
           
-          # save regression statistics to reactive value
-          rv$regStats_corrected <- statisticsList(rv$result_list)
+            # save regression statistics to reactive value
+            rv$regStats_corrected <- statisticsList(rv$result_list)
           
-          createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv)
+            createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv)
+          })
           
-          # on finished
+          # when finished
           rv$corrected_finished <- TRUE
           writeLog("Finished plotting corrected")
         }
@@ -187,7 +190,7 @@ moduleCorrectedPlotsUI <- function(id){
                width=12
              ),
              box(
-               title = "Comparison of Sum of Sqared Errors",
+               title = "Comparison of Sum of Squared Errors",
                imageOutput(ns("plotsSSE_corrected")),
                width=12
              )),
