@@ -5,7 +5,7 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
   # for plotting: basic idea and some code snippets from:
   # https://gist.github.com/wch/5436415/
   plot.list <- reactive({
-    regression_type1(data, rv$vec_cal, rv)
+    regression_type1(data, rv$vec_cal, rv, mode)
   })
   
   if (is.null(mode)){

@@ -1,6 +1,6 @@
 # perform regression with input data of type 1
 ## during preprocessing, type 2 data will be transformed into representation of type 1 data
-regression_type1 <- function(datatable, vec_cal, rv){
+regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
   writeLog("Entered 'regression_type1'-Function")
   
   plot.listR <- list()
@@ -12,9 +12,16 @@ regression_type1 <- function(datatable, vec_cal, rv){
     hyperbolic_regression(df_agg, vec_cal[i], rv = rv)
     cubic_regression(df_agg, vec_cal[i], rv = rv)
     
+    if (is.null(mode)){
+      custom_ylab <- "% apparent methylation after PCR"
+    } else if (mode == "corrected"){
+      custom_ylab <- "% apparent methylation after BiasCorrection"
+    }
+    
+    
     p <- ggplot(data=df_agg, aes(x = true_methylation, y = CpG)) + 
       geom_point() + 
-      ylab("% apparent methylation after PCR") + 
+      ylab(custom_ylab) + 
       xlab("% actual methylation") + 
       ggtitle(paste("CpG-site:", vec_cal[i])) + 
       geom_text(data = data.frame(),
