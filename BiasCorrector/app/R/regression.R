@@ -19,13 +19,13 @@ regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
     }
     
     
-    p <- ggplot(data=df_agg, aes(x = true_methylation, y = CpG)) + 
+    p <- ggplot(data=df_agg, aes(x = as.numeric(as.character(true_methylation)), y = as.numeric(as.character(CpG)))) + 
       geom_point() + 
       ylab(custom_ylab) + 
       xlab("% actual methylation") + 
       ggtitle(paste("CpG-site:", vec_cal[i])) + 
       geom_text(data = data.frame(),
-                aes(x=-0.95, y=Inf, hjust=0, vjust = 1),
+                aes(x=-Inf, y=Inf, hjust=0, vjust = 1),
                 label = paste0("SSE cubic: ", round(rv$result_list[[vec_cal[i]]]$SSE_cubic, 3),
                                "\nSSE hyperbolic: ", round(rv$result_list[[vec_cal[i]]]$SSE_hyper, 3)),
                 size = 4)

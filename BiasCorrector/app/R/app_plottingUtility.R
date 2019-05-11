@@ -17,6 +17,9 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
   
   # get number of CpG-sites
   length_vector <- length(rv$vec_cal)
+  
+  
+  pl <<- plotlistR
     
   Map(function(f) {
     plotname <- paste0(gsub("[[:punct:]]", "", rv$vec_cal[f]))
@@ -34,6 +37,8 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
       filename <- paste0(plotdir, b, "-", samplelocusname, "_", plotname, fn_suffix, ".png")
       plotmessage <- paste0("Locus ID: ", b, " --> Creating ", msg_suffix, "plot No. ", f)
     }
+    
+    writeLog(paste(plotmessage, "- filename:", filename))
     
     # Create a Progress object
     progress <- shiny::Progress$new()

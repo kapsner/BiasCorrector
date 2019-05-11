@@ -38,8 +38,7 @@ server <- function(input, output, session) {
     corrected_finished = FALSE,
     fileimportCal_corrected = NULL,
     regStats_corrected = NULL,
-    result_list_type2_corrected = NULL,
-    temp_results_corrected = NULL
+    result_list_type2_corrected = NULL
   )
   
   # run start function
@@ -201,6 +200,9 @@ server <- function(input, output, session) {
   # Calculate results for experimental data
   observeEvent(input$results, {
     
+    # disable Biascorrection-Button
+    shinyjs::disable("results")
+    
     if (rv$type_locus_sample == "1"){
       output$menu <- renderMenu({
         sidebarMenu(
@@ -213,6 +215,7 @@ server <- function(input, output, session) {
           menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
         )
       })
+      
     } else if (rv$type_locus_sample == "2"){
       output$menu <- renderMenu({
         sidebarMenu(
@@ -220,8 +223,8 @@ server <- function(input, output, session) {
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
           menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
           menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))#,
-          #menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist")),
+          menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
         )
       })
     }

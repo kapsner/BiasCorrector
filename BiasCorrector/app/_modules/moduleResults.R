@@ -44,43 +44,60 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           incProgress(1/1, detail = "... working on BiasCorrection ...")
           
           # Experimental data
+          # iterate over unique locus ids in experimental file
           for (b in rv$fileimportExp[,unique(locus_id)]){
+            # get regression results
             rv$result_list <- rv$result_list_type2[[b]]
-            expdata <- rv$fileimportExp[locus_id==b]
+            # get copy of experimental data for that specific locus
+            expdata <- rv$fileimportExp[locus_id==b,]
+            # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
             vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
+            # solve equations for that locus and append temp_results
             rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
           }
+          
+          # iterate over temp_results (key=locus-name) and iteratively append final results
           for (i in names(rv$temp_results)){
             if (is.null(rv$finalResults)){
               rv$finalResults <- rv$temp_results[[i]]
             } else {
+              # set use.names = T and fill = T because, as pointed out before, different loci can have different numbers of CpG sites and!!
+              # the best fitting algorithm can be cubic or hyperbolic for the same CpG site-number of different loci
               rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
             }
           }
           vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
+          # reorder the columns so that the rownames are at the end!
           rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
           
           # TODO 
           # Calibration Data (to show corrected calibration curves)
-          # for (a in 1:length(rv$fileimportCal)){
-          #   for (b in rv$fileimportCal[[a]][,unique(true_methylation)]){
-          #     rv$result_list <- rv$result_list_type2[[b]]
-          #     caldata <- rv$fileimportCal[[a]][true_methylation==b]
-          #     vec <- c("true_methylation", colnames(caldata)[2:(caldata[,min(CpG_count)]+1)], "rowmeans")
-          #     rv$temp_results_corrected[[b]] <- solving_equations(caldata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")
-          #   }
-          #   
-          #   for (i in names(rv$temp_results_corrected)){
-          #     if (is.null(rv$fileimportCal_corrected)){
-          #       rv$fileimportCal_corrected <- list()
-          #       rv$fileimportCal_corrected[[a]] <- rv$temp_results_corrected[[i]]
-          #     } else {
-          #       rv$fileimportCal_corrected[[a]] <- rbind(rv$fileimportCal_corrected[[a]], rv$temp_results_corrected[[i]], use.names = T, fill = T)
-          #     }
-          #   }
-          #   vec <- colnames(rv$fileimportCal_corrected)[grepl("rowmeans", colnames(rv$fileimportCal_corrected))]
-          #   rv$fileimportCal_corrected <- cbind(rv$fileimportCal_corrected[,-vec, with=F], rv$fileimportCal_corrected[,vec,with=F], CpG_sites = unique(rv$fileimportCal[,CpG_count,by=true_methylation])$CpG_count)
-          # }
+          # initialize calibration results list
+          rv$fileimportCal_corrected <- list()
+          # iterate over fileimportCal (in type 2 data, this is a list with one calibrationdata data.table for each locus)
+          for (a in names(rv$fileimportCal)){
+            # get unique elements of true_methylation for one specific locus (we are treating them here as if they were sample ids)
+            for (b in rv$fileimportCal[[a]][,unique(true_methylation)]){
+              # get the regression parameters of that locus (locusname is saved in "a")
+              rv$result_list <- rv$result_list_type2[[a]]
+              # get subset of the calibration data of that methylation step
+              caldata <- rv$fileimportCal[[a]][true_methylation==b,]
+              nc <- ncol(caldata)
+              vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "rowmeans")
+              # solve equation for that calibrationstep
+              # save result of each calibrationstep in tmp object
+              tmp <- solving_equations(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")
+              # imediatelly rename columnames
+              colnames(tmp) <- vec
+              # if new calibration step is saved for the first time
+              if (is.null(rv$fileimportCal_corrected[[a]])){
+                rv$fileimportCal_corrected[[a]] <- tmp
+              } else {
+                # we should not need fill, since there should be no differences in colnames for one file
+                rv$fileimportCal_corrected[[a]] <- rbind(rv$fileimportCal_corrected[[a]], tmp, use.names=T, fill=F)
+              }
+            }
+          }
         })
       }
       

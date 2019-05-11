@@ -4,9 +4,9 @@ createPlots <- function(plotlist, f, rv, filename){
     # always reset j to f
     rv$j <- f
     return(print(plotlist +
-                   geom_abline(aes(slope = 1, intercept = 0, color = "unbiased"), linetype="dashed", size=1.04) +
                    stat_function(fun = hyperbolic_equation, args = list(rv=rv), geom = "line", aes(color = "Hyperbolic Regression"), size=1.06) +
                    stat_function(fun = cubic_equation, args = list(rv=rv), geom = "line", aes(color = "Cubic Regression"), size=1.06) +
+                   geom_line(aes(x=plotlist$data$true_methylation, y=plotlist$data$true_methylation, color = "unbiased"), linetype="dashed", size=1.04) +
                    labs(color = element_blank()) +
                    ggsci::scale_color_npg() + 
                    #scale_colour_manual("Regression:", values = c(Cubic = "indianred1", Hyperbolic = "mediumspringgreen", unbiased = "lightblue")) +
@@ -18,7 +18,7 @@ createPlots <- function(plotlist, f, rv, filename){
   width = 600)
 }
 
-createBarErrorPlots <- function(statstable_pre, statstable_post, rv){
+createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NULL){
   
   stats_pre <- statstable_pre[,.(Name, SSE_hyperbolic, SSE_cubic)]
   stats_post <- statstable_post[,.(Name, SSE_hyperbolic, SSE_cubic)]
@@ -32,10 +32,16 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv){
     Map(function(i) {
       
       plotname <- paste0(gsub("[[:punct:]]", "", vec_cal[i]))
-      filename <- paste0(plotdir, rv$sampleLocusName, "_", plotname, "_sse.png")
+      
+      if (type == 1){
+        filename <- paste0(plotdir, rv$sampleLocusName, "_", plotname, "_sse.png")
+      } else if (type == 2){
+        filename <- paste0(plotdir,  paste0(gsub("[[:punct:]]", "", b)), "-", rv$sampleLocusName, "_", plotname, "_sse.png")
+      }
+      
       
       plotmessage <- paste("Creating barplot No.", i)
-      writeLog(paste(plotmessage, "Filname:", filename))
+      writeLog(paste(plotmessage, "- filename:", filename))
         
       dt <- data.table(timepoint = character(0), value = numeric(0), regressiontype = character(0))
       

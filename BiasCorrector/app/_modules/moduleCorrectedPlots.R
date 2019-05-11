@@ -14,7 +14,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             # save regression statistics to reactive value
             rv$regStats_corrected <- statisticsList(rv$result_list)
           
-            createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv)
+            createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv, type=1)
           })
           
           # when finished
@@ -24,27 +24,34 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         
         # else if type 2 data
       } else if (rv$type_locus_sample == "2"){
-        cat("\nNot implemented yet\n")
-        rv$corrected_finished <- TRUE
-        # if (isFALSE(rv$corrected_finished)){
-        #   a <- 1
-        #   rv$result_list_type2_corrected <- list()
-        #   
-        #   for (b in names(rv$fileimportCal_corrected)){
-        #     rv$vec_cal <- names(rv$fileimportCal_corrected[[a]])[-1]
-        #     #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
-        #     
-        #     plottingUtility(rv$fileimportCal_corrected[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected")
-        #     
-        #     # save regression statistics to reactive value
-        #     rv$regStats_corrected[[b]] <- statisticsList(rv$result_list)
-        #     rv$result_list_type2_corrected[[b]] <- rv$result_list
-        #     a <- a + 1
-        #   }
-        #   # on finished
-        #   rv$corrected_finished <- TRUE
-        #   writeLog("Finished plotting corrected")
-        # }
+        
+        if (isFALSE(rv$corrected_finished)){
+          a <- 1
+          rv$result_list_type2_corrected <- list()
+
+          withProgress(message = "Plotting BiasCorrected results", value = 0, {
+            incProgress(1/1, detail = "... working hard ...")
+
+            for (b in names(rv$fileimportCal_corrected)){
+              rv$vec_cal <- names(rv$fileimportCal_corrected[[a]])[-1]
+              #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
+
+              plottingUtility(rv$fileimportCal_corrected[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected")
+
+              # save regression statistics to reactive value
+              rv$regStats_corrected[[b]] <- statisticsList(rv$result_list)
+              rv$result_list_type2_corrected[[b]] <- rv$result_list
+
+              # create barplots
+              createBarErrorPlots(rv$regStats[[b]], rv$regStats_corrected[[b]], rv, type=2, b=b)
+
+              a <- a + 1
+            }
+          })
+          # on finished
+          rv$corrected_finished <- TRUE
+          writeLog("Finished plotting corrected")
+        }
       }
   })
   
@@ -90,7 +97,14 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         s <- selIn2()
         b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
         c <- downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot")
-        do.call(tagList, list(s, b, tags$hr(), c))
+        do.call(tagList, list(
+          
+              div(class="row",
+                  div(class="col-sm-4", s),
+                  div(class="col-sm-4", b),
+                  div(class="col-sm-4", c)
+              )
+        ))
       })
       
       # for debugging
@@ -100,15 +114,23 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       
       # render plots from local temporary file
       output$plots_corrected <- renderImage({
+        #width  <- session$clientData[["output_moduleCorrectedPlots-plots_corrected_width"]]
+        
         filename <- paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected.png")
         # Return a list containing the filename
+        # list(src = filename,
+        #      width = width)
         list(src = filename)
       }, deleteFile = FALSE)
       
       # render plots from local temporary file
       output$plotsSSE_corrected <- renderImage({
+        #width  <- session$clientData[["output_moduleCorrectedPlots-plotsSSE_corrected_width"]]
+        
         filename <- paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_sse.png")
         # Return a list containing the filename
+        # list(src = filename,
+        #      width = width)
         list(src = filename)
       }, deleteFile = FALSE)
       
@@ -169,9 +191,24 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
 
           # render plot from local temporary file
           output$plots_corrected <- renderImage({
+            #width  <- session$clientData[["output_moduleCorrectedPlots-plots_corrected_width"]]
+            
             filename <- paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_corrected.png")
             # print(filename)
             # Return a list containing the filename
+            # list(src = filename,
+            #      width = width)
+            list(src = filename)
+          }, deleteFile = FALSE)
+          
+          # render plots from local temporary file
+          output$plotsSSE_corrected <- renderImage({
+            #width  <- session$clientData[["output_moduleCorrectedPlots-plotsSSE_corrected_width"]]
+            
+            filename <- paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_sse.png")
+            # Return a list containing the filename
+            # list(src = filename,
+            #      width = width)
             list(src = filename)
           }, deleteFile = FALSE)
     }
@@ -183,22 +220,26 @@ moduleCorrectedPlotsUI <- function(id){
   
   tagList(
     fluidRow(
-      column(8,
-             box(
-               title = "BiasCorrected Regression Plot",
-               imageOutput(ns("plots_corrected")),
-               width=12
-             ),
-             box(
-               title = "Comparison of Sum of Squared Errors",
-               imageOutput(ns("plotsSSE_corrected")),
-               width=12
-             )),
-      column(4,
-             box(
-               title = "Plot Selection",
-               uiOutput(ns("selectPlotInput_corrected")),
-               width = 12)
+      box(
+        title = "Plot Selection",
+        uiOutput(ns("selectPlotInput_corrected")),
+        width = 9
+      ),
+      fluidRow(
+        column(6,
+               box(
+                 title = "BiasCorrected Regression Plot",
+                 imageOutput(ns("plots_corrected")),
+                 tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
+                 width=12
+               )),
+        column(6,
+               box(
+                 title = "Comparison of Sum of Squared Errors",
+                 imageOutput(ns("plotsSSE_corrected")),
+                 tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
+                 width=12
+               ))
       )
     )
   )
