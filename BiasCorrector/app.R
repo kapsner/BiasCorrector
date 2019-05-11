@@ -6,6 +6,8 @@ library(data.table)
 library(ggplot2)
 library(magrittr)
 library(polynom)
+library(ggpubr)
+library(ggsci)
 
 # app entrypoint here
 shinyAppDir("app")

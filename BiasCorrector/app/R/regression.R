@@ -25,10 +25,10 @@ regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
       xlab("% actual methylation") + 
       ggtitle(paste("CpG-site:", vec_cal[i])) + 
       geom_text(data = data.frame(),
-                aes(x=-Inf, y=Inf),
-                label = paste("SSE cubic:", round(rv$result_list[[vec_cal[i]]]$SSE_cubic, 3),
-                              "\nSSE hyperbolic:", round(rv$result_list[[vec_cal[i]]]$SSE_hyper, 3)),
-                hjust = 0, vjust = 1, size = 4)
+                aes(x=-0.95, y=Inf, hjust=0, vjust = 1),
+                label = paste0("SSE cubic: ", round(rv$result_list[[vec_cal[i]]]$SSE_cubic, 3),
+                               "\nSSE hyperbolic: ", round(rv$result_list[[vec_cal[i]]]$SSE_hyper, 3)),
+                size = 4)
     plot.listR[[i]] <- p
   }
   return(plot.listR)
