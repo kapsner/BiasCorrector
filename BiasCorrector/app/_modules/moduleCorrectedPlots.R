@@ -92,7 +92,6 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       )
       
       # render head of page with selectInput and downloadbutton
-      # TODO align selectinput and button aside of each other
       output$selectPlotInput_corrected <- renderUI({
         s <- selIn2()
         b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
@@ -180,13 +179,29 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             },
             contentType = "image/png"
           )
+          
+          output$downloadPlotsSSE_corrected <- downloadHandler(
+            filename = function(){paste0(gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_sse.png")},
+            content = function(file){
+              file.copy(paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_sse.png"), file)
+            },
+            contentType = "image/png"
+          )
 
           # render Plot UI
           output$selectPlotInput_corrected <- renderUI({
             s1 <- selectPlotLocus()
             s2 <- uiOutput("moduleCorrectedPlots-s2PlotOutput_corrected")
-            b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Plot")
-            do.call(tagList, list(s1, s2, b))
+            b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
+            c <- downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot")
+            do.call(tagList, list(
+              div(class="row",
+                  div(class="col-sm-3", s1),
+                  div(class="col-sm-3", s2),
+                  div(class="col-sm-3", b),
+                  div(class="col-sm-3", c)
+              )
+            ))
           })
 
           # render plot from local temporary file

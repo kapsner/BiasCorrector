@@ -17,9 +17,6 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
   
   # get number of CpG-sites
   length_vector <- length(rv$vec_cal)
-  
-  
-  pl <<- plotlistR
     
   Map(function(f) {
     plotname <- paste0(gsub("[[:punct:]]", "", rv$vec_cal[f]))
