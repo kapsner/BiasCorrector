@@ -103,7 +103,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       
       output$dtfinal <- DT::renderDataTable({
         # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20)) %>%
+        DT::datatable(rv$finalResults, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
           formatRound(columns=c(2:ncol(rv$finalResults)), digits=3)
       })
       
@@ -220,7 +220,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
     )
     
     output$substituted_values <- DT::renderDataTable({
-      DT::datatable(rv$substitutions, options = list(scrollX = TRUE, pageLength = 20)) %>%
+      DT::datatable(rv$substitutions, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
         formatRound(columns=c(2:ncol(rv$fileimportExp)), digits=3)
     })
     

@@ -27,7 +27,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         })
         
         output$dt1 <- DT::renderDataTable({
-          DT::datatable(rv$fileimportCal, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          DT::datatable(rv$fileimportCal, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
             formatRound(columns=c(2:ncol(rv$fileimportCal)), digits=3)
         })
         
@@ -121,7 +121,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         
         output$dt2 <- DT::renderDataTable({
           temp <- df()
-          DT::datatable(temp, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          DT::datatable(temp, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
             formatRound(columns=c(2:ncol(temp)), digits=3)
         })
         

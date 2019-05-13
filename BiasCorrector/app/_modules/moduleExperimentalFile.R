@@ -9,7 +9,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
       if (rv$type_locus_sample == "1"){
         
         output$experimental_data <- DT::renderDataTable({
-          DT::datatable(rv$fileimportExp, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          DT::datatable(rv$fileimportExp, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
             formatRound(columns=c(2:ncol(rv$fileimportExp)), digits=3)
         })
         
@@ -31,7 +31,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
       } else if (rv$type_locus_sample == "2"){
         
         output$experimental_data <- DT::renderDataTable({
-          DT::datatable(rv$fileimportExp, options = list(scrollX = TRUE, pageLength = 20)) %>%
+          DT::datatable(rv$fileimportExp, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
             formatRound(columns=c(2:ncol(rv$fileimportExp)), digits=3)
         })
         

@@ -4,10 +4,11 @@ renderRegressionStatisticTable <- function(dt){
   # rgb(124, 252, 0, max=255, alpha=90): "#7CFC005A"
   # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
   t <- DT::datatable(dt, colnames = c("Name", "SSE (h)", "b", "y0", "y1", "  ", "SSE (c)", "ax³", "bx²", "cx", "d", "better_model"),
-                options = list(scrollX = TRUE, 
-                               pageLength = 20,
-                               columnDefs = list(list(targets = 12, visible = FALSE))
-                )) %>%
+                     options = list(scrollX = TRUE, 
+                                    pageLength = 20,
+                                    columnDefs = list(list(targets = 12, visible = FALSE)), 
+                                    dom="ltip"
+                     )) %>%
     formatRound(columns=c(2:12), digits=3) %>%
     formatStyle(columns = 2,
                 valueColumns = "better_model",

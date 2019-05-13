@@ -195,13 +195,18 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
             c <- downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot")
             do.call(tagList, list(
-              div(class="row",
-                  div(class="col-sm-3", s1),
-                  div(class="col-sm-3", s2),
-                  div(class="col-sm-3", b),
-                  div(class="col-sm-3", c)
+              column(6,
+                     s1,
+                     tags$hr(),
+                     s2
+              ),
+              column(6,
+                     b,
+                     tags$hr(),
+                     c
               )
-            ))
+            )
+            )
           })
 
           # render plot from local temporary file
@@ -235,27 +240,29 @@ moduleCorrectedPlotsUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "Plot Selection",
-        uiOutput(ns("selectPlotInput_corrected")),
-        width = 9
-      ),
-      fluidRow(
-        column(6,
-               box(
-                 title = "BiasCorrected Regression Plot",
-                 imageOutput(ns("plots_corrected")),
-                 tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
-                 width=12
-               )),
-        column(6,
-               box(
-                 title = "Comparison of Sum of Squared Errors",
-                 imageOutput(ns("plotsSSE_corrected")),
-                 tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
-                 width=12
-               ))
+      column(6,
+             box(
+               title = "Plot Selection",
+               uiOutput(ns("selectPlotInput_corrected")),
+               width = 12
+             )
       )
+    ),
+    fluidRow(
+      column(6,
+             box(
+               title = "BiasCorrected Regression Plot",
+               imageOutput(ns("plots_corrected")),
+               tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
+               width=12
+             )),
+      column(6,
+             box(
+               title = "Comparison of Sum of Squared Errors",
+               imageOutput(ns("plotsSSE_corrected")),
+               tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
+               width=12
+             ))
     )
   )
 }
