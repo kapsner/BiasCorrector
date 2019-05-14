@@ -22,7 +22,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         
         output$exp_samples_raw <- reactive({
           len <- sort(unique(rv$fileimportExp[,sample_id]))
-          message <- paste0("Unique sample IDs:\n", paste(len, collapse = ", "))
+          message <- paste0("Unique sample IDs:\n", paste(len, collapse = "\n"))
           writeLog(message)
           message
         })
@@ -50,6 +50,18 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         })
         
       }
+      
+      # Download experimental data
+      output$downloadExperimental <- downloadHandler(
+        
+        filename = function(){
+          paste0("raw_experimental_data.csv")
+        },
+        content = function(file){
+          writeCSV(rv$fileimportExp, file)
+        },
+        contentType = "text/csv"
+      )
     })
 }
 
@@ -59,15 +71,20 @@ moduleExperimentalFileUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "Experimental Data",
-        div(class="row", style="margin: 0.5%"),
-        verbatimTextOutput(ns("exp_samples")),
-        verbatimTextOutput(ns("exp_samples_raw")),
-        dataTableOutput(ns("experimental_data")),
-        tags$hr(),
-        tags$head(tags$style("#panel_1{margin: 0.5%;}")),
-        width = 12
-      ))
+      column(9,
+             box(title = "Experimental Data",
+                 dataTableOutput(ns("experimental_data")),
+                 width = 12
+             )),
+      column(3,
+             box(verbatimTextOutput(ns("exp_samples")),
+                 verbatimTextOutput(ns("exp_samples_raw")),
+                 tags$head(tags$style("#exp_samples_raw{overflow-y:scroll; max-height: 10vh; background: ghostwhite;}")),
+                 tags$hr(),
+                 div(class="row", style="text-align: center", downloadButton(ns("downloadExperimental"), "Download experimental file")),
+                 width = 12
+             )
+      )
+    )
   )
 }

@@ -136,6 +136,13 @@ server <- function(input, output, session) {
   # table rendering module
   callModule(moduleCalibrationFileServer, "moduleCalibrationFile", rv=rv, input_re=reactive({input}))
   
+  observe({
+    req(rv$fileimportCal)
+    # enable calibrationfile download button
+    shinyjs::enable("moduleCalibrationFile-downloadCalibration")
+  })
+  
+  
   ###### Run Analysis
   observeEvent(input$run, {
     if (!is.null(rv$fileimportCal)){

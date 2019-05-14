@@ -45,6 +45,17 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
           message
         })
         
+        # Download experimental data
+        output$downloadCalibration <- downloadHandler(
+          filename = function(){
+            paste0("raw_calibration_data.csv")
+          },
+          content = function(file){
+            writeCSV(rv$fileimportCal, file)
+          },
+          contentType = "text/csv"
+        )
+        
         # if type 2 data
       } else if (rv$type_locus_sample == "2"){
         
@@ -131,6 +142,17 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         # print out list!
         do.call(tagList, output_list)
       })
+      
+      # Download experimental data
+      output$downloadCalibration <- downloadHandler(
+        filename = function(){
+          paste0("raw_calibration_data_", gsub("[[:punct:]]", "", input_re()$selectType2), ".csv")
+        },
+        content = function(file){
+          writeCSV(df(), file)
+        },
+        contentType = "text/csv"
+      )
     }
   })
 }
@@ -140,15 +162,23 @@ moduleCalibrationFileUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "Calibration Data",
-        div(class="row", style="margin: 0.5%"),
-        verbatimTextOutput(ns("cal_samples")),
-        verbatimTextOutput(ns("cal_samples_raw")),
-        uiOutput(ns("calibration_data")),
-        uiOutput(ns("calibration_data2")),
-        tags$hr(),
-        width = 12
-      ))
+      column(9,
+             box(title = "Calibration Data",
+                 uiOutput(ns("calibration_data")),
+                 uiOutput(ns("calibration_data2")),
+                 width = 12
+             )),
+      column(3,
+             box(verbatimTextOutput(ns("cal_samples")),
+                 verbatimTextOutput(ns("cal_samples_raw")),
+                 tags$head(tags$style("#cal_samples_raw{overflow-y:scroll; max-height: 10vh; background: ghostwhite;}")),
+                 tags$hr(),
+                 div(class="row", style="text-align: center", shinyjs::disabled(downloadButton(ns("downloadCalibration"), "Download calibration file"))),
+                 width = 12
+             )
+      )
+    )
   )
+  
+  
 }
