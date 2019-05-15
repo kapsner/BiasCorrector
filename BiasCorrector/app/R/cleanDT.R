@@ -3,7 +3,9 @@ cleanDT <- function(datatable, description, type, rv) {
   writeLog("Entered 'cleanDT'-Function")
   
   # remove all columns that only contain empty cells
-  datatable <- datatable[,Filter(function(x) !(all(x=="")), .SD)]
+  datatable <- Filter(function(x) !(all(x=="")), datatable)
+  # remove all columns that only contain missings
+  datatable <- Filter(function(x) !(all(is.na(x))), datatable)
   
   # load type 1 data
   if (type == "1") {
