@@ -23,7 +23,7 @@ cleanDT <- function(datatable, description, type, rv) {
       
     } else {
       cat("### ERROR 18 ###")
-      stop(NULL)
+      return(NULL)
     }
     
     # load type 2 data
@@ -44,11 +44,11 @@ cleanDT <- function(datatable, description, type, rv) {
       
     } else {
       cat("### ERROR 36 ###")
-      stop(NULL)
+      return(NULL)
     }
   } else {
     cat("### ERROR 40 ###")
-    stop(NULL)
+    return(NULL)
   }
   
   # all other columns are numeric
@@ -62,7 +62,7 @@ cleanDT <- function(datatable, description, type, rv) {
       datatable[, (vec[1]) := lapply(.SD, function(x){factor(as.numeric(as.character(x)))}), .SDcols = vec[1]]
     }, error = function(e){
       cat("### ERROR 54 ###")
-      stop(NULL)
+      return(NULL)
     })
   } else {
     datatable[, (vec[1]) := lapply(.SD, as.factor), .SDcols = vec[1]]
@@ -98,7 +98,7 @@ cleanDT <- function(datatable, description, type, rv) {
     # the same number of CpG-sites specified?
     if (sum(duplicated(unique(datatable[,CpG_count,by=locus_id])$locus_id)) > 0){
       writeLog("### ERROR ###\nThe data provided contains locus ids with heterogeneous counts of CpG-sites.")
-      stop(NULL)
+      return(NULL)
     }
     
     if (description == "experimental"){
@@ -122,7 +122,7 @@ cleanDT <- function(datatable, description, type, rv) {
       # type 1 data must have at least 4 calibration steps
       if (datatable[,nlevels(factor(true_methylation))] < 4){
         writeLog("### ERROR ###\nThe data provided contains less than four calibration steps.\nAt least four distinct calibration steps are required to perform bias correction.")
-        stop(NULL)
+        return(NULL)
       }
     }
   }
