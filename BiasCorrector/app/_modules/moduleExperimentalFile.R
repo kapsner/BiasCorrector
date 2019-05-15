@@ -44,7 +44,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         
         output$exp_samples_raw <- reactive({
           len <- sort(unique(rv$fileimportExp[,locus_id]))
-          message <- paste0("Unique locus IDs:\n", paste(len, collapse = ", "))
+          message <- paste0("Unique locus IDs:\n", paste(len, collapse = "\n"))
           writeLog(message)
           message
         })
@@ -82,6 +82,7 @@ moduleExperimentalFileUI <- function(id){
                  tags$head(tags$style("#exp_samples_raw{overflow-y:scroll; max-height: 10vh; background: ghostwhite;}")),
                  tags$hr(),
                  div(class="row", style="text-align: center", downloadButton(ns("downloadExperimental"), "Download experimental file")),
+                 tags$hr(),
                  width = 12
              )
       )

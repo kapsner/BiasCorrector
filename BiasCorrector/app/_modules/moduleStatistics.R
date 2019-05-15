@@ -7,7 +7,6 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       output$regression_statistics <- renderUI({
         output$dt_reg <- DT::renderDataTable({
           dt <- rv$regStats
-          stats_debug <<- dt
           # use formatstyle to highlight lower SSE values
           renderRegressionStatisticTable(dt)
         })
@@ -32,7 +31,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       
       # create reactive selectinput:
       selInLocus <- reactive({
-        selectInput(inputId="selectRegStatsLocus", label = NULL, multiple = F, selectize = F, choices = names(rv$fileimportCal))
+        selectInput(inputId="selectRegStatsLocus", label = "Select locus:", multiple = F, selectize = F, choices = names(rv$fileimportCal))
       })
       
       # create reactive df-selection:
@@ -46,12 +45,19 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       })
       
       # render head of page with selectInput and downloadbutton
-      # TODO align selectinput and button aside of each other
-      output$regression_statistics <- renderUI({
+      
+      output$statistics_select <- renderUI({
         s1 <- selInLocus()
+        do.call(tagList, list(s1, tags$hr()))
+      })
+      
+      output$biascorrection <- renderUI({
+        do.call(tagList, list(div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))))
+      })
+      
+      output$regression_statistics <- renderUI({
         dt <- DT::dataTableOutput("moduleStatistics-dt_regs")
-        db <- div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))
-        do.call(tagList, list(s1, dt, db))
+        do.call(tagList, list(dt))
       })
       
       # create download button for regression statistics
@@ -74,14 +80,27 @@ moduleStatisticsUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "Regression Statistics",
-        div(class="row", style="margin: 0.5%"),
-        uiOutput(ns("regression_statistics")),
-        tags$hr(),
-        div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat"), "Download regression statistics")),
-        tags$hr(),
-        width = 12
-      ))
+      column(9,
+             box(title = "Regression Statistics",
+                 uiOutput(ns("regression_statistics")),
+                 width = 12
+             )),
+      column(3,
+             box(title = "Download Regression Statistics",
+                 uiOutput(ns("statistics_select")),
+                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat"), "Download regression statistics")),
+                 tags$hr(),
+                 width = 12
+             ),
+             conditionalPanel(
+               condition = "input['moduleFileupload-type_locus_sample'] == 2",
+               box(title = "BiasCorrect Experimental Data",
+                   uiOutput(ns("biascorrection")),
+                   tags$hr(),
+                   width = 12
+               )
+             )
+      )
+    )
   )
 }

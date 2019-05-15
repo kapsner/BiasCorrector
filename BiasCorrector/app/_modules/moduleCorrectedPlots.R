@@ -71,7 +71,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       
       # create reactive selectinput:
       selIn2 <- reactive({
-        selectInput(inputId="selectPlot_corrected", label = NULL, multiple = F, selectize = F, choices = plot_output_list, width = "50%")
+        selectInput(inputId="selectPlot_corrected", label = "Select CpG-site:", multiple = F, selectize = F, choices = plot_output_list)
       })
       
       # create download button for each plot
@@ -94,16 +94,9 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       # render head of page with selectInput and downloadbutton
       output$selectPlotInput_corrected <- renderUI({
         s <- selIn2()
-        b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
-        c <- downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot")
-        do.call(tagList, list(
-          
-              div(class="row",
-                  div(class="col-sm-4", s),
-                  div(class="col-sm-4", b),
-                  div(class="col-sm-4", c)
-              )
-        ))
+        b <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot"))
+        c <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot"))
+        do.call(tagList, list(s, tags$hr(), b, tags$hr(), c, tags$hr()))
       })
       
       # for debugging
@@ -143,7 +136,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           }
 
           selectPlotLocus <- reactive({
-            selectInput(inputId="selectPlotLocus_corrected", label = NULL, multiple = F, selectize = F, choices = list_plot_locus, width = "50%")
+            selectInput(inputId="selectPlotLocus_corrected", label = "Select locus:", multiple = F, selectize = F, choices = list_plot_locus)
           })
 
 
@@ -162,7 +155,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
 
           # always wrap selectInput into reactive-function
           selectPlotCpG <- reactive({
-            selectInput(inputId="selectPlotType2_corrected", label = NULL, multiple = F, selectize = F, choices = cpg_output(), width = "50%")
+            selectInput(inputId="selectPlotType2_corrected", label = "Select CpG-site:", multiple = F, selectize = F, choices = cpg_output())
           })
 
           # render second selectInput
@@ -192,21 +185,9 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           output$selectPlotInput_corrected <- renderUI({
             s1 <- selectPlotLocus()
             s2 <- uiOutput("moduleCorrectedPlots-s2PlotOutput_corrected")
-            b <- downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot")
-            c <- downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot")
-            do.call(tagList, list(
-              column(6,
-                     s1,
-                     tags$hr(),
-                     s2
-              ),
-              column(6,
-                     b,
-                     tags$hr(),
-                     c
-              )
-            )
-            )
+            b <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot"))
+            c <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot"))
+            do.call(tagList, list(s1, s2, tags$hr(), b, tags$hr(), c, tags$hr()))
           })
 
           # render plot from local temporary file
@@ -240,29 +221,25 @@ moduleCorrectedPlotsUI <- function(id){
   
   tagList(
     fluidRow(
-      column(6,
-             box(
-               title = "Plot Selection",
-               uiOutput(ns("selectPlotInput_corrected")),
-               width = 12
+      column(9,
+             box(title = "BiasCorrected Regression Plot",
+                 imageOutput(ns("plots_corrected")),
+                 tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
+                 width=12
+             ),
+             box(title = "Comparison of Sum of Squared Errors",
+                 imageOutput(ns("plotsSSE_corrected")),
+                 tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
+                 width=12
+             )
+             
+      ),
+      column(3,
+             box(title = "Plot Selection",
+                 uiOutput(ns("selectPlotInput_corrected")),
+                 width = 12
              )
       )
-    ),
-    fluidRow(
-      column(6,
-             box(
-               title = "BiasCorrected Regression Plot",
-               imageOutput(ns("plots_corrected")),
-               tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
-               width=12
-             )),
-      column(6,
-             box(
-               title = "Comparison of Sum of Squared Errors",
-               imageOutput(ns("plotsSSE_corrected")),
-               tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
-               width=12
-             ))
     )
   )
 }

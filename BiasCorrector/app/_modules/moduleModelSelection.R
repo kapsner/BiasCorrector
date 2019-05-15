@@ -11,7 +11,7 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
           div(class="row", style = "margin: 0.5%; text-align: center;",
               div(class="col-sm-4", style="text-align: left;",
                   h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
-              div(class="col-sm-4", style = "text-align: center;",
+              div(class="col-sm-4", style = "text-align: left;",
                   div(class = "row", style = "text-align: center;",
                       radioButtons(inputId = radioname,
                                    label = NULL,
@@ -23,10 +23,13 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
                   verbatimTextOutput(paste0("moduleModelSelection-text_", radioname)))
               )
         })
-        do.call(tagList, list(radio_output_list, tags$hr(),
-                              div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))
-        )) # needed to display properly.
+        do.call(tagList, list(radio_output_list)) # needed to display properly.
       })
+      
+      output$biascorrection <- renderUI({
+        do.call(tagList, list(div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))))
+      })
+      
     } else if (rv$type_locus_sample == "2"){
       # type 2 data: 
       # trigger claculation of results (bypass manual model selection)
@@ -73,12 +76,18 @@ moduleModelSelectionUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "Select Regression Model",
-        div(class="row", style="margin: 0.5%"),
-        uiOutput(ns("reg_radios")),
-        tags$hr(),
-        width = 12
-      ))
+      column(9,
+             box(title = "Select Regression Model",
+                 uiOutput(ns("reg_radios")),
+                 width=12
+             )
+      ),
+      column(3,
+             box(title = "BiasCorrect Experimental Data",
+                 uiOutput(ns("biascorrection")),
+                 tags$hr(),
+                 width = 12)
+      )
+    )
   )
 }

@@ -21,7 +21,7 @@ renderRegressionStatisticTable <- function(dt){
                 fontWeight = styleEqual(1, "bold")) %>%
     formatStyle(columns = 7:11,
                 valueColumns = "better_model",
-                backgroundColor = styleEqual(1, "#7CFC005A")) %>%
-    formatStyle(columns = c(1:11), fontSize = "80%")
+                backgroundColor = styleEqual(1, "#7CFC005A")) #%>%
+    #formatStyle(columns = c(1:11), fontSize = "80%")
   return(t)
 }

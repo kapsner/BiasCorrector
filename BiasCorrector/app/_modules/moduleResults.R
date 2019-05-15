@@ -110,9 +110,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       # show corrected results for experimental data
       output$corrected_data <- renderUI({
         dt <- dataTableOutput("moduleResults-dtfinal")
-        db <- div(class="row", style="text-align: center", downloadButton("moduleResults-downloadFinal", "Download corrected values"))
-        dball <- div(class="row", style="text-align: center", downloadButton("moduleResults-downloadAllData", "Download zip archive (tables and plots)"))
-        do.call(tagList, list(dt, tags$hr(), db, tags$hr(), dball))
+        
+        do.call(tagList, list(dt))
       })
       
       # Download corrected results
@@ -185,6 +184,11 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       # present substitutions in extra tab (only if there were some)
       if (nrow(rv$substitutions) > 0){
         rv$substitutionsCalc <- TRUE
+        # workaround to tell ui, that experimental file is there
+        output$gotSubstitutions <- reactive({
+          return(TRUE)
+        })
+        outputOptions(output, 'gotSubstitutions', suspendWhenHidden=FALSE)
       }
       
       rv$calculate_results <- FALSE
@@ -198,11 +202,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
     # this workaround is related to this issue:
     # TODO issue: https://github.com/rstudio/shiny/issues/2116
     output$substitutedOut <- renderUI({
-      h <- div(class="row", style="text-align: center",
-               h4("Substituted values"))
       t <- dataTableOutput("moduleResults-substituted_values")
-      b <- div(class="row", style="text-align: center", downloadButton("moduleResults-downloadSubstituted", "Download substituted values"))
-      do.call(tagList, list(h, tags$hr(), t, b, tags$hr()))
+      do.call(tagList, list(t))
     })
     # change colnames for better display
     colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Corrected value", "Substituted value")
@@ -246,14 +247,38 @@ moduleResultsUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "BiasCorrected Results",
-        div(class="row", style="margin: 0.5%"),
-        uiOutput(ns("corrected_data")),
-        tags$hr(),
-        uiOutput(ns("substitutedOut")),
-        tags$hr(),
-        width = 12
-      ))
+      column(9,
+             box(title = "BiasCorrected Results",
+                 uiOutput(ns("corrected_data")),
+                 width = 12
+             )),
+      column(3,
+             box(title = "Download BiasCorrected Results",
+                 div(class="row", style="text-align: center", downloadButton("moduleResults-downloadFinal", "Download corrected values")),
+                 tags$hr(),
+                 div(class="row", style="text-align: center", downloadButton("moduleResults-downloadAllData", "Download zip archive (tables and plots)")),
+                 tags$hr(),
+                 width = 12
+             )
+      )
+    ),
+    fluidRow(
+      conditionalPanel(
+        condition = "output['moduleResults-gotSubstitutions']",
+        column(9,
+               box(title = "Substituted values",
+                   uiOutput(ns("substitutedOut")),
+                   width = 12
+               )),
+        column(3,
+               box(title = "Download Substitutions",
+                   div(class="row", style="text-align: center", downloadButton("moduleResults-downloadSubstituted", "Download substituted values")),
+                   tags$hr(),
+                   width = 12
+               )
+        )
+      )
+      
+    )
   )
 }

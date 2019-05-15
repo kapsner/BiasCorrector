@@ -60,7 +60,7 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
       
       # create reactive selectinput:
       selIn2 <- reactive({
-        selectInput(inputId="selectPlot", label = NULL, multiple = F, selectize = F, choices = plot_output_list, width = "50%")
+        selectInput(inputId="selectPlot", label = "Select CpG-site", multiple = F, selectize = F, choices = plot_output_list)
       })
       
       # create download button for each plot
@@ -76,8 +76,8 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
       # TODO align selectinput and button aside of each other
       output$selectPlotInput <- renderUI({
         s <- selIn2()
-        b <- downloadButton("modulePlotting-downloadPlots", "Download Plot")
-        do.call(tagList, list(s, b))
+        b <- div(class="row", style="text-align: center", downloadButton("modulePlotting-downloadPlots", "Download Plot"))
+        do.call(tagList, list(s, tags$hr(), b, tags$hr()))
       })
       
       # for debugging
@@ -102,7 +102,7 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
           }
 
           selectPlotLocus <- reactive({
-            selectInput(inputId="selectPlotLocus", label = NULL, multiple = F, selectize = F, choices = list_plot_locus, width = "50%")
+            selectInput(inputId="selectPlotLocus", label = "Select locus:", multiple = F, selectize = F, choices = list_plot_locus)
           })
 
 
@@ -121,13 +121,12 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
 
           # always wrap selectInput into reactive-function
           selectPlotCpG <- reactive({
-            selectInput(inputId="selectPlotType2", label = NULL, multiple = F, selectize = F, choices = cpg_output(), width = "50%")
+            selectInput(inputId="selectPlotType2", label = "Select CpG-site:", multiple = F, selectize = F, choices = cpg_output())
           })
 
           # render second selectInput
           output$s2PlotOutput <- renderUI({
-            s3 <- selectPlotCpG()
-            s3
+            selectPlotCpG()
           })
 
           # create download button for each plot
@@ -143,8 +142,8 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
           output$selectPlotInput <- renderUI({
             s1 <- selectPlotLocus()
             s2 <- uiOutput("modulePlotting-s2PlotOutput")
-            b <- downloadButton("modulePlotting-downloadPlots", "Download Plot")
-            do.call(tagList, list(s1, s2, b))
+            b <- div(class="row", style="text-align: center", downloadButton("modulePlotting-downloadPlots", "Download Plot"))
+            do.call(tagList, list(s1, s2, tags$hr(), b, tags$hr()))
           })
 
           # render plot from local temporary file
@@ -163,16 +162,20 @@ modulePlottingUI <- function(id){
   
   tagList(
     fluidRow(
-      box(
-        title = "Regression Plot",
-        imageOutput(ns("plots")),
-        tags$head(tags$style(type="text/css", "#modulePlotting-plots img {max-height: 100%; max-width: 100%; width: auto}")),
-        width=8
+      column(9,
+             box(
+               title = "Regression Plot",
+               imageOutput(ns("plots")),
+               tags$head(tags$style(type="text/css", "#modulePlotting-plots img {max-height: 100%; max-width: 100%; width: auto}")),
+               width=12
+             )
       ),
-      box(
-        title = "Plot Selection",
-        uiOutput(ns("selectPlotInput")),
-        width = 4)
+      column(3,
+             box(
+               title = "Plot Selection",
+               uiOutput(ns("selectPlotInput")),
+               width = 12)
+      )
     )
   )
 }

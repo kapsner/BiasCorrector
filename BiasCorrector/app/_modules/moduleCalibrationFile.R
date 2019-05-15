@@ -118,7 +118,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
       
       # create reactive selectinput:
       selIn <- reactive({
-        selectInput(inputId="selectType2", label = NULL, multiple = F, selectize = F, choices = names(rv$fileimportCal))
+        selectInput(inputId="selectType2", label = "Select locus:", multiple = F, selectize = F, choices = names(rv$fileimportCal))
       })
       
       # create reactive df-selection:
@@ -126,9 +126,13 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         temp <- rv$fileimportCal[[input_re()$selectType2]]
       })
       
+      output$calibration_select <- renderUI({
+        s <- selIn()
+        do.call(tagList, list(tags$hr(), s))
+      })
+      
       # render the UI output
       output$calibration_data2 <- renderUI({
-        s <- selIn()
         
         output$dt2 <- DT::renderDataTable({
           temp <- df()
@@ -137,7 +141,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         })
         
         # merge selectInput and dataframe to list
-        output_list <- list(s, DT::dataTableOutput("moduleCalibrationFile-dt2"))
+        output_list <- list(DT::dataTableOutput("moduleCalibrationFile-dt2"))
         
         # print out list!
         do.call(tagList, output_list)
@@ -172,8 +176,10 @@ moduleCalibrationFileUI <- function(id){
              box(verbatimTextOutput(ns("cal_samples")),
                  verbatimTextOutput(ns("cal_samples_raw")),
                  tags$head(tags$style("#cal_samples_raw{overflow-y:scroll; max-height: 10vh; background: ghostwhite;}")),
+                 uiOutput(ns("calibration_select")),
                  tags$hr(),
                  div(class="row", style="text-align: center", shinyjs::disabled(downloadButton(ns("downloadCalibration"), "Download calibration file"))),
+                 tags$hr(),
                  width = 12
              )
       )
