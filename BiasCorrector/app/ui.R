@@ -15,6 +15,7 @@ ui <- dashboardPage(skin = "black",
                                   menuItem("File Upload", tabName = "dashboard", icon = icon("file")),
                                   sidebarMenuOutput("menu"),
                                   menuItem("Log", tabName = "panel_9", icon = icon("file-alt")),
+                                  tags$hr(),
                                   actionButton("reset", "Reset App", width = "80%") # Restart session
                       )
                     ),

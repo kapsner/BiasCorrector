@@ -146,13 +146,19 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           # create other files
           if (rv$type_locus_sample == "1"){
             writeCSV(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
-            writeCSV(rv$regStats[,-12, with=F], paste0(csvdir, "BC_regression_stats.csv"))
+            writeCSV(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats.csv"))
+            writeCSV(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected.csv"))
             
           } else if (rv$type_locus_sample == "2"){
             # regression stats
             for (key in names(rv$fileimportCal)){
-              writeCSV(rv$regStats[[key]][,-12, with=F],
+              writeCSV(rv$regStats[[key]][,-(which(colnames(rv$regStats[[key]])=="better_model")), with=F],
                        paste0(csvdir, "BC_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
+            }
+            
+            for (key in names(rv$fileimportCal_corrected)){
+              writeCSV(rv$regStats_corrected[[key]][,-(which(colnames(rv$regStats_corrected[[key]])=="better_model")), with=F],
+                       paste0(csvdir, "BC_regression_stats_corrected_", gsub("[[:punct:]]", "", key), ".csv"))
             }
             
             # raw calibrations data
@@ -199,6 +205,16 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
   observe({
     req(rv$substitutionsCalc)
     
+    output$description <- renderText({
+      str1 <- "Substitutions occur, when no result is found in the range of plausible values between 0 and 100 during the BiasCorrection."
+      str2 <- "A 'border zone' is implemented in the ranges 0 – 10% and 100 + 10%."
+      str3 <- "If a result is in the range -10 < x < 0 percentage or 100  < x < 110 percentage, the value is substituted in the final results with 0 percentage or 100 percentage respectively."
+      str4 <- "Values beyond these border zones will be substituted with a blank value in the final output, as they seem implausible and could indicate substantial errors in the underlying data."
+      str5 <- "For detailed feedback, the table below shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG-site."
+      
+      HTML(paste(str1, str2, str3, str4, str5, sep = "<br/><br/>"))
+    })
+    
     # this workaround is related to this issue:
     # TODO issue: https://github.com/rstudio/shiny/issues/2116
     output$substitutedOut <- renderUI({
@@ -206,7 +222,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       do.call(tagList, list(t))
     })
     # change colnames for better display
-    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "Corrected value", "Substituted value")
+    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "BiasCorrected value", "Substituted value")
     
     
     output$downloadSubstituted <- downloadHandler(
@@ -259,6 +275,14 @@ moduleResultsUI <- function(id){
                  div(class="row", style="text-align: center", downloadButton("moduleResults-downloadAllData", "Download zip archive (tables and plots)")),
                  tags$hr(),
                  width = 12
+             ),
+             
+             conditionalPanel(
+               condition = "output['moduleResults-gotSubstitutions']",
+               box(title = "Description",
+                   htmlOutput(ns("description")),
+                   width = 12
+               )
              )
       )
     ),

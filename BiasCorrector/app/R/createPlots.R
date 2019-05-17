@@ -59,17 +59,19 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
       
       
       # add relative error of corrected hyperbolic curve
-      dt <- rbind(dt, cbind(timepoint="corrected", value = round(error_data[Name==vec_cal[i],relative_error], 3),
-                            regressiontype = ifelse(error_data[Name==vec_cal[i],better_model] == 1, "Cubic Regression", "Hyperbolic Regression")))
+      
       dt <- rbind(dt, cbind(timepoint="biased", value = round(error_data[Name==vec_cal[i],relative_error_pre], 3), 
-                            regressiontype = "unbiased"))
+                            regressiontype = "Uncorrected"))
+      dt <- rbind(dt, cbind(timepoint="corrected", value = round(error_data[Name==vec_cal[i],relative_error], 3),
+                            regressiontype = ifelse(error_data[Name==vec_cal[i],better_model] == 1, "Corrected [Cubic Regression]", "Corrected [Hyperbolic Regression]")))
       
-      dt[,regressiontype := factor(regressiontype, levels = c("Cubic Regression", "Hyperbolic Regression", "unbiased"))]
+      # set "Raw" as first level, to show corresponding bar on the left of the plot
+      dt[,regressiontype := factor(regressiontype, levels = c("Uncorrected", "Corrected [Cubic Regression]", "Corrected [Hyperbolic Regression]"))]
       
-      if ("Cubic Regression" %in% dt[,regressiontype]){
-        values <- c("#E64B35FF", "#00A087FF")
-      } else if ("Hyperbolic Regression" %in% dt[,regressiontype]){
-        values <- c("#4DBBD5FF", "#00A087FF")
+      if ("Corrected [Cubic Regression]" %in% dt[,regressiontype]){
+        values <- c("#8491B4FF", "#E64B35FF")
+      } else {
+        values <- c("#8491B4FF", "#4DBBD5FF")
       }
       
       plotPNG({
@@ -82,9 +84,9 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
           scale_fill_manual(values = values) + 
           ggpubr::theme_pubr() +
           theme(axis.title.x = element_blank(), 
-                #legend.position = "none", 
-                axis.ticks.x = element_blank(), 
-                axis.text.x = element_blank())
+                legend.position = "none") #, 
+                #axis.ticks.x = element_blank(), 
+                #axis.text.x = element_blank())
         # print whole plot in return, otherwise it will fail
         return(print(p))
       },

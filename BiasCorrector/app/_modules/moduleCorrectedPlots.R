@@ -99,7 +99,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       output$selectPlotInput_corrected <- renderUI({
         s <- selIn2()
         b <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot"))
-        c <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot"))
+        c <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download Error Plot"))
         do.call(tagList, list(s, tags$hr(), b, tags$hr(), c, tags$hr()))
       })
       
@@ -129,6 +129,34 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         #      width = width)
         list(src = filename)
       }, deleteFile = FALSE)
+      
+      
+      
+      ## regression statistics
+      output$regression_statistics_corrected <- renderUI({
+        output$dt_reg_corrected <- DT::renderDataTable({
+          dt <- rv$regStats_corrected
+          # use formatstyle to highlight lower SSE values
+          renderRegressionStatisticTable(dt)
+        })
+        d <- DT::dataTableOutput("moduleCorrectedPlots-dt_reg_corrected")
+        do.call(tagList, list(d))
+      })
+      
+      # create download button for regression statistics
+      output$downloadRegStat_corrected <- downloadHandler(
+        filename = function(){
+          paste0("BC_regression_stats_corrected_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+                 gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
+        },
+        content = function(file){
+          writeCSV(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], file)
+        },
+        contentType = "text/csv"
+      )
+      
+      
+      
       
       # type 2 data:
     } else if (rv$type_locus_sample == "2"){
@@ -190,7 +218,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             s1 <- selectPlotLocus()
             s2 <- uiOutput("moduleCorrectedPlots-s2PlotOutput_corrected")
             b <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot"))
-            c <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download SSE Plot"))
+            c <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download Error Plot"))
             do.call(tagList, list(s1, s2, tags$hr(), b, tags$hr(), c, tags$hr()))
           })
 
@@ -216,6 +244,38 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             #      width = width)
             list(src = filename)
           }, deleteFile = FALSE)
+          
+          
+          
+          ## regression statistics
+          # create reactive df-selection:
+          df_regs <- reactive({
+            dt <- rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]]
+          })
+          
+          output$dt_regs_corrected <- DT::renderDataTable({
+            dt <- df_regs()
+            renderRegressionStatisticTable(dt)
+          })
+          
+          # render head of page with selectInput and downloadbutton
+          
+          output$regression_statistics_corrected <- renderUI({
+            dt <- DT::dataTableOutput("moduleCorrectedPlots-dt_regs_corrected")
+            do.call(tagList, list(dt))
+          })
+          
+          # create download button for regression statistics
+          output$downloadRegStat_corrected <- downloadHandler(
+            filename = function(){
+              paste0("BC_regression_stats_corrected_", gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+                     gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
+            },
+            content = function(file){
+              writeCSV(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]][,-(which(colnames(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]])=="better_model")), with=F], file)
+            },
+            contentType = "text/csv"
+          )
     }
   })
 }
@@ -241,6 +301,22 @@ moduleCorrectedPlotsUI <- function(id){
       column(3,
              box(title = "Plot Selection",
                  uiOutput(ns("selectPlotInput_corrected")),
+                 width = 12
+             )
+      )
+    ),
+    
+    fluidRow(
+      column(9,
+             box(title = "Regression Statistics [corrected]",
+                 uiOutput(ns("regression_statistics_corrected")),
+                 width = 12
+             )),
+      column(3,
+             box(title = "Download Regression Statistics",
+                 uiOutput(ns("statistics_select")),
+                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat_corrected"), "Download regression statistics")),
+                 tags$hr(),
                  width = 12
              )
       )

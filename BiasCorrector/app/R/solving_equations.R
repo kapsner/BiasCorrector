@@ -121,12 +121,33 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
             replacement = "100"
             
           } else {
-            msg3 <- "No fitting numeric roots within the borders found: substitute NA"
-            vector <- c(vector, NA)
+            #if (is.null(mode)){
+              msg3 <- "No fitting numeric roots within the borders found: substitute NA"
+              vector <- c(vector, NA)
+              
+              # store substitutions
+              original = as.character(paste(round(nonfitting, 3), collapse = ", "))
+              replacement = "NA"
+            # } else {
+            #   
+            #   print("Nonfitting")
+            #   print(nonfitting)
+            #   
+            #   if (sum(nonfitting >= 110) > 0){
+            #     nf <- nonfitting[nonfitting >= 110]
+            #     msg3 <- "No fitting numeric roots within the borders found: since we are in mode==corrected,  substitute 100"
+            #     vector <- c(vector, 100)
+            #     replacement = "100"
+            #   } else if (sum(nonfitting <= -10) > 0){
+            #     nf <- nonfitting[nonfitting <= -10]
+            #     msg3 <- "No fitting numeric roots within the borders found: since we are in mode==corrected,  substitute 0"
+            #     vector <- c(vector, 0)
+            #     replacement = "0"
+            #   }
+            #   # store substitutions
+            #   original = as.character(paste(round(nonfitting, 3), collapse = ", "))
+            # }
             
-            # store substitutions
-            original = as.character(paste(round(nonfitting, 3), collapse = ", "))
-            replacement = "NA"
           }
           
           if (is.null(mode)){
@@ -182,12 +203,27 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
             replacement = "100"
             
           } else {
-            msg3 <- "No fitting numeric roots within the borders found: substitute NA"
-            vector <- c(vector, NA)
+            #if (is.null(mode)){
+              msg3 <- "No fitting numeric roots within the borders found: substitute NA"
+              vector <- c(vector, NA)
+              
+              # store substitutions
+              original = as.character(h_solv)
+              replacement = "NA"
+            # } else {
+            #   if (h_solv >= 110){
+            #     msg3 <- "No fitting numeric roots within the borders found: since we are in mode==corrected,  substitute 100"
+            #     vector <- c(vector, 100)
+            #     replacement = "100"
+            #   } else if (h_solv <= -10){
+            #     msg3 <- "No fitting numeric roots within the borders found: since we are in mode==corrected,  substitute 0"
+            #     vector <- c(vector, 0)
+            #     replacement = "0"
+            #   }
+            #   # store substitutions
+            #   original = as.character(h_solv)
+            # }
             
-            # store substitutions
-            original = as.character(h_solv)
-            replacement = "NA"
             
           }
           

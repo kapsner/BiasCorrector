@@ -53,7 +53,7 @@ hyperbolic_regression <- function(df_agg, vec, rv){
   # optimization function of built in R -> based on Nelder-Mead
   # by default, optim performs minimization
   # bias_factor <- optim(1, fn, method = "Nelder-Mead")$par
-  rv$b <- optim(1, fn, method = "Brent", lower = -50, upper = 50)$par # due to error with Nelder-Mead
+  rv$b <- optim(1, fn, method = "Brent", lower = 0, upper = 50)$par # due to error with Nelder-Mead
   
   # correct values, based on optimized b
   fitted_values <- hyperbolic_equation(true_levels, rv$b, rv = rv)

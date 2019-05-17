@@ -2,6 +2,18 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
   observe({
     req(rv$plotting_finished)
     
+    output$description <- renderText({
+      str1 <- "The table shows the regression parameters of the hyperbolic regression and the cubic regression.<br/>"
+      str2 <- "Column 1 presents the CpG-site's name."
+      str3 <- "Column 2 presents the mean of the relative absolute errors for every CpG-site."
+      str4 <- "Columns 3-6 present the sum of squared error of the hyperbolic regression ('SSE [h]') and the regression parameters used to calculate the hyperbolic regression curves for the respective CpG-site."
+      str5 <- "Columns 7-11 present the sum of squared error of the cubic regression ('SSE [c]') and the regression parameters used to calculate the cubic regression curves."
+      str6 <- "The green background colour indicates the regression equation, that in comparison of the sum of squared errors better fits the data points."
+      
+      
+      HTML(paste(str1, str2, str3, str4, str5, str6, sep = "<br/><br/>"))
+    })
+    
     # type 1 data:
     if (rv$type_locus_sample == "1"){
       output$regression_statistics <- renderUI({
@@ -21,7 +33,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          writeCSV(rv$regStats[,-12, with=F], file)
+          writeCSV(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], file)
         },
         contentType = "text/csv"
       )
@@ -67,7 +79,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          writeCSV(rv$regStats[[input_re()$selectRegStatsLocus]][,-12, with=F], file)
+          writeCSV(rv$regStats[[input_re()$selectRegStatsLocus]][,-(which(colnames(rv$regStats[[input_re()$selectRegStatsLocus]])=="better_model")), with=F], file)
         },
         contentType = "text/csv"
       )
@@ -99,6 +111,11 @@ moduleStatisticsUI <- function(id){
                    tags$hr(),
                    width = 12
                )
+             ),
+             box(title = "Description",
+                 htmlOutput(ns("description")),
+                 #tags$head(tags$style("#moduleStatistics-description{overflow-y:visible; overflow-x:visible; width=100vh; word-wrap: break-word; background: ghostwhite;}")),
+                 width = 12
              )
       )
     )
