@@ -26,12 +26,12 @@ writeLog <- function(message){
 
 # write csv files
 writeCSV <- function(table, filename){
-  return(write.table(x = table, 
-                     file = filename, 
-                     row.names = F, 
-                     sep = ",", 
-                     dec = ".", 
-                     fileEncoding = "UTF-8"))
+  return(fwrite(x = table, 
+                file = filename, 
+                row.names = F, 
+                sep = ",", 
+                dec = ".", 
+                eol = "\n"))
 }
 
 # create substitutions dataframe
