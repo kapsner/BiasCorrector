@@ -53,7 +53,7 @@ hyperbolic_regression <- function(df_agg, vec, rv){
   # optimization function of built in R -> based on Nelder-Mead
   # by default, optim performs minimization
   # bias_factor <- optim(1, fn, method = "Nelder-Mead")$par
-  rv$b <- optim(1, fn, method = "Brent", lower = -10, upper = 10)$par # due to error with Nelder-Mead
+  rv$b <- optim(1, fn, method = "Brent", lower = -50, upper = 50)$par # due to error with Nelder-Mead
   
   # correct values, based on optimized b
   fitted_values <- hyperbolic_equation(true_levels, rv$b, rv = rv)
@@ -62,10 +62,16 @@ hyperbolic_regression <- function(df_agg, vec, rv){
   df_agg[, fitted := fitted_values]
   
   # sum of squares between fitted and measuerd values
-  df_agg[,squared_error := I((CpG-fitted)^2)]
+  df_agg[,CpG_fitted_diff := CpG-fitted]
+  df_agg[,squared_error := I((CpG_fitted_diff)^2)]
+  
+  # calculate raw_error
+  df_agg[,CpG_true_diff := abs(CpG-true_methylation)]
+  df_agg[,relative_error := ifelse(true_methylation != 0, (CpG_true_diff/true_methylation)*100, NA)]
   
   # sum of squared errors
   rv$result_list[[vec]] <- list("Var" = vec,
+                                "relative_error" = df_agg[,mean(relative_error, na.rm = T)],
                                 "SSE_hyper" = df_agg[,sum(squared_error)],
                                 "Coef_hyper" = list("y0" = rv$y0,
                                                     "y1" = rv$y1,

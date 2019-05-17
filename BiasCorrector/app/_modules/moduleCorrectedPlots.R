@@ -13,6 +13,10 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           
             # save regression statistics to reactive value
             rv$regStats_corrected <- statisticsList(rv$result_list)
+            
+            for (i in rv$choices_list[,Name]){
+              rv$regStats_corrected[Name==i,better_model:=rv$choices_list[Name==i,as.integer(as.character(better_model))]]
+            }
           
             createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv, type=1)
           })
@@ -84,9 +88,9 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       )
       
       output$downloadPlotsSSE_corrected <- downloadHandler(
-        filename = function(){paste0(rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_sse.png")},
+        filename = function(){paste0(rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_errorplot.png")},
         content = function(file){
-          file.copy(paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_sse.png"), file)
+          file.copy(paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_errorplot.png"), file)
         },
         contentType = "image/png"
       )
@@ -119,7 +123,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       output$plotsSSE_corrected <- renderImage({
         #width  <- session$clientData[["output_moduleCorrectedPlots-plotsSSE_corrected_width"]]
         
-        filename <- paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_sse.png")
+        filename <- paste0(plotdir, rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_errorplot.png")
         # Return a list containing the filename
         # list(src = filename,
         #      width = width)
@@ -174,9 +178,9 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           )
           
           output$downloadPlotsSSE_corrected <- downloadHandler(
-            filename = function(){paste0(gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_sse.png")},
+            filename = function(){paste0(gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_errorplot.png")},
             content = function(file){
-              file.copy(paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_sse.png"), file)
+              file.copy(paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_errorplot.png"), file)
             },
             contentType = "image/png"
           )
@@ -206,7 +210,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           output$plotsSSE_corrected <- renderImage({
             #width  <- session$clientData[["output_moduleCorrectedPlots-plotsSSE_corrected_width"]]
             
-            filename <- paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_sse.png")
+            filename <- paste0(plotdir, gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "-", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlotType2_corrected), "_errorplot.png")
             # Return a list containing the filename
             # list(src = filename,
             #      width = width)
@@ -227,7 +231,7 @@ moduleCorrectedPlotsUI <- function(id){
                  tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
                  width=12
              ),
-             box(title = "Comparison of Sum of Squared Errors",
+             box(title = "Efficiency of BiasCorrection",
                  imageOutput(ns("plotsSSE_corrected")),
                  tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected img {max-height: 100%; max-width: 100%; width: auto}")),
                  width=12

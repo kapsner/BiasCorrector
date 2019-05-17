@@ -15,7 +15,7 @@ regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
     if (is.null(mode)){
       custom_ylab <- "% apparent methylation after PCR"
     } else if (mode == "corrected"){
-      custom_ylab <- "% apparent methylation after BiasCorrection"
+      custom_ylab <- "% methylation after BiasCorrection"
     }
     
     

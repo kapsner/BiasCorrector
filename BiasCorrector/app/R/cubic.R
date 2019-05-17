@@ -36,7 +36,8 @@ cubic_regression <- function(df_agg, vec, rv) {
   df_agg[, fitted := fitted_values]
   
   # sum of squares between fitted and measuerd values
-  df_agg[,squared_error := I((CpG-fitted)^2)]
+  df_agg[,CpG_fitted_diff := CpG-fitted]
+  df_agg[,squared_error := I((CpG_fitted_diff)^2)]
   
   # sum of squared errors
   # rv$result_list[Var==vec[i], SSE_cubic := df_agg[,sum(squared_error)]]

@@ -174,7 +174,7 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
             replacement = "0"
             
           } else if (h_solv > 100 & h_solv < 110){
-            msg3 <- paste0("Positive numeric root found:  \nRoot: ", round(nf, 3), "  \n--> '100 < root < 110' --> substitute 100")
+            msg3 <- paste0("Positive numeric root found:  \nRoot: ", round(h_solv, 3), "  \n--> '100 < root < 110' --> substitute 100")
             vector <- c(vector, 100)
             
             # store substitutions
