@@ -20,7 +20,10 @@ shinyAppDir("app")
 # TODO in the end, generate markdown pdf with plots in temporary directory
 # TODO add log-file to downloadable zip-folder
 # TODO make logfile downloadable
-
+# TODO check weired error, when correcting calibration data (corrected results), 
+## especially with true_methylation==0
+# TODO replace rowmeans with "row_means"
+# TODO add demo-data
 
 # for package:
 # imports: ggplot2, data.table
