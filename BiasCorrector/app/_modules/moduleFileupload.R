@@ -252,7 +252,7 @@ moduleFileuploadUI <- function(id){
         condition = "input['moduleFileupload-type_locus_sample'] != null",
         
         box(
-          title = "Datainput: Experimental Data",
+          title = "Data Input: Experimental Data",
           h5("Please upload the CSV files* containing the experimental data."),
           
           # Input: Select a file
@@ -270,7 +270,7 @@ moduleFileuploadUI <- function(id){
         condition =  "output['moduleFileupload-fileUploaded']",
         
         box(
-          title = "Datainput: Calibraration Data",
+          title = "Data Input: Calibration Data",
           h5("Please upload the CSV files* containing the calibration data."),
           
           uiOutput(ns("fileInputCal")),

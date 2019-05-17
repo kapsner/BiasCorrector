@@ -15,7 +15,7 @@ createPlots <- function(plotlist, f, rv, filename){
   },
   filename = filename,
   height = 400, 
-  width = 600)
+  width = 450)
 }
 
 createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NULL){
@@ -79,7 +79,7 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
       },
       filename = filename,
       height = 400, 
-      width = 600)
+      width = 450)
     }, 1:length_vector)
   } else {
     writeLog("Error during creating bar plot; Names are not identical.")

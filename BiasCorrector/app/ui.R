@@ -12,7 +12,7 @@ ui <- dashboardPage(skin = "black",
                       
                       #Sidebar Panel
                       sidebarMenu(id = "tabs",
-                                  menuItem("Fileupload", tabName = "dashboard", icon = icon("file")),
+                                  menuItem("File Upload", tabName = "dashboard", icon = icon("file")),
                                   sidebarMenuOutput("menu"),
                                   menuItem("Log", tabName = "panel_9", icon = icon("file-alt")),
                                   actionButton("reset", "Reset App", width = "80%") # Restart session
