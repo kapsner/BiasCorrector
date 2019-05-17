@@ -3,7 +3,7 @@ renderRegressionStatisticTable <- function(dt){
   # col2rgb("lawngreen"): red=124, green=252, blue=0
   # rgb(124, 252, 0, max=255, alpha=90): "#7CFC005A"
   # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-  t <- DT::datatable(dt, colnames = c("Name", "Avg. rel. error",
+  t <- DT::datatable(dt, colnames = c("Name", "Relative error",
                                       "SSE [h]", "b", "y₀", "y₁", "  ",
                                       "SSE [c]", "ax³", "bx²", "cx", "d",
                                       "better_model"),
