@@ -41,7 +41,7 @@ cubic_regression <- function(df_agg, vec, rv) {
   
   # sum of squared errors
   # rv$result_list[Var==vec[i], SSE_cubic := df_agg[,sum(squared_error)]]
-  rv$result_list[[vec]]["SSE_cubic"] <- df_agg[,sum(squared_error)]
+  rv$result_list[[vec]]["SSE_cubic"] <- df_agg[,sum(squared_error, na.rm = T)]
   rv$result_list[[vec]][["Coef_cubic"]] <- list("ax3" = unname(cof[4]),
                                                 "bx2" = unname(cof[3]),
                                                 "cx" = unname(cof[2]),

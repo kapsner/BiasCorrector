@@ -72,7 +72,7 @@ hyperbolic_regression <- function(df_agg, vec, rv){
   # sum of squared errors
   rv$result_list[[vec]] <- list("Var" = vec,
                                 "relative_error" = df_agg[,mean(relative_error, na.rm = T)],
-                                "SSE_hyper" = df_agg[,sum(squared_error)],
+                                "SSE_hyper" = df_agg[,sum(squared_error, na.rm = T)],
                                 "Coef_hyper" = list("y0" = rv$y0,
                                                     "y1" = rv$y1,
                                                     "b" = rv$b,

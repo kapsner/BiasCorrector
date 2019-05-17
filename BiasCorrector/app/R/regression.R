@@ -8,7 +8,12 @@ regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
   for (i in 1:length(vec_cal)){
     message <- paste0("# CpG-site: ", vec_cal[i])
     writeLog(message)
-    df_agg <- create_agg_df(datatable, vec_cal[i])
+    df_agg <- na.omit(create_agg_df(datatable, vec_cal[i]))
+    
+    print(df_agg)
+    writeLog(paste("Logging df_agg:", vec_cal[i]))
+    writeLog(df_agg)
+    
     hyperbolic_regression(df_agg, vec_cal[i], rv = rv)
     cubic_regression(df_agg, vec_cal[i], rv = rv)
     
