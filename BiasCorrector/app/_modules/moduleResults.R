@@ -51,7 +51,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
             # get copy of experimental data for that specific locus
             expdata <- rv$fileimportExp[locus_id==b,]
             # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
-            vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "rowmeans")
+            vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "row_means")
             # solve equations for that locus and append temp_results
             rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
           }
@@ -66,7 +66,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
               rv$finalResults <- rbind(rv$finalResults, rv$temp_results[[i]], use.names = T, fill = T)
             }
           }
-          vec <- colnames(rv$finalResults)[grepl("rowmeans", colnames(rv$finalResults))]
+          vec <- colnames(rv$finalResults)[grepl("row_means", colnames(rv$finalResults))]
           # reorder the columns so that the rownames are at the end!
           rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
           
@@ -83,7 +83,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
               # get subset of the calibration data of that methylation step
               caldata <- rv$fileimportCal[[a]][true_methylation==b,]
               nc <- ncol(caldata)
-              vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "rowmeans")
+              vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "row_means")
               # solve equation for that calibrationstep
               # save result of each calibrationstep in tmp object
               tmp <- solving_equations(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")
@@ -142,6 +142,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           writeCSV(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
           writeCSV(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
           writeCSV(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
+          write(rv$logfile, paste0(csvdir, "BC_logfile.txt"))
           
           # create other files
           if (rv$type_locus_sample == "1"){
@@ -197,6 +198,14 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         outputOptions(output, 'gotSubstitutions', suspendWhenHidden=FALSE)
       }
       
+      output$description <- renderText({
+        str1 <- "The results table shows the BiasCorrected experimental data."
+        str2 <- "Column 1 shows the sample ID (type 1 data) or the locus ID (type 2 data)."
+        str3 <- "All other columns represent the BiasCorrected experimental data for the CpG-sites and the row-means of all CpG-sites respectively."
+        str4 <- "The suffixes '_h' and '_c' of the column names indicate the regression algorithm used for BiasCorrection of the respective CpG-site ('_h': hyperbolic regression; '_c': cubic regression)."
+        HTML(paste(str1, str2, str3, str4, sep = "<br/><br/>"))
+      })
+      
       rv$calculate_results <- FALSE
     }
   })
@@ -205,12 +214,12 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
   observe({
     req(rv$substitutionsCalc)
     
-    output$description <- renderText({
+    output$description_sub <- renderText({
       str1 <- "Substitutions occur, when no result is found in the range of plausible values between 0 and 100 during the BiasCorrection."
       str2 <- "A 'border zone' is implemented in the ranges 0 – 10% and 100 + 10%."
       str3 <- "If a result is in the range -10 < x < 0 percentage or 100  < x < 110 percentage, the value is substituted in the final results with 0 percentage or 100 percentage respectively."
       str4 <- "Values beyond these border zones will be substituted with a blank value in the final output, as they seem implausible and could indicate substantial errors in the underlying data."
-      str5 <- "For detailed feedback, the table below shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG-site."
+      str5 <- "For a detailed feedback, the substitutions table shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG-site."
       
       HTML(paste(str1, str2, str3, str4, str5, sep = "<br/><br/>"))
     })
@@ -270,19 +279,19 @@ moduleResultsUI <- function(id){
              )),
       column(3,
              box(title = "Download BiasCorrected Results",
-                 div(class="row", style="text-align: center", downloadButton("moduleResults-downloadFinal", "Download corrected values")),
+                 div(class="row", style="text-align: center", downloadButton("moduleResults-downloadFinal", "Download corrected values", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")),
                  tags$hr(),
-                 div(class="row", style="text-align: center", downloadButton("moduleResults-downloadAllData", "Download zip archive (tables and plots)")),
+                 div(class="row", style="text-align: center", downloadButton("moduleResults-downloadAllData", "Download zip archive (tables and plots)", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")),
                  tags$hr(),
                  width = 12
              ),
-             
-             conditionalPanel(
-               condition = "output['moduleResults-gotSubstitutions']",
-               box(title = "Description",
-                   htmlOutput(ns("description")),
-                   width = 12
-               )
+             box(title = "Description",
+                 htmlOutput(ns("description")),
+                 width = 12
              )
       )
     ),
@@ -296,8 +305,14 @@ moduleResultsUI <- function(id){
                )),
         column(3,
                box(title = "Download Substitutions",
-                   div(class="row", style="text-align: center", downloadButton("moduleResults-downloadSubstituted", "Download substituted values")),
+                   div(class="row", style="text-align: center", downloadButton("moduleResults-downloadSubstituted", "Download substituted values", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")),
                    tags$hr(),
+                   width = 12
+               ),
+               box(title = "What are 'substitutions'?",
+                   htmlOutput(ns("description_sub")),
                    width = 12
                )
         )

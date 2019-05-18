@@ -27,7 +27,9 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
       })
       
       output$biascorrection <- renderUI({
-        do.call(tagList, list(div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))))
+        do.call(tagList, list(div(class="row", style="text-align: center", actionButton("results", "BiasCorrect experimental data", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))))
       })
       
     } else if (rv$type_locus_sample == "2"){

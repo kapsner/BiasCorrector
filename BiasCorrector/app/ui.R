@@ -44,7 +44,7 @@ ui <- dashboardPage(skin = "black",
                         # regression plots
                         tabItem(tabName = "panel_3",
                                 modulePlottingUI("modulePlotting")
-                                ),
+                        ),
                         
                         # regression statistics
                         tabItem(tabName = "panel_4",
@@ -72,7 +72,16 @@ ui <- dashboardPage(skin = "black",
                                     title = "Log",
                                     verbatimTextOutput("log_out"),
                                     tags$head(tags$style("#log_out{overflow-y:scroll; max-height: 80vh; background: ghostwhite;}")),
-                                    width = 12
+                                    width = 9
+                                  ),
+                                  box(title = "Download Log File",
+                                      div(class="row", style="text-align: center;", shinyjs::disabled(downloadButton("downloadLogfile",
+                                                                                                   "Download Log File",
+                                                                                                   style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))),
+                                      tags$hr(),
+                                      width=3
                                   ))
                         )
                       )

@@ -81,7 +81,11 @@ moduleExperimentalFileUI <- function(id){
                  verbatimTextOutput(ns("exp_samples_raw")),
                  tags$head(tags$style("#exp_samples_raw{overflow-y:scroll; max-height: 10vh; background: ghostwhite;}")),
                  tags$hr(),
-                 div(class="row", style="text-align: center", downloadButton(ns("downloadExperimental"), "Download experimental file")),
+                 div(class="row", style="text-align: center", downloadButton(ns("downloadExperimental"),
+                                                                             "Download experimental file",
+                                                                             style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")),
                  tags$hr(),
                  width = 12
              )

@@ -76,7 +76,9 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
       # TODO align selectinput and button aside of each other
       output$selectPlotInput <- renderUI({
         s <- selIn2()
-        b <- div(class="row", style="text-align: center", downloadButton("modulePlotting-downloadPlots", "Download Plot"))
+        b <- div(class="row", style="text-align: center", downloadButton("modulePlotting-downloadPlots", "Download Plot", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))
         do.call(tagList, list(s, tags$hr(), b, tags$hr()))
       })
       
@@ -142,7 +144,9 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
           output$selectPlotInput <- renderUI({
             s1 <- selectPlotLocus()
             s2 <- uiOutput("modulePlotting-s2PlotOutput")
-            b <- div(class="row", style="text-align: center", downloadButton("modulePlotting-downloadPlots", "Download Plot"))
+            b <- div(class="row", style="text-align: center", downloadButton("modulePlotting-downloadPlots", "Download Plot", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))
             do.call(tagList, list(s1, s2, tags$hr(), b, tags$hr()))
           })
 

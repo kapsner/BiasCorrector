@@ -11,7 +11,8 @@ createPlots <- function(plotlist, f, rv, filename){
                    scale_color_manual(values = c("#E64B35FF", "#4DBBD5FF", "#00A087FF"),
                                       labels = c("Cubic Regression", "Hyperbolic Regression", "unbiased")) + 
                    #scale_colour_manual("Regression:", values = c(Cubic = "indianred1", Hyperbolic = "mediumspringgreen", unbiased = "lightblue")) +
-                   ggpubr::theme_pubr()
+                   ggpubr::theme_pubr() +
+                   theme(plot.title = element_text(hjust = 0.5))
     ))
   },
   filename = filename,
@@ -84,7 +85,8 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
           scale_fill_manual(values = values) + 
           ggpubr::theme_pubr() +
           theme(axis.title.x = element_blank(), 
-                legend.position = "none") #, 
+                legend.position = "none",
+                plot.title = element_text(hjust = 0.5)) #, 
                 #axis.ticks.x = element_blank(), 
                 #axis.text.x = element_blank())
         # print whole plot in return, otherwise it will fail

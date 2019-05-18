@@ -8,7 +8,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       str3 <- "Column 2 presents the mean of the relative absolute errors for every CpG-site."
       str4 <- "Columns 3-6 present the sum of squared error of the hyperbolic regression ('SSE [h]') and the regression parameters used to calculate the hyperbolic regression curves for the respective CpG-site."
       str5 <- "Columns 7-11 present the sum of squared error of the cubic regression ('SSE [c]') and the regression parameters used to calculate the cubic regression curves."
-      str6 <- "The green background colour indicates the regression equation, that in comparison of the sum of squared errors better fits the data points."
+      str6 <- "The rows highlighted with a green background colour indicate the regression equation, that in comparison of the sum of squared errors better fits the data points for the respecitve CpG-site."
       
       
       HTML(paste(str1, str2, str3, str4, str5, str6, sep = "<br/><br/>"))
@@ -64,7 +64,9 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       })
       
       output$biascorrection <- renderUI({
-        do.call(tagList, list(div(class="row", style="text-align: center", actionButton("results", "BiasCorrect your experimental data"))))
+        do.call(tagList, list(div(class="row", style="text-align: center", actionButton("results", "BiasCorrect experimental data", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))))
       })
       
       output$regression_statistics <- renderUI({
@@ -100,7 +102,9 @@ moduleStatisticsUI <- function(id){
       column(3,
              box(title = "Download Regression Statistics",
                  uiOutput(ns("statistics_select")),
-                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat"), "Download regression statistics")),
+                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat"), "Download regression statistics", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")),
                  tags$hr(),
                  width = 12
              ),

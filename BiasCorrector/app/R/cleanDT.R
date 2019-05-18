@@ -85,7 +85,7 @@ cleanDT <- function(datatable, description, type, rv) {
   #datatable[,(vec_cal) := lapply(.SD, function(x){ifelse(x < 0, NA, ifelse(x > 100, NA, as.numeric(x)))}), .SDcols=vec_cal]
   
   # rowmeans are already in type 2 calibration data table (from fileMerger-application!)
-  datatable[, rowmeans := rowMeans(datatable[,vec_cal, with=F], na.rm = T)]
+  datatable[, row_means := rowMeans(datatable[,vec_cal, with=F], na.rm = T)]
   
   # make vec_cal global for type 1 data (many operations of the app rely on vec_cal)
   if (type == "1"){

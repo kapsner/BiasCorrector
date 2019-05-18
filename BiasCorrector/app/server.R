@@ -77,10 +77,21 @@ server <- function(input, output, session) {
                                logfilename, 
                                readLines)
     rv$logfile <- file()
+    
+    output$downloadLogfile <- downloadHandler(
+      filename = function(){
+        paste0("BC_logfile.txt")
+      },
+      content = function(file){
+        write(rv$logfile, file)
+      },
+      contentType = "text/csv"
+    )
   })
   output$log_out <- reactive({
     paste(paste0(rv$logfile, collapse = "\n"))
   })
+  
   
   
   
@@ -95,6 +106,8 @@ server <- function(input, output, session) {
   observe({
     req(rv$fileimportExp)
     cat("\nSome UI Stuff: disable Radiobuttons, experimentalFile and textInput\n")
+    # enable logfile-download
+    shinyjs::enable("downloadLogfile")
     # disable radiobuttons
     shinyjs::disable("moduleFileupload-type_locus_sample")
     # disable upload possibility of experimental file

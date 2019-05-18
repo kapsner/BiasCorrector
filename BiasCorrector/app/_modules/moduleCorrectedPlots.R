@@ -98,8 +98,12 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       # render head of page with selectInput and downloadbutton
       output$selectPlotInput_corrected <- renderUI({
         s <- selIn2()
-        b <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot"))
-        c <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download Error Plot"))
+        b <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))
+        c <- div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download Error Plot", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))
         do.call(tagList, list(s, tags$hr(), b, tags$hr(), c, tags$hr()))
       })
       
@@ -217,8 +221,12 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           output$selectPlotInput_corrected <- renderUI({
             s1 <- selectPlotLocus()
             s2 <- uiOutput("moduleCorrectedPlots-s2PlotOutput_corrected")
-            b <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot"))
-            c <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download Error Plot"))
+            b <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected", "Download Corrected Plot", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))
+            c <-  div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected", "Download Error Plot", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;"))
             do.call(tagList, list(s1, s2, tags$hr(), b, tags$hr(), c, tags$hr()))
           })
 
@@ -313,9 +321,11 @@ moduleCorrectedPlotsUI <- function(id){
                  width = 12
              )),
       column(3,
-             box(title = "Download Regression Statistics",
+             box(title = "Download Regression Statistics [corrected]",
                  uiOutput(ns("statistics_select")),
-                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat_corrected"), "Download regression statistics")),
+                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat_corrected"), "Download regression statistics", style="white-space: normal; text-align:center; 
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")),
                  tags$hr(),
                  width = 12
              )

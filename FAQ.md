@@ -2,14 +2,16 @@
 
 ## Table of Contents  
 
-[Where does the bias correction algorithm come from?](#where-does-the-bias-correction-algorithm-come-from) 
-[What kind of data can be corrected?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
-[Do my input files need to be formated?](#do-my-input-files-need-to-be-formated)  
+[Where does the PCR-bias correction algorithm come from?](#where-does-the-pcr-bias-correction-algorithm-come-from) 
+[What kind of data can be corrected by BiasCorrector?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
+[Do my input files need to be in a special format?](#do-my-input-files-need-to-be-in-a-special-format)  
 [Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
-[What is exactly being checked during BiasCorrector's data preprocessing?](#what-is-exactly-being-checked-during-biascorrectors-data-preprocessing) 
+[What is exactly done during BiasCorrector's data preprocessing?](#what-is-exactly-done-checked-during-biascorrectors-data-preprocessing) 
+[What are the regression statistics?](#what-are-the-regression-statistics)
+[What are 'substitutions' in my final results?](#what-are-substitutions-in-my-final-results)
 
 
-## Where does the bias correction algorithm come from?  
+## Where does the PCR-bias correction algorithm come from?  
 
 BiasCorrector is the user friendly implementation of the algorithms, described by Moskalev et. al in their article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press*.  
 
@@ -109,3 +111,20 @@ Example: to upload a file for bias correction of type 2, that contains the calib
 During the preprocessing, all requirements on the input files as stated in [Do my input files need to be formated?](#do-my-input-files-need-to-be-formated) are checked. Furhtermore, the rowmeans of all CpG-columns are calculated for every provided file. 
 
 If any of the abovementioned file requirements is not met, an error will occur, e.g. if any calibration step is not within the range of 0 <= CS <= 100 or if you provided less then four calibration steps with your input data. 
+
+
+## What are the regression statistics?
+
+The regression statistics table shows the regression parameters of the hyperbolic regression and the cubic regression. 
+- Column 1 presents the CpG-site's name. 
+- Column 2 presents the mean of the relative absolute errors for every CpG-site. 
+- Columns 3-6 present the sum of squared error of the hyperbolic regression ('SSE [h]') and the regression parameters used to calculate the hyperbolic regression curves for the respective CpG-site. 
+- Columns 7-11 present the sum of squared error of the cubic regression ('SSE [c]') and the regression parameters used to calculate the cubic regression curves. 
+- The rows highlighted with a green background colour indicate the regression equation, that in comparison of the sum of squared errors better fits the data points for the respecitve CpG-site. 
+
+
+## What are 'substitutions' in my final results?
+
+Substitutions occur, when no result is found in the range of plausible values between 0 and 100 during the BiasCorrection. A 'border zone' is implemented in the ranges 0 – 10% and 100 + 10%. If a result is in the range -10 < x < 0 percentage or 100 < x < 110 percentage, the value is substituted in the final results with 0 percentage or 100 percentage respectively. 
+Values beyond these border zones will be substituted with a blank value in the final output, as they seem implausible and could indicate substantial errors in the underlying data. 
+For a detailed feedback, the substitutions table shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG-site. 

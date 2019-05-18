@@ -97,7 +97,7 @@ type2FileConfirm <- function(filelist, choiceslist, rv){
       # create empty matrix/data.table of dimension CpG_count + 2 (true_methylation +  rownames)
       m <- data.table(matrix(nrow = 0, ncol = (as.numeric(gene_names[locus_id==g, CpG_count]) + 2)))
       # rename columns
-      colnames(m) <- c("true_methylation", col_names[2:(ncol(m)-1)], "rowmeans")
+      colnames(m) <- c("true_methylation", col_names[2:(ncol(m)-1)], "row_means")
       # store empty data.table with right dimensions in list
       final_calibs[[g]] <- m
     }
@@ -112,7 +112,7 @@ type2FileConfirm <- function(filelist, choiceslist, rv){
       
       # loop through loci in basefile and append results to final_calibs
       for (locus in gene_names[,locus_id]){
-        vec2 <- c(vec[2:(gene_names[locus_id==locus,CpG_count]+1)], "rowmeans")
+        vec2 <- c(vec[2:(gene_names[locus_id==locus,CpG_count]+1)], "row_means")
         add_df <- basefile[locus_id==locus, (vec2), with=F]
         final_calibs[[locus]] <- rbind(final_calibs[[locus]], cbind(true_methylation = rep(calstep, nrow(add_df)), add_df))
       }
