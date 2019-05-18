@@ -2,6 +2,12 @@
 plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
   initializeListJ(rv)
   
+  if (!is.null(b)){
+    writeLog(paste0("### Starting with regression calculations ###\n\nLocus ID: ", b))
+  } else {
+    writeLog(paste0("### Starting with regression calculations ###"))
+  }
+  
   # for plotting: basic idea and some code snippets from:
   # https://gist.github.com/wch/5436415/
   plot.list <- reactive({
