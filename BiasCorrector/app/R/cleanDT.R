@@ -24,7 +24,7 @@ cleanDT <- function(datatable, description, type, rv) {
       names(datatable)[1] <- "sample_id"
       
     } else {
-      cat("### ERROR 18 ###")
+      cat("### ERROR 18: wrong description ###")
       return(NULL)
     }
     
@@ -45,11 +45,11 @@ cleanDT <- function(datatable, description, type, rv) {
       names(datatable)[1] <- "locus_id"
       
     } else {
-      cat("### ERROR 36 ###")
+      cat("### ERROR 36: wrong description ###")
       return(NULL)
     }
   } else {
-    cat("### ERROR 40 ###")
+    cat("### ERROR 40: wrong type ###")
     return(NULL)
   }
   
@@ -58,16 +58,22 @@ cleanDT <- function(datatable, description, type, rv) {
   datatable[, (vec) := lapply(.SD, function(x){gsub(",", ".", x)}), .SDcols = vec]
   
   # fist column is factor
-  if (description == "calibration" && type == "1"){
+  if (description == "calibration" & type == "1"){
     # this is needed, because values here must be numeric
-    tryCatch({
-      datatable[, (vec[1]) := lapply(.SD, function(x){factor(as.numeric(as.character(x)))}), .SDcols = vec[1]]
-    }, error = function(e){
-      cat("### ERROR 54 ###")
+    result <- tryCatch({
+      datatable[, (vec[1]) := factor(as.numeric(as.character(get(vec[1]))))]
+    }, warning = function(w){
+      print(w)
+      cat("### ERROR 54: first column cannot be parsed to numeric ###")
       return(NULL)
     })
+    
+    if (is.null(result)){
+      return(NULL)
+    }
+    
   } else {
-    datatable[, (vec[1]) := lapply(.SD, as.factor), .SDcols = vec[1]]
+    datatable[, (vec[1]) := as.factor(get(vec[1]))]
   }
   
   # rest is numeric
@@ -76,6 +82,8 @@ cleanDT <- function(datatable, description, type, rv) {
   # sort datatable by first column and return it
   datatable <- datatable[order(datatable[[vec[1]]])]
   
+  # remove empty rows
+  datatable <- datatable[rowSums(datatable[,-1], na.rm = T) != 0,]
   
   # some more dataprepration 
   vec_cal <- names(datatable)[-1]

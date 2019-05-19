@@ -64,7 +64,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
       if (ending[2] %in% c("csv", "CSV")){
         file <- reactiveFileReader(1000, session,
                                    input_re()[["moduleFileupload-experimentalFile"]]$datapath, 
-                                   fread)
+                                   fread, header = T)
         tryCatch({
           rv$fileimportExp <- cleanDT(file(), description = "experimental", type = rv$type_locus_sample, rv=rv)
           
@@ -119,7 +119,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
         if (ending[2] %in% c("csv", "CSV")){
           file <- reactiveFileReader(1000, session,
                                      input_re()[["calibrationFile"]]$datapath, 
-                                     fread)
+                                     fread, header = T)
           
           # try to import file
           tryCatch({
@@ -187,7 +187,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
           
           file <- reactiveFileReader(1000, session,
                                      input_re()[["calibrationFile"]]$datapath[i], 
-                                     fread)
+                                     fread, header = T)
           
           if (ending[2] %in% c("csv", "CSV")){
             rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
