@@ -9,9 +9,10 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       str4 <- "Columns 3-6 present the sum of squared error of the hyperbolic regression ('SSE [h]') and the regression parameters used to calculate the hyperbolic regression curves for the respective CpG-site."
       str5 <- "Columns 7-11 present the sum of squared error of the cubic regression ('SSE [c]') and the regression parameters used to calculate the cubic regression curves."
       str6 <- "The rows highlighted with a green background colour indicate the regression equation, that in comparison of the sum of squared errors better fits the data points for the respecitve CpG-site."
+      str7 <- "'Relative error' is the average of the relative errors between the true and the observed methylation degrees of each methylation step for the respective CpG-sites.<br/>It is calculated by the formula<br/> <i>abs(methylation_true - methylation_observed) / methylation_true </i>."
       
       
-      HTML(paste(str1, str2, str3, str4, str5, str6, sep = "<br/><br/>"))
+      HTML(paste(str1, str2, str3, str4, str5, str6, str7, sep = "<br/><br/>"))
     })
     
     # type 1 data:

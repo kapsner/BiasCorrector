@@ -31,9 +31,13 @@ regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
       ggtitle(paste("CpG-site:", vec_cal[i])) + 
       geom_text(data = data.frame(),
                 aes(x=-Inf, y=Inf, hjust=0, vjust = 1),
-                label = paste0("SSE cubic: ", round(rv$result_list[[vec_cal[i]]]$SSE_cubic, 3),
-                               "\nSSE hyperbolic: ", round(rv$result_list[[vec_cal[i]]]$SSE_hyper, 3)),
-                size = 4)
+                label = paste0(" Cubic:\n",
+                               "  SSE: ", round(rv$result_list[[vec_cal[i]]]$SSE_cubic, 2),
+                               "\n  R²: ", round(rv$result_list[[vec_cal[i]]]$Coef_cubic$R2, 2),
+                               "\n\n Hyperbolic:\n", 
+                               "  SSE: ", round(rv$result_list[[vec_cal[i]]]$SSE_hyper, 2),
+                               "\n  R²: ", round(rv$result_list[[vec_cal[i]]]$Coef_hyper$R2, 2)),
+                size = 3.5)
     plot.listR[[i]] <- p
   }
   return(plot.listR)

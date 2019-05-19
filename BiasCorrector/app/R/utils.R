@@ -41,3 +41,12 @@ substitutions_create <- function(rv){
                                  corrected = character(),
                                  replacement = character())
 }
+
+# R-squared function
+rsq <- function(true, fitted){
+  return(cor(true, fitted) ^ 2)
+}
+
+sdm <- function(vector){
+  I((vector-mean(vector))^2)
+}

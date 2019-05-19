@@ -39,11 +39,24 @@ cubic_regression <- function(df_agg, vec, rv) {
   df_agg[,CpG_fitted_diff := CpG-fitted]
   df_agg[,squared_error := I((CpG_fitted_diff)^2)]
   
+  # sum of squared errors = residual sum of squares
+  SSE <- as.numeric(df_agg[,sum(squared_error, na.rm = T)])
+  
+  # squared dist to mean
+  df_agg[,squared_dist_mean := sdm(fitted)]
+  
+  # total sum of squares
+  TSS <- as.numeric(df_agg[,sum(squared_dist_mean, na.rm = T)])
+  
+  
   # sum of squared errors
   # rv$result_list[Var==vec[i], SSE_cubic := df_agg[,sum(squared_error)]]
-  rv$result_list[[vec]]["SSE_cubic"] <- df_agg[,sum(squared_error, na.rm = T)]
+  rv$result_list[[vec]]["SSE_cubic"] <- SSE
   rv$result_list[[vec]][["Coef_cubic"]] <- list("ax3" = unname(cof[4]),
                                                 "bx2" = unname(cof[3]),
                                                 "cx" = unname(cof[2]),
-                                                "d" = unname(cof[1]))
+                                                "d" = unname(cof[1]),
+                                                "R2" = 1 - (SSE / TSS))
+  
+  df_agg[,c("fitted", "squared_error", "CpG_fitted_diff", "squared_dist_mean") := NULL]
 }

@@ -65,20 +65,31 @@ hyperbolic_regression <- function(df_agg, vec, rv){
   df_agg[,CpG_fitted_diff := CpG-fitted]
   df_agg[,squared_error := I((CpG_fitted_diff)^2)]
   
+  # sum of squared errors = residual sum of squares
+  SSE <- as.numeric(df_agg[,sum(squared_error, na.rm = T)])
+  
   # calculate raw_error
   df_agg[,CpG_true_diff := abs(CpG-true_methylation)]
   df_agg[,relative_error := ifelse(true_methylation != 0, (CpG_true_diff/true_methylation)*100, NA)]
   
+  # squared dist to mean
+  df_agg[,squared_dist_mean := sdm(fitted)]
+  
+  # total sum of squares
+  TSS <- as.numeric(df_agg[,sum(squared_dist_mean, na.rm = T)])
+  
   # sum of squared errors
   rv$result_list[[vec]] <- list("Var" = vec,
                                 "relative_error" = df_agg[,mean(relative_error, na.rm = T)],
-                                "SSE_hyper" = df_agg[,sum(squared_error, na.rm = T)],
-                                "Coef_hyper" = list("y0" = rv$y0,
-                                                    "y1" = rv$y1,
-                                                    "b" = rv$b,
-                                                    "m0" = rv$m0,
-                                                    "m1" = rv$m1))
+                                "SSE_hyper" = SSE)
+  
+  rv$result_list[[vec]][["Coef_hyper"]] = list("y0" = rv$y0,
+                                               "y1" = rv$y1,
+                                               "b" = rv$b,
+                                               "m0" = rv$m0,
+                                               "m1" = rv$m1,
+                                               "R2" = 1 - (SSE / TSS))
   
   # delete fitted/squared_error
-  df_agg[,c("fitted", "squared_error") := NULL]
+  df_agg[,c("fitted", "squared_error", "CpG_fitted_diff", "CpG_true_diff", "relative_error", "squared_dist_mean") := NULL]
 }

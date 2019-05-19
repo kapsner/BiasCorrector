@@ -4,26 +4,26 @@ renderRegressionStatisticTable <- function(dt){
   # rgb(124, 252, 0, max=255, alpha=90): "#7CFC005A"
   # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
   t <- DT::datatable(dt, colnames = c("Name", "Relative error",
-                                      "SSE [h]", "b", "y₀", "y₁", "  ",
-                                      "SSE [c]", "ax³", "bx²", "cx", "d",
+                                      "SSE [h]", "R² [h]", "b", "y₀", "y₁", "  ",
+                                      "SSE [c]", "R² [c]", "ax³", "bx²", "cx", "d",
                                       "better_model"),
                      rownames = F,
                      options = list(scrollX = TRUE, 
                                     pageLength = 20,
-                                    columnDefs = list(list(targets = 12, visible = FALSE)), 
+                                    columnDefs = list(list(targets = 14, visible = FALSE)), 
                                     dom="ltip"
                      )) %>%
-    formatRound(columns=c(2:12), digits=3) %>%
+    formatRound(columns=c(2:14), digits=3) %>%
     formatStyle(columns = 3,
                 valueColumns = "better_model",
                 fontWeight = styleEqual(0, "bold")) %>%
-    formatStyle(columns = 3:6,
+    formatStyle(columns = 3:7,
                 valueColumns = "better_model",
                 backgroundColor = styleEqual(0, "#7CFC005A")) %>%
-    formatStyle(columns = 8,
+    formatStyle(columns = 9,
                 valueColumns = "better_model",
                 fontWeight = styleEqual(1, "bold")) %>%
-    formatStyle(columns = 8:12,
+    formatStyle(columns = 9:14,
                 valueColumns = "better_model",
                 backgroundColor = styleEqual(1, "#7CFC005A")) #%>%
     #formatStyle(columns = c(1:11), fontSize = "80%")
