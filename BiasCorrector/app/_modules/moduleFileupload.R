@@ -13,7 +13,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
     if (isFALSE(rv$expFileReq)){
       writeLog("(app) Entered observation for experimental file.")
       # check file ending
-      ending <- strsplit(input_re()[["moduleFileupload-experimentalFile"]]$name, ".", fixed = T)[[1]]
+      rv$ending <- strsplit(input_re()[["moduleFileupload-experimentalFile"]]$name, ".", fixed = T)[[1]]
       
       # if type 1 data
       if (rv$type_locus_sample == "1"){
@@ -61,7 +61,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
       #removeUI(selector = "#tag1", immediate = T)
       #shinyjs::disable("moduleFileupload-type_locus_sample")
       
-      if (ending[2] %in% c("csv", "CSV")){
+      if (rv$ending[2] %in% c("csv", "CSV")){
         file <- reactiveFileReader(1000, session,
                                    input_re()[["moduleFileupload-experimentalFile"]]$datapath, 
                                    fread, header = T)
@@ -79,22 +79,21 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
         if (is.null(rv$fileimportExp)){
           # error handling fileimport
           openModal("experimentalFile", rv)
+        } else {
+          # check here, if there have been deleted rows containing missing values
+          tryCatch({
+            omitnasModal(rv$omitnas, "experimental")
+            rv$omitnas <- NULL
+          }, error = function(e){
+            writeLog(paste0("Errormessage: ", e))
+          })
+          
+          # workaround to tell ui, that experimental file is there
+          output$fileUploaded <- reactive({
+            return(TRUE)
+          })
+          outputOptions(output, 'fileUploaded', suspendWhenHidden=FALSE)
         }
-        
-        # check here, if there have been deleted rows containing missing values
-        tryCatch({
-          omitnasModal(rv$omitnas, "experimental")
-          rv$omitnas <- NULL
-        }, error = function(e){
-          writeLog(paste0("Errormessage: ", e))
-        })
-        
-        # workaround to tell ui, that experimental file is there
-        output$fileUploaded <- reactive({
-          return(TRUE)
-        })
-        outputOptions(output, 'fileUploaded', suspendWhenHidden=FALSE)
-        
       } else {
         # error handling fileimport
         openModal("experimentalFile", rv)
@@ -108,15 +107,17 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
   observe({
     req(input_re()[["calibrationFile"]])
     
+    rv$ending <- NULL
+    
     if (is.null(rv$fileimportCal) | is.null(rv$fileimportList)){
       # if calibration file is of data type 1
       if (rv$type_locus_sample == "1"){
         
         # check file ending
-        ending <- strsplit(input_re()[["calibrationFile"]]$name, ".", fixed = T)[[1]]
+        rv$ending <- strsplit(input_re()[["calibrationFile"]]$name, ".", fixed = T)[[1]]
         
         # if ending suggests it might be a csv file
-        if (ending[2] %in% c("csv", "CSV")){
+        if (rv$ending[2] %in% c("csv", "CSV")){
           file <- reactiveFileReader(1000, session,
                                      input_re()[["calibrationFile"]]$datapath, 
                                      fread, header = T)
@@ -180,30 +181,33 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
         # if calibration file is of data type 2
       } else if (rv$type_locus_sample == "2"){
         
-        # loop through calibration files
-        for (i in 1:nrow(input_re()[["calibrationFile"]])){
-          # check file ending
-          ending <- strsplit(input_re()[["calibrationFile"]]$name[i], ".", fixed = T)[[1]]
+        if (isFALSE(rv$type2cal_uploaded)){
           
-          file <- reactiveFileReader(1000, session,
-                                     input_re()[["calibrationFile"]]$datapath[i], 
-                                     fread, header = T)
-          
-          if (ending[2] %in% c("csv", "CSV")){
-            rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
-          } else {
-            # error handling fileimport
-            openModal("csv", rv)
+          # loop through calibration files
+          for (i in 1:nrow(input_re()[["calibrationFile"]])){
+            # check file ending
+            rv$ending <- strsplit(input_re()[["calibrationFile"]]$name[i], ".", fixed = T)[[1]]
+            
+            file <- reactiveFileReader(1000, session,
+                                       input_re()[["calibrationFile"]]$datapath[i], 
+                                       fread, header = T)
+            
+            if (rv$ending[2] %in% c("csv", "CSV")){
+              rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
+            } else {
+              # error handling fileimport
+              openModal("csv", rv)
+            }
           }
-        }
-        
-        # chech type 2 file requirements here
-        filecheck <- type2FileReq(rv$fileimportList, rv)
-        
-        if (is.character(filecheck)){
-          openModal(filecheck, rv)
-        } else if (isTRUE(filecheck)){
-          rv$type2cal_uploaded <- TRUE
+          
+          # chech type 2 file requirements here
+          filecheck <- type2FileReq(rv$fileimportList, rv)
+          
+          if (is.character(filecheck)){
+            openModal(filecheck, rv)
+          } else if (isTRUE(filecheck)){
+            rv$type2cal_uploaded <- TRUE
+          }
         }
       }
     }

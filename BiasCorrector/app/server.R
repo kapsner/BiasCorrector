@@ -1,6 +1,7 @@
 server <- function(input, output, session) {
   
   rv <- reactiveValues(
+    ending = NULL,
     expFileReq = F,
     type_locus_sampe = NULL,
     fileimportExp = NULL,
