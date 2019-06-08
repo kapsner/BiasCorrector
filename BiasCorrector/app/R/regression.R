@@ -14,8 +14,9 @@ regression_type1 <- function(datatable, vec_cal, rv, mode=NULL){
     writeLog(paste("Logging df_agg:", vec_cal[i]))
     writeLog(df_agg)
     
-    hyperbolic_regression(df_agg, vec_cal[i], rv = rv)
-    cubic_regression(df_agg, vec_cal[i], rv = rv)
+    rv$result_list[[vec_cal[i]]] <- hyperbolic_regression(df_agg, vec_cal[i])
+    # append result_list
+    rv$result_list[[vec_cal[i]]] <- c(rv$result_list[[vec_cal[i]]], cubic_regression(df_agg, vec_cal[i]))
     
     if (is.null(mode)){
       custom_ylab <- "% apparent methylation after PCR"

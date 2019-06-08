@@ -1,11 +1,5 @@
 # solved hyperbolic equation
-hyperbolic_equation_solved <- function(y, rv){
-  b <- rv$b
-  y0 <- rv$y0
-  y1 <- rv$y1
-  m0 <- rv$m0
-  m1 <- rv$m1
-  
+hyperbolic_equation_solved <- function(y, b, y0, y1, m0, m1){
   # old solved equation
   #return(((100 * y0) - (100 * y)) / ((y * b) - (y1 * b) + y0 - y))
   # new solved equation
@@ -167,15 +161,17 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
       message <- paste("Solving hyperbolic regression for", i)
       writeLog(message)
       
-      rv$y0 <- rv$result_list[[i]][["Coef_hyper"]][["y0"]]
-      rv$y1 <- rv$result_list[[i]][["Coef_hyper"]][["y1"]]
-      rv$b <- rv$result_list[[i]][["Coef_hyper"]][["b"]]
+      b <- rv$result_list[[i]][["Coef_hyper"]][["b"]]
+      y0 <- rv$result_list[[i]][["Coef_hyper"]][["y0"]]
+      y1 <- rv$result_list[[i]][["Coef_hyper"]][["y1"]]
+      m0 <- rv$result_list[[i]][["Coef_hyper"]][["m0"]]
+      m1 <- rv$result_list[[i]][["Coef_hyper"]][["m1"]]
       
       
       for (j in as.vector(df_agg_ex[,get(first_colname)])){
         msg1 <- paste("Samplename:", j)
         
-        h_solv <- as.numeric(as.character(hyperbolic_equation_solved(df_agg_ex[get(first_colname)==j,CpG], rv=rv)))
+        h_solv <- as.numeric(as.character(hyperbolic_equation_solved(df_agg_ex[get(first_colname)==j,CpG], b, y0, y1, m0, m1)))
         print(h_solv)
         
         if (h_solv >= 0 & h_solv <= 100){

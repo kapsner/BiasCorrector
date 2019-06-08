@@ -1,11 +1,27 @@
 createPlots <- function(plotlist, f, rv, filename){
   plotPNG({
-    # add plot and plot statistics here, "j" is necessary to get values for curve in equations
-    # always reset j to f
-    rv$j <- f
+    
+    # hyperbolic parameters
+    b <- rv$result_list[[rv$vec_cal[f]]][["Coef_hyper"]]$b
+    y0 <- rv$result_list[[rv$vec_cal[f]]][["Coef_hyper"]]$y0
+    y1 <- rv$result_list[[rv$vec_cal[f]]][["Coef_hyper"]]$y1
+    m0 <- rv$result_list[[rv$vec_cal[f]]][["Coef_hyper"]]$m0
+    m1 <- rv$result_list[[rv$vec_cal[f]]][["Coef_hyper"]]$m1
+    
+    message <- paste0("# CpG-site: ", rv$vec_cal[f])
+    msg2 <- paste("Using bias_weight =", b, ", y0 =", y0, ", y1 =", y1)
+    writeLog(paste0(message, "  \n", msg2))
+    
+    # cubic parameters
+    c <- sapply(rv$result_list[[rv$vec_cal[f]]][["Coef_cubic"]], unlist)[c(4:1)]
+    #c <- sapply(rv$result_list[[rv$vec_cal[i]]][["Coef_cubic"]], `[`)[c(4:1)]
+    message <- paste0("# CpG-site: ", rv$vec_cal[f])
+    msg2 <- paste("Using c =", paste(c, collapse = ", "))
+    writeLog(paste0(message, "  \n", msg2))
+    
     return(print(plotlist +
-                   stat_function(fun = hyperbolic_equation, args = list(rv=rv), geom = "line", aes(color = "Hyperbolic Regression"), size=1.06) +
-                   stat_function(fun = cubic_equation, args = list(rv=rv), geom = "line", aes(color = "Cubic Regression"), size=1.06) +
+                   stat_function(fun = hyperbolic_equation, args = list(b=b, y0=y0, y1=y1, m0=m0, m1=m1), geom = "line", aes(color = "Hyperbolic Regression"), size=1.06) +
+                   stat_function(fun = cubic_equation, args = list(c=c), geom = "line", aes(color = "Cubic Regression"), size=1.06) +
                    geom_line(aes(x=plotlist$data$true_methylation, y=plotlist$data$true_methylation, color = "unbiased"), linetype="dashed", size=1.04) +
                    labs(color = element_blank()) +
                    scale_color_manual(values = c("#E64B35FF", "#4DBBD5FF", "#00A087FF"),

@@ -1,6 +1,9 @@
 # plotting utility
 plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
-  initializeListJ(rv)
+  
+  # initialize result_list
+  # save all goodness of fit statistics and for equation necessary parameters in list
+  rv$result_list <- list()
   
   if (!is.null(b)){
     writeLog(paste0("### Starting with regression calculations ###\n\nLocus ID: ", b))
