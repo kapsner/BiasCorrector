@@ -10,6 +10,8 @@ hyperbolic_equation_solved <- function(y, b, y0, y1, m0, m1){
 solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
   writeLog("Entered 'solving_equations'-Function")
   
+  substitutions <- substitutions_create()
+  
   first_colname <- colnames(datatable)[1]
   
   # create results dataframe
@@ -116,12 +118,12 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
             
           } else {
             #if (is.null(mode)){
-              msg3 <- "No fitting numeric roots within the borders found: substitute NA"
-              vector <- c(vector, NA)
-              
-              # store substitutions
-              original = as.character(paste(round(nonfitting, 3), collapse = ", "))
-              replacement = "NA"
+            msg3 <- "No fitting numeric roots within the borders found: substitute NA"
+            vector <- c(vector, NA)
+            
+            # store substitutions
+            original = as.character(paste(round(nonfitting, 3), collapse = ", "))
+            replacement = "NA"
             # } else {
             #   
             #   print("Nonfitting")
@@ -145,10 +147,10 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
           }
           
           if (is.null(mode)){
-            rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
-                                                                   CpG_site = i,
-                                                                   corrected = original,
-                                                                   replacement = replacement))
+            substitutions <- rbind(substitutions, data.table(id = j,
+                                                             CpG_site = i,
+                                                             corrected = original,
+                                                             replacement = replacement))
           }
           
           writeLog(paste0(msg1, "  \n  \n", msg2, "  \n", msg3))
@@ -200,12 +202,12 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
             
           } else {
             #if (is.null(mode)){
-              msg3 <- "No fitting numeric roots within the borders found: substitute NA"
-              vector <- c(vector, NA)
-              
-              # store substitutions
-              original = as.character(h_solv)
-              replacement = "NA"
+            msg3 <- "No fitting numeric roots within the borders found: substitute NA"
+            vector <- c(vector, NA)
+            
+            # store substitutions
+            original = as.character(h_solv)
+            replacement = "NA"
             # } else {
             #   if (h_solv >= 110){
             #     msg3 <- "No fitting numeric roots within the borders found: since we are in mode==corrected,  substitute 100"
@@ -224,10 +226,10 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
           }
           
           if (is.null(mode)){
-            rv$substitutions <- rbind(rv$substitutions, data.table(id = j,
-                                                                   CpG_site = i,
-                                                                   corrected = original,
-                                                                   replacement = replacement))
+            substitutions <- rbind(substitutions, data.table(id = j,
+                                                             CpG_site = i,
+                                                             corrected = original,
+                                                             replacement = replacement))
           }
           
           writeLog(paste0(msg1, "  \n  \n", msg2, "  \n", msg3))
@@ -243,6 +245,6 @@ solving_equations <- function(datatable, regmethod, type, rv, mode=NULL){
     }
   }
   results[,(colnames(results)[-1]):=lapply(.SD, function(x){as.numeric(as.character(x))}), .SDcols=colnames(results)[-1]]
-  return(results)
+  return(list("results" = results, "substitutions" = substitutions))
 }
 

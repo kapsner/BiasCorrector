@@ -66,7 +66,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
                                    input_re()[["moduleFileupload-experimentalFile"]]$datapath, 
                                    fread, header = T)
         tryCatch({
-          rv$fileimportExp <- cleanDT(file(), description = "experimental", type = rv$type_locus_sample, rv=rv)
+          rv$fileimportExp <- cleanDT(file(), description = "experimental", type = rv$type_locus_sample)[["dat"]]
           
           #updateTabItems(session, "tabs", "panel_1")
         }, error = function(e){
@@ -125,7 +125,9 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
           # try to import file
           tryCatch({
             if (is.null(rv$fileimportCal)){
-              rv$fileimportCal <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
+              cal_type_1 <- cleanDT(file(), "calibration", type = "1")
+              rv$fileimportCal <- cal_type_1[["dat"]]
+              rv$vec_cal <- cal_type_1[["vec_cal"]]
             }
           }, error = function(e){
             print(e)
@@ -193,7 +195,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
                                        fread, header = T)
             
             if (rv$ending[2] %in% c("csv", "CSV")){
-              rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = rv$type_locus_sample, rv=rv)
+              rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = "2")[["dat"]]
             } else {
               # error handling fileimport
               openModal("csv", rv)

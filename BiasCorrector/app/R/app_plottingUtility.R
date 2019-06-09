@@ -1,10 +1,6 @@
 # plotting utility
 plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
   
-  # initialize result_list
-  # save all goodness of fit statistics and for equation necessary parameters in list
-  rv$result_list <- list()
-  
   if (!is.null(b)){
     writeLog(paste0("### Starting with regression calculations ###\n\nLocus ID: ", b))
   } else {
@@ -13,15 +9,17 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
   
   # for plotting: basic idea and some code snippets from:
   # https://gist.github.com/wch/5436415/
-  plot.list <- reactive({
-    regression_type1(data, rv$vec_cal, rv, mode)
+  regression <- reactive({
+    regression_type1(data, rv$vec_cal, mode)
   })
   
   
   withProgress(message = "Calculating calibration curves", value = 0, {
     incProgress(1/1, detail = "... working on calculations ...")
     # calculate results (if this is run here, j must be resetted)
-    plotlistR <- plot.list()
+    regression_results <- regression()
+    plotlistR <- regression_results[["plot_list"]]
+    rv$result_list <- regression_results[["result_list"]]
   })
   
   # get number of CpG-sites

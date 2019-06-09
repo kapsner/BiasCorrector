@@ -15,17 +15,19 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         })
         print(rv$choices_list)
         
-        
-        substitutions_create(rv)
         # calculating final results
         withProgress(message = "BiasCorrecting experimental data", value = 0, {
           incProgress(1/1, detail = "... working on BiasCorrection ...")
           
           # Experimental data 
-          rv$finalResults <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+          solved_eq <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+          rv$finalResults <- solved_eq[["results"]]
+          rv$substitutions <- solved_eq[["substitutions"]]
           
           # Calibration Data (to show corrected calibration curves)
-          rv$fileimportCal_corrected <- solving_equations(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected")
+          solved_eq2 <- solving_equations(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected")
+          rv$fileimportCal_corrected <- solved_eq2[["results"]]
+          
           colnames(rv$fileimportCal_corrected) <- colnames(rv$fileimportCal)
         })
         
@@ -35,7 +37,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         # initialize temp results
         rv$temp_results <- list()
         
-        substitutions_create(rv)
+        rv$substitutions <- substitutions_create()
+        
         # iterate over unique names in locus_id of experimental file (to correctly display
         # decreasing order of CpG-sites in final results)
         
@@ -53,7 +56,9 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
             # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
             vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "row_means")
             # solve equations for that locus and append temp_results
-            rv$temp_results[[b]] <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
+            solved_eq <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
+            rv$temp_results[[b]] <- solved_eq[["results"]]
+            rv$substitutions <- rbind(rv$substitutions, solved_eq[["substitutions"]])
           }
           
           # iterate over temp_results (key=locus-name) and iteratively append final results
@@ -86,7 +91,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
               vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "row_means")
               # solve equation for that calibrationstep
               # save result of each calibrationstep in tmp object
-              tmp <- solving_equations(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")
+              tmp <- solving_equations(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")[["results"]]
               # imediatelly rename columnames
               colnames(tmp) <- vec
               # if new calibration step is saved for the first time

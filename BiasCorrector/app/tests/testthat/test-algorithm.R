@@ -1,0 +1,75 @@
+context("test functioning of algorithm, type 1")
+
+# # we need to import the writeLog-function
+# source("../../R/utils.R", encoding = "UTF-8")
+
+# debugging prefix
+#prefix <- "./BiasCorrector/app/tests/testthat/"
+prefix <- "./"
+
+# the writeLog-function needs the logfilename
+logfilename <- paste0(prefix, "log.txt")
+
+# initialize our list for reactive values
+rv <- list()
+
+library(data.table)
+
+
+test_that("algorithm test, type 1",{
+  # experimental data
+  exp_type_1 <- fread(paste0(prefix, "testdata/exp_type_1.csv"))
+  rv$fileimportExp <- cleanDT(exp_type_1, "experimental", 1)[["dat"]]
+  
+  # calibration data
+  cal_type_1 <- fread(paste0(prefix, "testdata/cal_type_1.csv"))
+  cal_type_1 <- cleanDT(cal_type_1, "calibration", 1)
+  rv$fileimportCal <- cal_type_1[["dat"]]
+  rv$vec_cal <- cal_type_1[["vec_cal"]]
+  
+  # some tests
+  expect_length(rv$vec_cal, 10)
+  expect_type(rv$vec_cal, "character")
+  
+  
+  # construct parts from app_plottingUtility.R
+  regression_results <- regression_type1(rv$fileimportCal, rv$vec_cal, mode=NULL)
+  plotlistR <- regression_results[["plot_list"]]
+  rv$result_list <- regression_results[["result_list"]]
+  
+  # save regression statistics to reactive value
+  rv$regStats <- statisticsList(rv$result_list)
+  
+  # some tests
+  expect_type(regression_results, "list")
+  expect_known_hash(regression_results, "2257cf6452")
+  expect_type(plotlistR, "list")
+  expect_known_hash(plotlistR, "abf6f8613d")
+  expect_type(rv$result_list, "list")
+  expect_known_hash(rv$result_list, "8c7d29964f")
+  expect_type(rv$regStats, "list")
+  expect_known_hash(rv$regStats, "a27d84167e")
+  
+  # calculate final results
+  # default rv$choices_list == rv$regStats[,.(Name, better_model)]
+  solved_eq <- solving_equations(rv$fileimportExp, rv$regStats[,c("Name", "better_model"),with=F], type = 1, rv = rv)
+  rv$finalResults <- solved_eq[["results"]]
+  rv$substitutions <- solved_eq[["substitutions"]]
+  
+  # Calibration Data (to show corrected calibration curves)
+  solved_eq2 <- solving_equations(rv$fileimportCal, rv$regStats[,c("Name", "better_model"),with=F], type = 1, rv = rv, mode = "corrected")
+  rv$fileimportCal_corrected <- solved_eq2[["results"]]
+  colnames(rv$fileimportCal_corrected) <- colnames(rv$fileimportCal)
+  
+  # some tests
+  expect_type(solved_eq, "list")
+  expect_known_hash(solved_eq, "564019ef97")
+  expect_type(rv$finalResults, "list")
+  expect_known_hash(rv$finalResults, "920658389f")
+  expect_type(rv$substitutions, "list")
+  expect_known_hash(rv$substitutions, "411246447a")
+  expect_type(solved_eq2, "list")
+  expect_known_hash(solved_eq2, "91795b9115")
+  expect_type(rv$fileimportCal_corrected, "list")
+  expect_known_hash(rv$fileimportCal_corrected, "913f716d0c")
+})

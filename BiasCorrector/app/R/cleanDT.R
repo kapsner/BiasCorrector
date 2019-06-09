@@ -1,6 +1,9 @@
 # modify datatable
-cleanDT <- function(datatable, description, type, rv) {
+cleanDT <- function(datatable, description, type) {
   writeLog("Entered 'cleanDT'-Function")
+  
+  # workaround for vec_cal
+  vec_cal <- NULL
   
   # remove all columns that only contain empty cells
   datatable <- Filter(function(x) !(all(x=="")), datatable)
@@ -97,7 +100,7 @@ cleanDT <- function(datatable, description, type, rv) {
   
   # make vec_cal global for type 1 data (many operations of the app rely on vec_cal)
   if (type == "1"){
-    rv$vec_cal <- names(datatable)[-1]
+    vec_cal <- names(datatable)[-1]
   }
   
   # count number of CpGs in type 2 data
@@ -136,5 +139,5 @@ cleanDT <- function(datatable, description, type, rv) {
       }
     }
   }
-  return(datatable)
+  return(list("dat" = datatable, "vec_cal" = vec_cal))
 }

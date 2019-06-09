@@ -35,11 +35,12 @@ writeCSV <- function(table, filename){
 }
 
 # create substitutions dataframe
-substitutions_create <- function(rv){
-  rv$substitutions <- data.table(id = character(), 
-                                 CpG_site = character(),
-                                 corrected = character(),
-                                 replacement = character())
+substitutions_create <- function(){
+  substitutions <- data.table(id = character(), 
+                              CpG_site = character(),
+                              corrected = character(),
+                              replacement = character())
+  return(substitutions)
 }
 
 # R-squared function
