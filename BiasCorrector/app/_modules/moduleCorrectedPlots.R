@@ -9,7 +9,12 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           
           withProgress(message = "Plotting BiasCorrected results", value = 0, {
             incProgress(1/1, detail = "... working hard ...")
-            plottingUtility(rv$fileimportCal_corrected, type=1, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected")
+            
+            regression_results <- regressionUtility(rv$fileimportCal_corrected, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected")
+            plotlistR <- regression_results[["plot_list"]]
+            rv$result_list <- regression_results[["result_list"]]
+            
+            plottingUtility(rv$fileimportCal_corrected, plotlistR, type=1, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", plotdir = plotdir)
           
             # save regression statistics to reactive value
             rv$regStats_corrected <- statisticsList(rv$result_list)
@@ -39,8 +44,12 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             for (b in names(rv$fileimportCal_corrected)){
               rv$vec_cal <- names(rv$fileimportCal_corrected[[a]])[-1]
               #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
+              
+              regression_results <- regressionUtility(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, mode="corrected")
+              plotlistR <- regression_results[["plot_list"]]
+              rv$result_list <- regression_results[["result_list"]]
 
-              plottingUtility(rv$fileimportCal_corrected[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected")
+              plottingUtility(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir)
 
               # save regression statistics to reactive value
               rv$regStats_corrected[[b]] <- statisticsList(rv$result_list)

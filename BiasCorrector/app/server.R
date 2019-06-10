@@ -38,7 +38,7 @@ server <- function(input, output, session) {
   )
   
   # run start function
-  onStart()
+  onStart(plotdir, csvdir, logfilename)
   
   
   # scientific purpose
@@ -59,7 +59,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$reset, {
     writeLog("restarting app")
-    cleanUp()
+    cleanUp(plotdir, csvdir)
     js$reset()
   })
   

@@ -38,6 +38,7 @@ source("./R/statisticsList.R", echo = F, encoding = "UTF-8")
 source("./R/app_requirementsError.R", echo = F, encoding = "UTF-8")
 source("./R/app_omitnasModal.R", echo = F, encoding = "UTF-8")
 source("./R/app_plottingUtility.R", echo = F, encoding = "UTF-8")
+source("./R/app_regressionUtility.R", echo = F, encoding = "UTF-8")
 source("./R/app_renderRegressionStatistic.R", echo = F, encoding = "UTF-8")
 source("./R/app_utils.R", echo = F, encoding = "UTF-8")
 

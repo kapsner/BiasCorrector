@@ -1,26 +1,11 @@
 # plotting utility
-plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
+plottingUtility <- function(data, plotlistR, type, samplelocusname, locus_id = NULL, rv, mode=NULL, headless=FALSE, plotdir){
   
-  if (!is.null(b)){
-    writeLog(paste0("### Starting with regression calculations ###\n\nLocus ID: ", b))
+  if (!is.null(locus_id)){
+    writeLog(paste0("### Starting with plotting ###\n\nLocus ID: ", locus_id))
   } else {
-    writeLog(paste0("### Starting with regression calculations ###"))
+    writeLog(paste0("### Starting with plotting ###"))
   }
-  
-  # for plotting: basic idea and some code snippets from:
-  # https://gist.github.com/wch/5436415/
-  regression <- reactive({
-    regression_type1(data, rv$vec_cal, mode)
-  })
-  
-  
-  withProgress(message = "Calculating calibration curves", value = 0, {
-    incProgress(1/1, detail = "... working on calculations ...")
-    # calculate results (if this is run here, j must be resetted)
-    regression_results <- regression()
-    plotlistR <- regression_results[["plot_list"]]
-    rv$result_list <- regression_results[["result_list"]]
-  })
   
   # get number of CpG-sites
   length_vector <- length(rv$vec_cal)
@@ -38,20 +23,23 @@ plottingUtility <- function(data, type, samplelocusname, b=NULL, rv, mode=NULL){
       filename <- paste0(plotdir, samplelocusname, "_", plotname, fn_suffix, ".png")
       plotmessage <- paste0("Creating ", msg_suffix, "plot No. ", f)
     } else if (type == 2){
-      filename <- paste0(plotdir, b, "-", samplelocusname, "_", plotname, fn_suffix, ".png")
-      plotmessage <- paste0("Locus ID: ", b, " --> Creating ", msg_suffix, "plot No. ", f)
+      filename <- paste0(plotdir, locus_id, "-", samplelocusname, "_", plotname, fn_suffix, ".png")
+      plotmessage <- paste0("Locus ID: ", locus_id, " --> Creating ", msg_suffix, "plot No. ", f)
     }
     
     writeLog(paste(plotmessage, "- filename:", filename))
     
-    # Create a Progress object
-    progress <- shiny::Progress$new()
-    # Make sure it closes when we exit this reactive, even if there's an error
-    on.exit(progress$close())
-    progress$set(message = plotmessage, value = 0)
-    
-    # Increment the progress bar, and update the detail text.
-    progress$inc(1/1, detail = paste("... working hard on plot", f, "of", length_vector))
+    # workaround to hide shiny-stuff, when going headless
+    if (isFALSE(headless)){
+      # Create a Progress object
+      progress <- shiny::Progress$new()
+      # Make sure it closes when we exit this reactive, even if there's an error
+      on.exit(progress$close())
+      progress$set(message = plotmessage, value = 0)
+      
+      # Increment the progress bar, and update the detail text.
+      progress$inc(1/1, detail = paste("... working hard on plot", f, "of", length_vector))
+    }
     
     # store plots to local temporary file
     createPlots(plotlistR[[f]], f, rv, filename)

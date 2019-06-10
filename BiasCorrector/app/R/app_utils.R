@@ -5,10 +5,10 @@ openModal <- function(description, rv){
   requirementsError(description)
 }
 
-onStart <- function(){
+onStart <- function(plotdir, csvdir, logfilename){
   
   if (dir.exists(plotdir)){
-    cleanUp()
+    cleanUp(plotdir, csvdir)
   }
   
   # create directories
@@ -19,7 +19,7 @@ onStart <- function(){
   suppressMessages(suppressWarnings(file.create(logfilename)))
 }
 
-cleanUp <- function(){
+cleanUp <- function(plotdir, csvdir){
   # on session end, remove plots and and all other files from tempdir
   do.call(file.remove, list(list.files(plotdir, full.names = TRUE)))
   unlink(plotdir, recursive = T)

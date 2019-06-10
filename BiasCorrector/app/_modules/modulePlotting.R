@@ -7,7 +7,10 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
       if (rv$type_locus_sample == "1"){
         if (isFALSE(rv$plotting_finished)){
           
-          plottingUtility(rv$fileimportCal, type=1, samplelocusname=rv$sampleLocusName, rv=rv)
+          regression_results <- regressionUtility(rv$fileimportCal, samplelocusname=rv$sampleLocusName, rv=rv)
+          plotlistR <- regression_results[["plot_list"]]
+          rv$result_list <- regression_results[["result_list"]]
+          plottingUtility(rv$fileimportCal, plotlistR, type=1, samplelocusname=rv$sampleLocusName, rv=rv, plotdir = plotdir)
           
           # save regression statistics to reactive value
           rv$regStats <- statisticsList(rv$result_list)
@@ -29,7 +32,10 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
             rv$vec_cal <- names(rv$fileimportCal[[a]])[-1]
             #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
             
-            plottingUtility(rv$fileimportCal[[a]], type=2, samplelocusname=rv$sampleLocusName, b=gsub("[[:punct:]]", "", b), rv=rv)
+            regression_results <- regressionUtility(rv$fileimportCal[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv)
+            plotlistR <- regression_results[["plot_list"]]
+            rv$result_list <- regression_results[["result_list"]]
+            plottingUtility(rv$fileimportCal[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, plotdir = plotdir)
             
             # save regression statistics to reactive value
             rv$regStats[[b]] <- statisticsList(rv$result_list)
