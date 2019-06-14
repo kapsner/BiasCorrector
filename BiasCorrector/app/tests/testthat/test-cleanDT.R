@@ -125,6 +125,3 @@ test_that("heterogenous cpg-sites per locus in type 2 data", {
   exp_type_2 <- fread(paste0(prefix, "testdata/exp_type_2_heterogenous.csv"))
   expect_null(cleanDT(exp_type_2, "experimental", 2))
 })
-
-# remove temporary files
-file.remove(logfilename)

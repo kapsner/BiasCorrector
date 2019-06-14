@@ -6,7 +6,13 @@ source("../R/headless.R", encoding = "UTF-8")
 
 test_check("testthat")
 
+debug_prefix <- "./"
+#debug_prefix <- "./BiasCorrector/app/"
 # start tests manually
-# test_dir("./BiasCorrector/app/tests/")
-# test_file("./BiasCorrector/app/tests/testthat/test-startup.R")
-# test_file("./BiasCorrector/app/tests/testthat/test-algorithm.R")
+test_dir(paste0(debug_prefix, "BiasCorrector/app/tests/"))
+test_file(paste0(debug_prefix, "BiasCorrector/app/tests/testthat/test-startup.R"))
+test_file(paste0(debug_prefix, "BiasCorrector/app/tests/testthat/test-algorithm.R"))
+test_file(paste0(debug_prefix, "BiasCorrector/app/tests/testthat/test-headless.R"))
+test_file(paste0(debug_prefix, "BiasCorrector/app/tests/testthat/test-create_aggregated.R"))
+test_file(paste0(debug_prefix, "BiasCorrector/app/tests/testthat/test-cleanDT.R"))
+test_file(paste0(debug_prefix, "BiasCorrector/app/tests/testthat/test-app_utils.R"))

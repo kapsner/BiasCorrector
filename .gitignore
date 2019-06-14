@@ -6,6 +6,7 @@
 !/.gitignore
 !/README.md
 !/FAQ.md
+!/LICENSE.md
 !/docker/
 /docker/addfolder/
 !/BiasCorrector/
