@@ -16,7 +16,7 @@
 
 
 createPlots <- function(plotlist, f, rv, filename){
-  plotPNG({
+  shiny::plotPNG({
     
     # hyperbolic parameters
     b <- rv$result_list[[rv$vec_cal[f]]][["Coef_hyper"]]$b
@@ -53,7 +53,7 @@ createPlots <- function(plotlist, f, rv, filename){
   width = 450)
 }
 
-createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NULL){
+createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NULL, headless = FALSE, plotdir){
   
   stats_pre <- statstable_pre[,.(Name, relative_error, better_model)]
   stats_post <- statstable_post[,.(Name, relative_error, better_model)]
@@ -66,7 +66,7 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
     vec_cal <- stats_pre[,Name]
     length_vector <- length(vec_cal)
     
-    Map(function(i) {
+    base::Map(function(i) {
       
       plotname <- paste0(gsub("[[:punct:]]", "", vec_cal[i]))
       
@@ -82,15 +82,16 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
         
       dt <- data.table(timepoint = character(0), value = numeric(0), regressiontype = character(0))
       
-      # Create a Progress object
-      progress <- shiny::Progress$new()
-      # Make sure it closes when we exit this reactive, even if there's an error
-      on.exit(progress$close())
-      progress$set(message = plotmessage, value = 0)
-      
-      # Increment the progress bar, and update the detail text.
-      progress$inc(1/1, detail = paste("... working hard on barplot", i, "of", length_vector))
-      
+      if (isFALSE(headless)){
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+        progress$set(message = plotmessage, value = 0)
+        
+        # Increment the progress bar, and update the detail text.
+        progress$inc(1/1, detail = paste("... working hard on barplot", i, "of", length_vector)) 
+      }
       
       # add relative error of corrected hyperbolic curve
       
@@ -108,7 +109,7 @@ createBarErrorPlots <- function(statstable_pre, statstable_post, rv, type, b=NUL
         values <- c("#8491B4FF", "#4DBBD5FF")
       }
       
-      plotPNG({
+      shiny::plotPNG({
         p <- ggplot(dt, aes(x = regressiontype, y=as.numeric(as.character(value)), fill=regressiontype)) +
           #scale_fill_manual(values = c("Cubic Regression" = "indianred1", "Hyperbolic Regression" = "mediumspringgreen")) + 
           geom_col()+

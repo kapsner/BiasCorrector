@@ -39,7 +39,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
               rv$regStats_corrected[Name==i,better_model:=rv$choices_list[Name==i,as.integer(as.character(better_model))]]
             }
           
-            createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv, type=1)
+            createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv, type=1, plotdir=plotdir)
           })
           
           # when finished
@@ -72,7 +72,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
               rv$result_list_type2_corrected[[b]] <- rv$result_list
 
               # create barplots
-              createBarErrorPlots(rv$regStats[[b]], rv$regStats_corrected[[b]], rv, type=2, b=b)
+              createBarErrorPlots(rv$regStats[[b]], rv$regStats_corrected[[b]], rv, type=2, b=b, plotdir=plotdir)
 
               a <- a + 1
             }
