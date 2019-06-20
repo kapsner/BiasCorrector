@@ -6,14 +6,14 @@
 [What kind of data can be corrected by BiasCorrector?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
 [Do my input files need to be in a special format?](#do-my-input-files-need-to-be-in-a-special-format)  
 [Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
-[What is exactly done during BiasCorrector's data preprocessing?](#what-is-exactly-done-checked-during-biascorrectors-data-preprocessing)  
+[What is exactly done during BiasCorrector's data preprocessing?](#what-is-exactly-done-during-biascorrectors-data-preprocessing)  
 [What are the regression statistics?](#what-are-the-regression-statistics)  
 [What are 'substitutions' in my final results?](#what-are-substitutions-in-my-final-results)  
 
 
 ## Where does the PCR-bias correction algorithm come from?  
 
-BiasCorrector is the user friendly implementation of the algorithms, described by Moskalev et. al in their article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press*.  
+BiasCorrector is the user friendly implementation of the algorithms, described by Moskalev et. al in their article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press* (DOI: [https://doi.org/10.1093/nar/gkr213](https://doi.org/10.1093/nar/gkr213)).  
 
 ### Citation:  
 ```
