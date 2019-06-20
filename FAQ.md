@@ -2,13 +2,13 @@
 
 ## Table of Contents  
 
-[Where does the PCR-bias correction algorithm come from?](#where-does-the-pcr-bias-correction-algorithm-come-from) 
+[Where does the PCR-bias correction algorithm come from?](#where-does-the-pcr-bias-correction-algorithm-come-from)  
 [What kind of data can be corrected by BiasCorrector?](#what-kind-of-data-can-be-corrected-by-biascorrector)   
 [Do my input files need to be in a special format?](#do-my-input-files-need-to-be-in-a-special-format)  
 [Are there any requirements for naming the files?](#are-there-any-requirements-for-naming-the-files)  
-[What is exactly done during BiasCorrector's data preprocessing?](#what-is-exactly-done-checked-during-biascorrectors-data-preprocessing) 
-[What are the regression statistics?](#what-are-the-regression-statistics)
-[What are 'substitutions' in my final results?](#what-are-substitutions-in-my-final-results)
+[What is exactly done during BiasCorrector's data preprocessing?](#what-is-exactly-done-checked-during-biascorrectors-data-preprocessing)  
+[What are the regression statistics?](#what-are-the-regression-statistics)  
+[What are 'substitutions' in my final results?](#what-are-substitutions-in-my-final-results)  
 
 
 ## Where does the PCR-bias correction algorithm come from?  

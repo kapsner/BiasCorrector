@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-headless <- function(experimental, calibration, samplelocusname, locusid = NULL, type=1, csvdir="./csvdir", plotdir="./plotdir", logfilename="./log.txt"){
+headless <- function(experimental, calibration, samplelocusname, type=1, csvdir="./csvdir", plotdir="./plotdir", logfilename="./log.txt"){
   # fix directories to work with all functions
   # therefore we need a "/" at the end of the dir-string
   plotdir <- gsub("([[:alnum:]])$", "\\1/", plotdir)
