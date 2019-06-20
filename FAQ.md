@@ -108,7 +108,7 @@ Example: to upload a file for bias correction of type 2, that contains the calib
 
 ## What is exactly done during BiasCorrector's data preprocessing?  
 
-During the preprocessing, all requirements on the input files as stated in [Do my input files need to be formated?](#do-my-input-files-need-to-be-formated) are checked. Furhtermore, the rowmeans of all CpG-columns are calculated for every provided file. 
+During the preprocessing, all requirements on the input files as stated in [Do my input files need to be formated?](#do-my-input-files-need-to-be-in-a-special-format) are checked. Furhtermore, the rowmeans of all CpG-columns are calculated for every provided file. 
 
 If any of the abovementioned file requirements is not met, an error will occur, e.g. if any calibration step is not within the range of 0 <= CS <= 100 or if you provided less then four calibration steps with your input data. 
 
