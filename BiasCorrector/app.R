@@ -18,11 +18,7 @@ library(shiny)
 library(shinyjs)
 library(shinydashboard)
 library(DT)
-library(data.table)
-library(ggplot2)
-library(magrittr)
-library(polynom)
-library(ggpubr)
+library(PCRBiasCorrection)
 
 # app entrypoint here
 shinyAppDir("app")

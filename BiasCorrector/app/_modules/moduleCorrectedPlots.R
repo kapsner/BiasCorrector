@@ -26,25 +26,25 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           withProgress(message = "Plotting BiasCorrected results", value = 0, {
             incProgress(1/1, detail = "... working hard ...")
             
-            regression_results <- regressionUtility(rv$fileimportCal_corrected, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected")
+            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected")
             plotlistR <- regression_results[["plot_list"]]
             rv$result_list <- regression_results[["result_list"]]
             
-            plottingUtility(rv$fileimportCal_corrected, plotlistR, type=1, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", plotdir = plotdir)
+            PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected, plotlistR, type=1, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", plotdir = plotdir)
           
             # save regression statistics to reactive value
-            rv$regStats_corrected <- statisticsList(rv$result_list)
+            rv$regStats_corrected <- PCRBiasCorrection::statisticsList_(rv$result_list)
             
             for (i in rv$choices_list[,Name]){
               rv$regStats_corrected[Name==i,better_model:=rv$choices_list[Name==i,as.integer(as.character(better_model))]]
             }
           
-            createBarErrorPlots(rv$regStats, rv$regStats_corrected, rv, type=1, plotdir=plotdir)
+            PCRBiasCorrection::createBarErrorPlots_(rv$regStats, rv$regStats_corrected, rv, type=1, plotdir=plotdir)
           })
           
           # when finished
           rv$corrected_finished <- TRUE
-          writeLog("Finished plotting corrected")
+          PCRBiasCorrection::writeLog_("Finished plotting corrected")
         }
         
         # else if type 2 data
@@ -61,25 +61,25 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
               rv$vec_cal <- names(rv$fileimportCal_corrected[[a]])[-1]
               #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
               
-              regression_results <- regressionUtility(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, mode="corrected")
+              regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, mode="corrected")
               plotlistR <- regression_results[["plot_list"]]
               rv$result_list <- regression_results[["result_list"]]
 
-              plottingUtility(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir)
+              PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir)
 
               # save regression statistics to reactive value
               rv$regStats_corrected[[b]] <- statisticsList(rv$result_list)
               rv$result_list_type2_corrected[[b]] <- rv$result_list
 
               # create barplots
-              createBarErrorPlots(rv$regStats[[b]], rv$regStats_corrected[[b]], rv, type=2, b=b, plotdir=plotdir)
+              PCRBiasCorrection::createBarErrorPlots_(rv$regStats[[b]], rv$regStats_corrected[[b]], rv, type=2, b=b, plotdir=plotdir)
 
               a <- a + 1
             }
           })
           # on finished
           rv$corrected_finished <- TRUE
-          writeLog("Finished plotting corrected")
+          PCRBiasCorrection::writeLog_("Finished plotting corrected")
         }
       }
   })
@@ -179,7 +179,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          writeCSV(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], file)
+          PCRBiasCorrection::writeCSV_(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], file)
         },
         contentType = "text/csv"
       )
@@ -305,7 +305,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
                      gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
             },
             content = function(file){
-              writeCSV(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]][,-(which(colnames(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]])=="better_model")), with=F], file)
+              PCRBiasCorrection::writeCSV_(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]][,-(which(colnames(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]])=="better_model")), with=F], file)
             },
             contentType = "text/csv"
           )

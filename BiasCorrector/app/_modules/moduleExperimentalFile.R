@@ -19,7 +19,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
   observeEvent({
     if (!is.null(rv$fileimportExp)) TRUE
     else return()}, {
-      writeLog("(app) Entered observeEvent after fileimport of experimental file")
+      PCRBiasCorrection::writeLog_("(app) Entered observeEvent after fileimport of experimental file")
       
       # if type 1 data
       if (rv$type_locus_sample == "1"){
@@ -32,14 +32,14 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         output$exp_samples <- reactive({
           len <- unique(rv$fileimportExp[,sample_id])
           message <- paste0("Unique samples: ", length(len))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
         output$exp_samples_raw <- reactive({
           len <- sort(unique(rv$fileimportExp[,sample_id]))
           message <- paste0("Unique sample IDs:\n", paste(len, collapse = "\n"))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
@@ -54,14 +54,14 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         output$exp_samples <- reactive({
           len <- unique(rv$fileimportExp[,locus_id])
           message <- paste0("Unique loci: ", length(len))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
         output$exp_samples_raw <- reactive({
           len <- sort(unique(rv$fileimportExp[,locus_id]))
           message <- paste0("Unique locus IDs:\n", paste(len, collapse = "\n"))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
@@ -74,7 +74,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
           paste0("raw_experimental_data.csv")
         },
         content = function(file){
-          writeCSV(rv$fileimportExp, file)
+          PCRBiasCorrection::writeCSV_(rv$fileimportExp, file)
         },
         contentType = "text/csv"
       )

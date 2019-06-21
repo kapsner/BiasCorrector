@@ -49,7 +49,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          writeCSV(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], file)
+          PCRBiasCorrection::writeCSV_(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], file)
         },
         contentType = "text/csv"
       )
@@ -97,7 +97,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
-          writeCSV(rv$regStats[[input_re()$selectRegStatsLocus]][,-(which(colnames(rv$regStats[[input_re()$selectRegStatsLocus]])=="better_model")), with=F], file)
+          PCRBiasCorrection::writeCSV_(rv$regStats[[input_re()$selectRegStatsLocus]][,-(which(colnames(rv$regStats[[input_re()$selectRegStatsLocus]])=="better_model")), with=F], file)
         },
         contentType = "text/csv"
       )

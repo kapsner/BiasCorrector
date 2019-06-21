@@ -36,12 +36,12 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           incProgress(1/1, detail = "... working on BiasCorrection ...")
           
           # Experimental data 
-          solved_eq <- solving_equations(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+          solved_eq <- PCRBiasCorrection::solvingEquations_(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
           rv$finalResults <- solved_eq[["results"]]
           rv$substitutions <- solved_eq[["substitutions"]]
           
           # Calibration Data (to show corrected calibration curves)
-          solved_eq2 <- solving_equations(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected")
+          solved_eq2 <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected")
           rv$fileimportCal_corrected <- solved_eq2[["results"]]
           
           colnames(rv$fileimportCal_corrected) <- colnames(rv$fileimportCal)
@@ -53,7 +53,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         # initialize temp results
         rv$temp_results <- list()
         
-        rv$substitutions <- substitutions_create()
+        rv$substitutions <- PCRBiasCorrection::substitutionsCreate_()
         
         # iterate over unique names in locus_id of experimental file (to correctly display
         # decreasing order of CpG-sites in final results)
@@ -72,7 +72,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
             # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
             vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "row_means")
             # solve equations for that locus and append temp_results
-            solved_eq <- solving_equations(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
+            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
             rv$temp_results[[b]] <- solved_eq[["results"]]
             rv$substitutions <- rbind(rv$substitutions, solved_eq[["substitutions"]])
           }
@@ -107,7 +107,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
               vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "row_means")
               # solve equation for that calibrationstep
               # save result of each calibrationstep in tmp object
-              tmp <- solving_equations(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")[["results"]]
+              tmp <- PCRBiasCorrection::solvingEquations_(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")[["results"]]
               # imediatelly rename columnames
               colnames(tmp) <- vec
               # if new calibration step is saved for the first time
@@ -139,10 +139,10 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       output$downloadFinal <- downloadHandler(
         
         filename = function(){
-          paste0("BC_corrected_values_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+          paste0("BC_corrected_values_", rv$sampleLocusName, "_", PCRBiasCorrection::getTimestamp_(), ".csv")
         },
         content = function(file){
-          writeCSV(rv$finalResults, file)
+          PCRBiasCorrection::writeCSV_(rv$finalResults, file)
         },
         contentType = "text/csv"
       )
@@ -160,32 +160,32 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           print(getwd())
           
           # create files where is no difference in export between type 1 and 2
-          writeCSV(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
-          writeCSV(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
-          writeCSV(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
+          PCRBiasCorrection::writeCSV_(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
+          PCRBiasCorrection::writeCSV_(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
+          PCRBiasCorrection::writeCSV_(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
           write(rv$logfile, paste0(csvdir, "BC_logfile.txt"))
           
           # create other files
           if (rv$type_locus_sample == "1"){
-            writeCSV(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
-            writeCSV(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats.csv"))
-            writeCSV(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected.csv"))
+            PCRBiasCorrection::writeCSV_(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected.csv"))
             
           } else if (rv$type_locus_sample == "2"){
             # regression stats
             for (key in names(rv$fileimportCal)){
-              writeCSV(rv$regStats[[key]][,-(which(colnames(rv$regStats[[key]])=="better_model")), with=F],
+              PCRBiasCorrection::writeCSV_(rv$regStats[[key]][,-(which(colnames(rv$regStats[[key]])=="better_model")), with=F],
                        paste0(csvdir, "BC_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
             }
             
             for (key in names(rv$fileimportCal_corrected)){
-              writeCSV(rv$regStats_corrected[[key]][,-(which(colnames(rv$regStats_corrected[[key]])=="better_model")), with=F],
+              PCRBiasCorrection::writeCSV_(rv$regStats_corrected[[key]][,-(which(colnames(rv$regStats_corrected[[key]])=="better_model")), with=F],
                        paste0(csvdir, "BC_regression_stats_corrected_", gsub("[[:punct:]]", "", key), ".csv"))
             }
             
             # raw calibrations data
             for (key in names(rv$fileimportCal)){
-              writeCSV(rv$fileimportCal[[key]],
+              PCRBiasCorrection::writeCSV_(rv$fileimportCal[[key]],
                        paste0(csvdir, "raw_calibration_data_", gsub("[[:punct:]]", "", key), ".csv"))
             }
           }
@@ -258,10 +258,10 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
     output$downloadSubstituted <- downloadHandler(
       
       filename = function(){
-        paste0("BC_substituted_values_", rv$sampleLocusName, "_", getTimestamp(), ".csv")
+        paste0("BC_substituted_values_", rv$sampleLocusName, "_", PCRBiasCorrection::getTimestamp_(), ".csv")
       },
       content = function(file){
-        writeCSV(rv$substitutions, file)
+        PCRBiasCorrection::writeCSV_(rv$substitutions, file)
       },
       contentType = "text/csv"
     )

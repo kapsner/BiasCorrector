@@ -27,7 +27,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
     req(input_re()[["moduleFileupload-experimentalFile"]])
     
     if (isFALSE(rv$expFileReq)){
-      writeLog("(app) Entered observation for experimental file.")
+      PCRBiasCorrection::writeLog_("(app) Entered observation for experimental file.")
       # check file ending
       rv$ending <- strsplit(input_re()[["moduleFileupload-experimentalFile"]]$name, ".", fixed = T)[[1]]
       
@@ -45,8 +45,8 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
           openModal("locusname", rv)
         } else {
           rv$expFileReq = T
-          rv$sampleLocusName = handleTextInput(input_re()[["moduleFileupload-locusname"]])
-          writeLog(paste0("Locus name: ", input_re()[["moduleFileupload-locusname"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
+          rv$sampleLocusName = PCRBiasCorrection::handleTextInput_(input_re()[["moduleFileupload-locusname"]])
+          PCRBiasCorrection::writeLog_(paste0("Locus name: ", input_re()[["moduleFileupload-locusname"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
           #shinyjs::disable("moduleFileupload-locusname")
           #removeUI(selector = "#locusname", immediate = T)
         }
@@ -65,8 +65,8 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
           openModal("samplename", rv)
         } else {
           rv$expFileReq = T
-          rv$sampleLocusName = handleTextInput(input_re()[["moduleFileupload-samplename"]])
-          writeLog(paste0("Sample name: ", input_re()[["moduleFileupload-samplename"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
+          rv$sampleLocusName = PCRBiasCorrection::handleTextInput_(input_re()[["moduleFileupload-samplename"]])
+          PCRBiasCorrection::writeLog_(paste0("Sample name: ", input_re()[["moduleFileupload-samplename"]], "\n(--> stored as: ", rv$sampleLocusName, ")"))
           #shinyjs::disable("moduleFileupload-samplename")
           #removeUI(selector = "#samplename", immediate = T)
         }
@@ -80,9 +80,9 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
       if (rv$ending[2] %in% c("csv", "CSV")){
         file <- reactiveFileReader(1000, session,
                                    input_re()[["moduleFileupload-experimentalFile"]]$datapath, 
-                                   fread, header = T)
+                                   data.table::fread, header = T)
         tryCatch({
-          rv$fileimportExp <- cleanDT(file(), description = "experimental", type = rv$type_locus_sample)[["dat"]]
+          rv$fileimportExp <- PCRBiasCorrection::cleanDT_(file(), description = "experimental", type = rv$type_locus_sample)[["dat"]]
           
           #updateTabItems(session, "tabs", "panel_1")
         }, error = function(e){
@@ -101,7 +101,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
             omitnasModal(rv$omitnas, "experimental")
             rv$omitnas <- NULL
           }, error = function(e){
-            writeLog(paste0("Errormessage: ", e))
+            PCRBiasCorrection::writeLog_(paste0("Errormessage: ", e))
           })
           
           # workaround to tell ui, that experimental file is there
@@ -136,12 +136,12 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
         if (rv$ending[2] %in% c("csv", "CSV")){
           file <- reactiveFileReader(1000, session,
                                      input_re()[["calibrationFile"]]$datapath, 
-                                     fread, header = T)
+                                     data.table::fread, header = T)
           
           # try to import file
           tryCatch({
             if (is.null(rv$fileimportCal)){
-              cal_type_1 <- cleanDT(file(), "calibration", type = "1")
+              cal_type_1 <- PCRBiasCorrection::cleanDT_(file(), "calibration", type = "1")
               rv$fileimportCal <- cal_type_1[["dat"]]
               rv$vec_cal <- cal_type_1[["vec_cal"]]
             }
@@ -208,10 +208,10 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
             
             file <- reactiveFileReader(1000, session,
                                        input_re()[["calibrationFile"]]$datapath[i], 
-                                       fread, header = T)
+                                       data.table::fread, header = T)
             
             if (rv$ending[2] %in% c("csv", "CSV")){
-              rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- cleanDT(file(), "calibration", type = "2")[["dat"]]
+              rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- PCRBiasCorrection::cleanDT_(file(), "calibration", type = "2")[["dat"]]
             } else {
               # error handling fileimport
               openModal("csv", rv)
@@ -219,7 +219,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
           }
           
           # chech type 2 file requirements here
-          filecheck <- type2FileReq(rv$fileimportList, rv)
+          filecheck <- PCRBiasCorrection::type2FileReq_(rv$fileimportList, rv)
           
           if (is.character(filecheck)){
             openModal(filecheck, rv)

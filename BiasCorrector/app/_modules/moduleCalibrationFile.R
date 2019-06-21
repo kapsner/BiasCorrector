@@ -19,7 +19,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
   observeEvent({
     if (isTRUE(rv$type2cal_uploaded) | isTRUE(rv$type1cal_uploaded)) TRUE
     else return()}, {
-      writeLog("(app) Entered observeEvent after fileimport of calibration file")
+      PCRBiasCorrection::writeLog_("(app) Entered observeEvent after fileimport of calibration file")
       
       # if type 1 data
       if (rv$type_locus_sample == "1"){
@@ -50,14 +50,14 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         output$cal_samples <- reactive({
           len <- unique(rv$fileimportCal[,true_methylation])
           message <- paste0("Unique calibration samples: ", length(len))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
         output$cal_samples_raw <- reactive({
           len <- unique(rv$fileimportCal[,true_methylation])
           message <- paste0("Unique calibration steps:\n", paste(len, collapse = "\n"))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
@@ -67,7 +67,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
             paste0("raw_calibration_data.csv")
           },
           content = function(file){
-            writeCSV(rv$fileimportCal, file)
+            PCRBiasCorrection::writeCSV_(rv$fileimportCal, file)
           },
           contentType = "text/csv"
         )
@@ -101,13 +101,13 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         
         output$cal_samples <- reactive({
           message <- paste0("Unique calibration samples: ", nrow(rv$calibr_steps))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
         
         output$cal_samples_raw <- reactive({
           message <- paste0("Unique calibration steps:\n", paste(levels(factor(rv$calibr_steps[,step])), collapse = "\n"))
-          writeLog(message)
+          PCRBiasCorrection::writeLog_(message)
           message
         })
       }
@@ -169,7 +169,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
           paste0("raw_calibration_data_", gsub("[[:punct:]]", "", input_re()$selectType2), ".csv")
         },
         content = function(file){
-          writeCSV(df(), file)
+          PCRBiasCorrection::writeCSV_(df(), file)
         },
         contentType = "text/csv"
       )

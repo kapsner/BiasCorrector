@@ -54,7 +54,7 @@ server <- function(input, output, session) {
   )
   
   # run start function
-  onStart(plotdir, csvdir, logfilename)
+  PCRBiasCorrection::onStart_(plotdir, csvdir, logfilename)
   
   
   # scientific purpose
@@ -66,7 +66,7 @@ server <- function(input, output, session) {
   ))
   
   observeEvent(input$dismiss_modal, {
-    writeLog("dismiss modal")
+    PCRBiasCorrection::writeLog_("dismiss modal")
     rv$modal_closed <- T
     rv$modal_type <- NULL
     removeModal()
@@ -74,8 +74,8 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$reset, {
-    writeLog("restarting app")
-    cleanUp(plotdir, csvdir)
+    PCRBiasCorrection::writeLog_("restarting app")
+    PCRBiasCorrection::cleanUp_(plotdir, csvdir)
     js$reset()
   })
   
