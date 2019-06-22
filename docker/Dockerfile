@@ -57,23 +57,14 @@ RUN wget --no-verbose https://download3.rstudio.org/ubuntu-14.04/x86_64/VERSION 
 ARG p_base="shiny \
     shinyjs \
     shinydashboard \
-    shinyWidgets \
-    DT \
-    data.table \
-    ggplot2"
+    devtools"
 
 RUN for package in $p_base; do \
     R -q -e "p <- \"$package\"; if (isFALSE(p %in% installed.packages()[,\"Package\"])){; cat(paste(\"Installing package:\", p, \"\n\n\")); install.packages(p, repos = \"https://ftp.fau.de/cran/\", quiet=T);} else {;cat(paste(\"Package\", p, \"is already installed\n\n\"));}"; \
     done
-
-ARG p_add="magrittr \
-    polynom \
-    ggpubr \
-    ggsci"
-
-RUN for package in $p_add; do \
-    R -q -e "p <- \"$package\"; if (isFALSE(p %in% installed.packages()[,\"Package\"])){; cat(paste(\"Installing package:\", p, \"\n\n\")); install.packages(p, repos = \"https://ftp.fau.de/cran/\", quiet=T);} else {;cat(paste(\"Package\", p, \"is already installed\n\n\"));}"; \
-    done
+    
+# install PCRBiasCorrection
+RUN R -q -e "devtools::install_github('kapsner/BiasCorrection')"
 
 # server configuration
 ADD shiny-server.conf /etc/shiny-server/shiny-server.conf
