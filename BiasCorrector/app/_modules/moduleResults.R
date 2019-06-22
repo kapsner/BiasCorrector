@@ -223,7 +223,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         str1 <- "The results table shows the BiasCorrected experimental data."
         str2 <- "Column 1 shows the sample ID (type 1 data) or the locus ID (type 2 data)."
         str3 <- "All other columns represent the BiasCorrected experimental data for the CpG-sites and the row-means of all CpG-sites respectively."
-        str4 <- "The suffixes '_h' and '_c' of the column names indicate the regression algorithm used for BiasCorrection of the respective CpG-site ('_h': hyperbolic regression; '_c': cubic regression)."
+        str4 <- "The suffixes '_h' and '_c' in the column names indicate the regression algorithm used for BiasCorrection of the respective CpG-site ('_h': hyperbolic regression; '_c': cubic regression)."
         HTML(paste(str1, str2, str3, str4, sep = "<br/><br/>"))
       })
       
