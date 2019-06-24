@@ -68,7 +68,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
               PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir)
 
               # save regression statistics to reactive value
-              rv$regStats_corrected[[b]] <- statisticsList(rv$result_list)
+              rv$regStats_corrected[[b]] <- PCRBiasCorrection::statisticsList_(rv$result_list)
               rv$result_list_type2_corrected[[b]] <- rv$result_list
 
               # create barplots
