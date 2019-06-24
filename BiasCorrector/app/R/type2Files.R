@@ -35,7 +35,7 @@ type2FileConfirm <- function(filelist, choiceslist, rv){
     final_calibs <- list()
     for (g in gene_names[,locus_id]){
       # create empty matrix/data.table of dimension CpG_count + 2 (true_methylation +  rownames)
-      m <- data.table(matrix(nrow = 0, ncol = (as.numeric(gene_names[locus_id==g, CpG_count]) + 2)))
+      m <- data.table::data.table(matrix(nrow = 0, ncol = (as.numeric(gene_names[locus_id==g, CpG_count]) + 2)))
       # rename columns
       colnames(m) <- c("true_methylation", col_names[2:(ncol(m)-1)], "row_means")
       # store empty data.table with right dimensions in list

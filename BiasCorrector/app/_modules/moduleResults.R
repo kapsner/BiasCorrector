@@ -24,7 +24,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       
       if (rv$type_locus_sample == "1"){
         
-        rv$choices_list <- data.table("Name" = character(), "better_model" = numeric())
+        rv$choices_list <- data.table::data.table("Name" = character(), "better_model" = numeric())
         lapply(1:length(rv$vec_cal), function(x) {
           radioname <- paste0("radio", x)
           rv$choices_list <- rbind(rv$choices_list, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
