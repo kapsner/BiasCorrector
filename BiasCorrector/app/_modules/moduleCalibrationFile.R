@@ -115,7 +115,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
   
   # confirm-Button for Type2-Data
   observeEvent(input_re()$confirm_steps, {
-    rv$choices_list <- data.table("name" = character(), "step" = numeric())
+    rv$choices_list <- data.table::data.table("name" = character(), "step" = numeric())
     lapply(1:nrow(rv$calibr_steps), function(g) {
       selectname <- paste0("select", g)
       rv$choices_list <- rbind(rv$choices_list, cbind("name" = rv$calibr_steps[g,name], "step" = as.numeric(eval(parse(text=paste0("input_re()$", selectname))))))
