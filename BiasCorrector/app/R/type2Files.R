@@ -15,15 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 type2FileConfirm <- function(filelist, choiceslist, rv){
-  PCRBiasCorrection::writeLog_("Entered 'type2FileConfirm'-Function")
+  PCRBiasCorrection::writeLog_("Entered 'type2FileConfirm'-Function", logfilename = logfilename)
   
   rv$calibr_steps <- choiceslist[,step := as.numeric(step)][order(step, decreasing = F)]
   
   if (rv$calibr_steps[,min(step)] < 0 | rv$calibr_steps[,max(step)] > 100){
-    PCRBiasCorrection::writeLog_("### ERROR ###\nCalibration steps must be in range '0 <= calibration step <= 100'.")
+    PCRBiasCorrection::writeLog_("### ERROR ###\nCalibration steps must be in range '0 <= calibration step <= 100'.", logfilename = logfilename)
     return("calibrange2")
   } else if (rv$calibr_steps[,sum(duplicated(step))] > 0){
-    PCRBiasCorrection::writeLog_("### ERROR ###\nThe calibration steps provided do not meet the file requirements!\nCalibration steps must be in range '0 <= calibration step <= 100'.\nEach calibration step may only be assigned once.")
+    PCRBiasCorrection::writeLog_("### ERROR ###\nThe calibration steps provided do not meet the file requirements!\nCalibration steps must be in range '0 <= calibration step <= 100'.\nEach calibration step may only be assigned once.", logfilename = logfilename)
     return("calibrange3")
   } else {
     

@@ -66,7 +66,7 @@ server <- function(input, output, session) {
   ))
   
   observeEvent(input$dismiss_modal, {
-    PCRBiasCorrection::writeLog_("dismiss modal")
+    PCRBiasCorrection::writeLog_("dismiss modal", logfilename = logfilename)
     rv$modal_closed <- T
     rv$modal_type <- NULL
     removeModal()
@@ -74,7 +74,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$reset, {
-    PCRBiasCorrection::writeLog_("restarting app")
+    PCRBiasCorrection::writeLog_("restarting app", logfilename = logfilename)
     PCRBiasCorrection::cleanUp_(plotdir, csvdir)
     js$reset()
   })

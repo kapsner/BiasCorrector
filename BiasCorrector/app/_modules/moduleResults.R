@@ -36,12 +36,12 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           incProgress(1/1, detail = "... working on BiasCorrection ...")
           
           # Experimental data 
-          solved_eq <- PCRBiasCorrection::solvingEquations_(rv$fileimportExp, rv$choices_list, type = 1, rv = rv)
+          solved_eq <- PCRBiasCorrection::solvingEquations_(rv$fileimportExp, rv$choices_list, type = 1, rv = rv, logfilename = logfilename)
           rv$finalResults <- solved_eq[["results"]]
           rv$substitutions <- solved_eq[["substitutions"]]
           
           # Calibration Data (to show corrected calibration curves)
-          solved_eq2 <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected")
+          solved_eq2 <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename)
           rv$fileimportCal_corrected <- solved_eq2[["results"]]
           
           colnames(rv$fileimportCal_corrected) <- colnames(rv$fileimportCal)
@@ -72,7 +72,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
             # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
             vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "row_means")
             # solve equations for that locus and append temp_results
-            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv)
+            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv, logfilename = logfilename)
             rv$temp_results[[b]] <- solved_eq[["results"]]
             rv$substitutions <- rbind(rv$substitutions, solved_eq[["substitutions"]])
           }
@@ -107,7 +107,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
               vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "row_means")
               # solve equation for that calibrationstep
               # save result of each calibrationstep in tmp object
-              tmp <- PCRBiasCorrection::solvingEquations_(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected")[["results"]]
+              tmp <- PCRBiasCorrection::solvingEquations_(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected", logfilename = logfilename)[["results"]]
               # imediatelly rename columnames
               colnames(tmp) <- vec
               # if new calibration step is saved for the first time

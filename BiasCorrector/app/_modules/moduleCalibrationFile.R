@@ -19,7 +19,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
   observeEvent({
     if (isTRUE(rv$type2cal_uploaded) | isTRUE(rv$type1cal_uploaded)) TRUE
     else return()}, {
-      PCRBiasCorrection::writeLog_("(app) Entered observeEvent after fileimport of calibration file")
+      PCRBiasCorrection::writeLog_("(app) Entered observeEvent after fileimport of calibration file", logfilename = logfilename)
       
       # if type 1 data
       if (rv$type_locus_sample == "1"){
@@ -50,14 +50,14 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         output$cal_samples <- reactive({
           len <- unique(rv$fileimportCal[,true_methylation])
           message <- paste0("Unique calibration samples: ", length(len))
-          PCRBiasCorrection::writeLog_(message)
+          PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
         
         output$cal_samples_raw <- reactive({
           len <- unique(rv$fileimportCal[,true_methylation])
           message <- paste0("Unique calibration steps:\n", paste(len, collapse = "\n"))
-          PCRBiasCorrection::writeLog_(message)
+          PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
         
@@ -101,13 +101,13 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         
         output$cal_samples <- reactive({
           message <- paste0("Unique calibration samples: ", nrow(rv$calibr_steps))
-          PCRBiasCorrection::writeLog_(message)
+          PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
         
         output$cal_samples_raw <- reactive({
           message <- paste0("Unique calibration steps:\n", paste(levels(factor(rv$calibr_steps[,step])), collapse = "\n"))
-          PCRBiasCorrection::writeLog_(message)
+          PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
       }
