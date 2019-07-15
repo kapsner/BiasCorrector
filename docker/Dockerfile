@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libssh-dev \
     libssl-dev \
+    libxml2-dev \
     locales \
     nano \
     software-properties-common \
