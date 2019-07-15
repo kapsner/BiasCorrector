@@ -71,7 +71,7 @@ RUN for package in $p_add; do \
 done
     
 # install PCRBiasCorrection
-RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection')"
+RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@v0.0.1.9002')"
 
 # server configuration
 ADD shiny-server.conf /etc/shiny-server/shiny-server.conf
