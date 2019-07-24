@@ -14,13 +14,8 @@ docker login "https://$REGISTRY_PREFIX"
 
 printf "\n\nbuilding images ...\n"
 
-mkdir -p addfolder/
-cp -R ../../BiasCorrector/* addfolder/
-
 printf "building image: $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG \n\n\n"
 docker build -f ../Dockerfile -t "$REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG" .
-
-rm -rf addfolder/
 
 printf "\n\npushing images ...\n"
 

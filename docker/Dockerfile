@@ -73,21 +73,21 @@ done
 # install PCRBiasCorrection
 RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@v0.0.1.9002')"
 
-# server configuration
-ADD ./shiny-server.conf /etc/shiny-server/shiny-server.conf
-
-# copy app
-ADD ./addfolder /srv/shiny-server/
+RUN cd /home/user && \
+    git clone https://github.com/kapsner/BiasCorrector.git && \
+    cd BiasCorrector && \
+    cp ./docker/shiny-server.conf /etc/shiny-server/shiny-server.conf && \
+    cp -r ./BiasCorrector/* /srv/shiny-server/ && \
+    # copy server script
+    # https://github.com/rocker-org/shiny/blob/master/shiny-server.sh
+    cp ./docker/shiny-server.sh /usr/bin/shiny-server.sh 
 
 # fix permissions
 RUN chown -R shiny:shiny /srv/shiny-server/
 
-# make app available at port 80
-EXPOSE 3838
-
-# copy server script
-# https://github.com/rocker-org/shiny/blob/master/shiny-server.sh
-ADD ./shiny-server.sh /usr/bin/shiny-server.sh 
 RUN cd /usr/bin/ && chmod +x shiny-server.sh 
+
+# make app available at port 3838
+EXPOSE 3838
 
 CMD ["/usr/bin/shiny-server.sh"]
