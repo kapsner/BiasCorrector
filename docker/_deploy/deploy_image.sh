@@ -15,12 +15,12 @@ docker login "https://$REGISTRY_PREFIX"
 printf "\n\nbuilding images ...\n"
 
 printf "building image: $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG \n\n\n"
-docker build -f ../Dockerfile -t $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG .
+docker build -f ../Dockerfile -t "$REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG" .
 
 
 printf "\n\npushing images ...\n"
 
 printf "pushing image: $REGISTRY_PREFIX/$IMAGE_NAME \n\n\n"
-docker push $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG
+docker push "$REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG"
 
 printf "\n\nfinished building an pushing all images ....\n"
