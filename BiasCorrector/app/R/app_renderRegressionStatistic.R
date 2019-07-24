@@ -15,33 +15,50 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # render regression-statistics table
-renderRegressionStatisticTable <- function(dt){
+renderRegressionStatisticTable <- function(dt, mode = NULL){
   # col2rgb("lawngreen"): red=124, green=252, blue=0
   # rgb(124, 252, 0, max=255, alpha=90): "#7CFC005A"
   # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-  t <- DT::datatable(dt, colnames = c("Name", "Relative error",
-                                      "SSE [h]", "R² [h]", "b", "y₀", "y₁", "  ",
-                                      "SSE [c]", "R² [c]", "ax³", "bx²", "cx", "d",
-                                      "better_model"),
-                     rownames = F,
-                     options = list(scrollX = TRUE, 
-                                    pageLength = 20,
-                                    columnDefs = list(list(targets = 14, visible = FALSE)), 
-                                    dom="ltip"
-                     )) %>%
-    formatRound(columns=c(2:14), digits=3) %>%
-    formatStyle(columns = 3,
-                valueColumns = "better_model",
-                fontWeight = styleEqual(0, "bold")) %>%
-    formatStyle(columns = 3:7,
-                valueColumns = "better_model",
-                backgroundColor = styleEqual(0, "#7CFC005A")) %>%
-    formatStyle(columns = 9,
-                valueColumns = "better_model",
-                fontWeight = styleEqual(1, "bold")) %>%
-    formatStyle(columns = 9:14,
-                valueColumns = "better_model",
-                backgroundColor = styleEqual(1, "#7CFC005A")) #%>%
+  
+  if (is.null(mode)){
+    t <- DT::datatable(dt, colnames = c("Name", "Relative error",
+                                        "SSE [h]", "R\u00B2 [h]", "b", "y₀", "y₁", "  ",
+                                        "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
+                                        "better_model"),
+                       rownames = F,
+                       options = list(scrollX = TRUE, 
+                                      pageLength = 20,
+                                      columnDefs = list(list(targets = 14, visible = FALSE)), 
+                                      dom="ltip"
+                       )) %>%
+      formatRound(columns=c(2:14), digits=3) %>%
+      formatStyle(columns = 3,
+                  valueColumns = "better_model",
+                  fontWeight = styleEqual(0, "bold")) %>%
+      formatStyle(columns = 3:7,
+                  valueColumns = "better_model",
+                  backgroundColor = styleEqual(0, "#7CFC005A")) %>%
+      formatStyle(columns = 9,
+                  valueColumns = "better_model",
+                  fontWeight = styleEqual(1, "bold")) %>%
+      formatStyle(columns = 9:14,
+                  valueColumns = "better_model",
+                  backgroundColor = styleEqual(1, "#7CFC005A")) #%>%
     #formatStyle(columns = c(1:11), fontSize = "80%")
+  } else if (mode == "corrected"){
+    t <- DT::datatable(dt, colnames = c("Name", "Relative error",
+                                        "SSE [h]", "R\u00B2 [h]", "b", "y₀", "y₁", "  ",
+                                        "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
+                                        "better_model"),
+                       rownames = F,
+                       options = list(scrollX = TRUE, 
+                                      pageLength = 20,
+                                      columnDefs = list(list(targets = 14, visible = FALSE)), 
+                                      dom="ltip"
+                       )) %>%
+      formatRound(columns=c(2:14), digits=3)
+  } else {
+    t <- "error"
+  }
   return(t)
 }

@@ -39,12 +39,6 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           solved_eq <- PCRBiasCorrection::solvingEquations_(rv$fileimportExp, rv$choices_list, type = 1, rv = rv, logfilename = logfilename)
           rv$finalResults <- solved_eq[["results"]]
           rv$substitutions <- solved_eq[["substitutions"]]
-          
-          # Calibration Data (to show corrected calibration curves)
-          solved_eq2 <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename)
-          rv$fileimportCal_corrected <- solved_eq2[["results"]]
-          
-          colnames(rv$fileimportCal_corrected) <- colnames(rv$fileimportCal)
         })
         
         
@@ -90,35 +84,6 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           vec <- colnames(rv$finalResults)[grepl("row_means", colnames(rv$finalResults))]
           # reorder the columns so that the rownames are at the end!
           rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
-          
-          # TODO 
-          # Calibration Data (to show corrected calibration curves)
-          # initialize calibration results list
-          rv$fileimportCal_corrected <- list()
-          # iterate over fileimportCal (in type 2 data, this is a list with one calibrationdata data.table for each locus)
-          for (a in names(rv$fileimportCal)){
-            # get unique elements of true_methylation for one specific locus (we are treating them here as if they were sample ids)
-            for (b in rv$fileimportCal[[a]][,unique(true_methylation)]){
-              # get the regression parameters of that locus (locusname is saved in "a")
-              rv$result_list <- rv$result_list_type2[[a]]
-              # get subset of the calibration data of that methylation step
-              caldata <- rv$fileimportCal[[a]][true_methylation==b,]
-              nc <- ncol(caldata)
-              vec <- c("true_methylation", colnames(caldata)[2:(nc-1)], "row_means")
-              # solve equation for that calibrationstep
-              # save result of each calibrationstep in tmp object
-              tmp <- PCRBiasCorrection::solvingEquations_(caldata[,vec,with=F], rv$regStats[[a]][,.(Name, better_model)], type = 2, rv = rv, mode = "corrected", logfilename = logfilename)[["results"]]
-              # imediatelly rename columnames
-              colnames(tmp) <- vec
-              # if new calibration step is saved for the first time
-              if (is.null(rv$fileimportCal_corrected[[a]])){
-                rv$fileimportCal_corrected[[a]] <- tmp
-              } else {
-                # we should not need fill, since there should be no differences in colnames for one file
-                rv$fileimportCal_corrected[[a]] <- rbind(rv$fileimportCal_corrected[[a]], tmp, use.names=T, fill=F)
-              }
-            }
-          }
         })
       }
       

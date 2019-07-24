@@ -19,7 +19,7 @@ server <- function(input, output, session) {
   rv <- reactiveValues(
     ending = NULL,
     expFileReq = F,
-    type_locus_sampe = NULL,
+    type_locus_sampe = NULL, # 1, # currently there is only type 1 correction implemented
     fileimportExp = NULL,
     fileimportCal = NULL,
     fileimportList = NULL,
@@ -176,7 +176,9 @@ server <- function(input, output, session) {
         sidebarMenu(
           menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"))
+          menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"))
+          )
         )
       })
       updateTabItems(session, "tabs", "panel_3")
@@ -203,9 +205,12 @@ server <- function(input, output, session) {
         sidebarMenu(
           menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-          menuItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
+          menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist")),
+                   shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
+          )
         )
       })
     } else {
@@ -213,8 +218,11 @@ server <- function(input, output, session) {
         sidebarMenu(
           menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line"))
+          menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist"))
+                   )
         )
       })
     }
@@ -240,11 +248,13 @@ server <- function(input, output, session) {
         sidebarMenu(
           menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-          menuItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line")),
-          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist")),
-          menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
+          menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist")),
+                   shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
+          ),
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
         )
       })
       
@@ -253,10 +263,12 @@ server <- function(input, output, session) {
         sidebarMenu(
           menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          menuItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-          menuItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist")),
-          menuItem("Corrected Plots", tabName = "panel_7", icon = icon("angellist"))
+          menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
+                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist"))
+          ),
+          menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
         )
       })
     }
