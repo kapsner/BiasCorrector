@@ -70,7 +70,7 @@ chmod +x build_image.sh
 
 - To start BiasCorrector, navigate into the directory 'docker' and execute the following command from your powershell/ terminal. Open a web browser and navigate to 'localhost:3838' to open BiasCorrector.  
 ```
-docker-compose up -d
+docker-compose -f docker-compose.local.yml up -d
 ```
 
 - To stop BiasCorrector, navigate into the directory 'docker' and execute the following command from your powershell/ terminal:  

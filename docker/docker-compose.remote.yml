@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  shiny:
+    container_name: biascorrector_container
+    image: docker.miracum.org/biascorrector/biascorrector_img:0.0.1.9000
+    restart: unless-stopped
+    ports:
+    - "3838:3838"
+
+# login into container:
+# docker exec -it biascorrector_container bash
+
+# monitor log-file in container:
+# tail -f /srv/shiny-server/app/biascorrector.log

@@ -7,11 +7,6 @@ services:
     restart: unless-stopped
     ports:
     - "3838:3838"
-    networks:
-    - biascorrectornet
-
-networks:
-  biascorrectornet: 
 
 # login into container:
 # docker exec -it biascorrector_container bash
