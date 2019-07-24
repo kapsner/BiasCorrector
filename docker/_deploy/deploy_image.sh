@@ -15,7 +15,7 @@ docker login "https://$REGISTRY_PREFIX"
 printf "\n\nbuilding images ...\n"
 
 printf "building image: $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG \n\n\n"
-docker build -f Dockerfile -t $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG .
+docker build -f ../Dockerfile -t $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG .
 
 
 printf "\n\npushing images ...\n"
