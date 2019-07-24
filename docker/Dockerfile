@@ -73,6 +73,8 @@ done
 # install PCRBiasCorrection
 RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@v0.0.1.9002')"
 
+RUN apt-get install git
+
 RUN cd /home/user && \
     git clone https://github.com/kapsner/BiasCorrector.git && \
     cd BiasCorrector && \
