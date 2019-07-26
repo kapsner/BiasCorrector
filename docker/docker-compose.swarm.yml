@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  biascorrector:
+    image: docker.miracum.org/biascorrector/biascorrector_img:latest
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik
+        - traefik.frontend.rule=Host:${HOST_NAME};PathPrefixStrip:/biascorrector/
+        - traefik.port=3838
+    networks:
+      - default
+      - traefik
+
+networks:
+  traefik:
+    external: true
