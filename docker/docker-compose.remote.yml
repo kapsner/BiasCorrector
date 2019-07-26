@@ -3,7 +3,7 @@ version: '3'
 services:
   shiny:
     container_name: biascorrector_container
-    image: docker.miracum.org/biascorrector/biascorrector_img:latest
+    image: docker.miracum.org/biascorrector/biascorrector_img:0.0.1.9000
     restart: unless-stopped
     ports:
     - "3838:3838"
