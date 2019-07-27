@@ -23,13 +23,13 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
       if (rv$type_locus_sample == "1"){
         if (isFALSE(rv$plotting_finished)){
           
-          regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal, samplelocusname=rv$sampleLocusName, rv=rv, logfilename = logfilename)
+          regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal, samplelocusname=rv$sampleLocusName, rv=rv, logfilename = logfilename, minmax = rv$minmax)
           plotlistR <- regression_results[["plot_list"]]
           rv$result_list <- regression_results[["result_list"]]
-          PCRBiasCorrection::plottingUtility_(rv$fileimportCal, plotlistR, type=1, samplelocusname=rv$sampleLocusName, rv=rv, plotdir = plotdir, logfilename = logfilename)
+          PCRBiasCorrection::plottingUtility_(rv$fileimportCal, plotlistR, type=1, samplelocusname=rv$sampleLocusName, rv=rv, plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
           
           # save regression statistics to reactive value
-          rv$regStats <- PCRBiasCorrection::statisticsList_(rv$result_list)
+          rv$regStats <- PCRBiasCorrection::statisticsList_(rv$result_list, minmax = rv$minmax)
           
           # on finished
           rv$plotting_finished <- TRUE
@@ -48,13 +48,13 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
             rv$vec_cal <- names(rv$fileimportCal[[a]])[-1]
             #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
             
-            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, logfilename = logfilename)
+            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, logfilename = logfilename, minmax = rv$minmax)
             plotlistR <- regression_results[["plot_list"]]
             rv$result_list <- regression_results[["result_list"]]
-            PCRBiasCorrection::plottingUtility_(rv$fileimportCal[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, plotdir = plotdir, logfilename = logfilename)
+            PCRBiasCorrection::plottingUtility_(rv$fileimportCal[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
             
             # save regression statistics to reactive value
-            rv$regStats[[b]] <- PCRBiasCorrection::statisticsList_(rv$result_list)
+            rv$regStats[[b]] <- PCRBiasCorrection::statisticsList_(rv$result_list, minmax = rv$minmax)
             rv$result_list_type2[[b]] <- rv$result_list
             a <- a + 1
           }

@@ -36,7 +36,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           incProgress(1/1, detail = "... working on BiasCorrection ...")
           
           # Experimental data 
-          solved_eq <- PCRBiasCorrection::solvingEquations_(rv$fileimportExp, rv$choices_list, type = 1, rv = rv, logfilename = logfilename)
+          solved_eq <- PCRBiasCorrection::solvingEquations_(rv$fileimportExp, rv$choices_list, type = 1, rv = rv, logfilename = logfilename, minmax = rv$minmax)
           rv$finalResults <- solved_eq[["results"]]
           rv$substitutions <- solved_eq[["substitutions"]]
         })
@@ -66,7 +66,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
             # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
             vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "row_means")
             # solve equations for that locus and append temp_results
-            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv, logfilename = logfilename)
+            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv, logfilename = logfilename, minmax = rv$minmax)
             rv$temp_results[[b]] <- solved_eq[["results"]]
             rv$substitutions <- rbind(rv$substitutions, solved_eq[["substitutions"]])
           }

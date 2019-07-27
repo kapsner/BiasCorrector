@@ -28,7 +28,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           rv$choices_list <- rv$regStats[,c("Name"), with=F][,("better_model"):=0]
           
           # correct calibration data (to show corrected calibration curves)
-          solved_eq_h <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename)
+          solved_eq_h <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename, minmax = rv$minmax)
           rv$fileimportCal_corrected_h <- solved_eq_h[["results"]]
           colnames(rv$fileimportCal_corrected_h) <- colnames(rv$fileimportCal)
         })
@@ -79,7 +79,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           rv$choices_list <- rv$regStats[,c("Name"), with=F][,("better_model"):=1]
           
           # correct calibration data (to show corrected calibration curves)
-          solved_eq_c <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename)
+          solved_eq_c <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename, minmax = rv$minmax)
           rv$fileimportCal_corrected_c <- solved_eq_c[["results"]]
           colnames(rv$fileimportCal_corrected_c) <- colnames(rv$fileimportCal)
         })
@@ -104,14 +104,14 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             incProgress(1/1, detail = "... working hard on hyperbolic correction ...")
             
             # calculate new calibration curves from corrected calibration data
-            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected_h, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", logfilename = logfilename)
+            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected_h, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", logfilename = logfilename, minmax = rv$minmax)
             plotlistR <- regression_results[["plot_list"]]
             rv$result_list_hyperbolic <- regression_results[["result_list"]]
             
-            PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected_h, plotlistR, type=1, samplelocusname=rv$sampleLocusName, locus_id = NULL, rv=rv, mode="corrected_h", plotdir = plotdir, logfilename = logfilename)
+            PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected_h, plotlistR, type=1, samplelocusname=rv$sampleLocusName, locus_id = NULL, rv=rv, mode="corrected_h", plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
             
             # save regression statistics to reactive value
-            rv$regStats_corrected_h <- PCRBiasCorrection::statisticsList_(rv$result_list_hyperbolic)
+            rv$regStats_corrected_h <- PCRBiasCorrection::statisticsList_(rv$result_list_hyperbolic, minmax = rv$minmax)
             
             for (i in rv$choices_list[,get("Name")]){
               rv$regStats_corrected_h[get("Name")==i,("better_model"):=rv$choices_list[get("Name")==i,as.integer(as.character(get("better_model")))]]
@@ -124,14 +124,14 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
             incProgress(1/1, detail = "... working hard on cubic correction ...")
             
             # calculate new calibration curves from corrected calibration data
-            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected_c, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", logfilename = logfilename)
+            regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected_c, samplelocusname=rv$sampleLocusName, rv=rv, mode="corrected", logfilename = logfilename, minmax = rv$minmax)
             plotlistR <- regression_results[["plot_list"]]
             rv$result_list_cubic<- regression_results[["result_list"]]
             
-            PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected_c, plotlistR, type=1, samplelocusname=rv$sampleLocusName, locus_id = NULL, rv=rv, mode="corrected_c", plotdir = plotdir, logfilename = logfilename)
+            PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected_c, plotlistR, type=1, samplelocusname=rv$sampleLocusName, locus_id = NULL, rv=rv, mode="corrected_c", plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
             
             # save regression statistics to reactive value
-            rv$regStats_corrected_c <- PCRBiasCorrection::statisticsList_(rv$result_list_cubic)
+            rv$regStats_corrected_c <- PCRBiasCorrection::statisticsList_(rv$result_list_cubic, minmax = rv$minmax)
             
             for (i in rv$choices_list[,get("Name")]){
               rv$regStats_corrected_c[get("Name")==i,("better_model"):=rv$choices_list[get("Name")==i,as.integer(as.character(get("better_model")))]]
@@ -158,14 +158,14 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
               rv$vec_cal <- names(rv$fileimportCal_corrected[[a]])[-1]
               #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
               
-              regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", logfilename = logfilename)
+              regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", logfilename = logfilename, minmax = rv$minmax)
               plotlistR <- regression_results[["plot_list"]]
               rv$result_list <- regression_results[["result_list"]]
               
-              PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir, logfilename = logfilename)
+              PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
               
               # save regression statistics to reactive value
-              rv$regStats_corrected[[b]] <- PCRBiasCorrection::statisticsList_(rv$result_list)
+              rv$regStats_corrected[[b]] <- PCRBiasCorrection::statisticsList_(rv$result_list, minmax = rv$minmax)
               rv$result_list_type2_corrected[[b]] <- rv$result_list
               
               # create barplots
@@ -293,7 +293,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         output$dt_reg_corrected_h <- DT::renderDataTable({
           dt <- rv$regStats_corrected_h
           # use formatstyle to highlight lower SSE values
-          renderRegressionStatisticTable(dt, mode = "corrected")
+          renderRegressionStatisticTable(dt, mode = "corrected", minmax = rv$minmax)
         })
         d <- DT::dataTableOutput("moduleCorrectedPlots-dt_reg_corrected_h")
         do.call(tagList, list(d))
@@ -303,7 +303,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         output$dt_reg_corrected_c <- DT::renderDataTable({
           dt <- rv$regStats_corrected_c
           # use formatstyle to highlight lower SSE values
-          renderRegressionStatisticTable(dt, mode = "corrected")
+          renderRegressionStatisticTable(dt, mode = "corrected", minmax = rv$minmax)
         })
         d <- DT::dataTableOutput("moduleCorrectedPlots-dt_reg_corrected_c")
         do.call(tagList, list(d))
@@ -441,7 +441,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       
       output$dt_regs_corrected <- DT::renderDataTable({
         dt <- df_regs()
-        renderRegressionStatisticTable(dt)
+        renderRegressionStatisticTable(dt, minmax = rv$minmax)
       })
       
       # render head of page with selectInput and downloadbutton
@@ -473,8 +473,9 @@ moduleCorrectedPlotsUI <- function(id){
   tagList(
     fluidRow(
       column(9,
-             box(title = "BiasCorrected Regression Plot",
+             box(title = "BiasCorrected Regression Plots",
                  column(6,
+                        h5(tags$b("Calibration data corrected with hyperbolic regression:")),
                         imageOutput(ns("plots_corrected_h")),
                         tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected_h img {max-height: 100%; max-width: 100%; width: auto}")),
                         div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected_h", "Download Corrected Plot (hyperbolic correction)", style="white-space: normal; text-align:center; 
@@ -482,6 +483,7 @@ moduleCorrectedPlotsUI <- function(id){
                                                                                                margin: 6px 10px 6px 10px;"))
                  ),
                  column(6,
+                        h5(tags$b("Calibration data corrected with cubic regression:")),
                         imageOutput(ns("plots_corrected_c")),
                         tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected_c img {max-height: 100%; max-width: 100%; width: auto}")),
                         div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected_c", "Download Corrected Plot (hyperbolic correction)", style="white-space: normal; text-align:center; 
@@ -519,7 +521,7 @@ moduleCorrectedPlotsUI <- function(id){
     
     fluidRow(
       column(9,
-             box(title = "Regression Statistics [corrected]",
+             box(title = "Regression Statistics (corrected)",
                  tabsetPanel(
                    tabPanel("Hyperbolic Correction", 
                             uiOutput(ns("regression_statistics_corrected_h"))

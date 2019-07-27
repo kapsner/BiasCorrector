@@ -53,6 +53,10 @@ server <- function(input, output, session) {
     result_list_type2_corrected = NULL
   )
   
+  # TODO minmax hard-coded
+  # if minmax = TRUE is not experimental anymore --> let user decide via checkbox e.g.
+  rv$minmax <- FALSE
+  
   # run start function
   PCRBiasCorrection::onStart_(plotdir, csvdir, logfilename)
   

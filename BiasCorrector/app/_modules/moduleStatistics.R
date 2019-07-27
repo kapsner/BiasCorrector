@@ -36,7 +36,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
         output$dt_reg <- DT::renderDataTable({
           dt <- rv$regStats
           # use formatstyle to highlight lower SSE values
-          renderRegressionStatisticTable(dt)
+          renderRegressionStatisticTable(dt, minmax = rv$minmax)
         })
         d <- DT::dataTableOutput("moduleStatistics-dt_reg")
         do.call(tagList, list(d))
@@ -69,7 +69,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       
       output$dt_regs <- DT::renderDataTable({
         dt <- df_regs()
-        renderRegressionStatisticTable(dt)
+        renderRegressionStatisticTable(dt, minmax = rv$minmax)
       })
       
       # render head of page with selectInput and downloadbutton
