@@ -32,6 +32,7 @@ ui <- dashboardPage(skin = "black",
                                   sidebarMenuOutput("menu"),
                                   menuItem("Log", tabName = "panel_9", icon = icon("file-alt")),
                                   tags$hr(),
+                                  menuItem("Settings", tabName = "settings", icon = icon("user-cog")),
                                   actionButton("reset", "Reset App", width = "80%") # Restart session
                       )
                     ),
@@ -99,6 +100,10 @@ ui <- dashboardPage(skin = "black",
                                       tags$hr(),
                                       width=3
                                   ))
+                        ),
+                        
+                        tabItem(tabName = "settings",
+                                moduleSettingsUI("moduleSettings")
                         )
                       )
                     )

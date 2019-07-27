@@ -50,12 +50,9 @@ server <- function(input, output, session) {
     corrected_finished = FALSE,
     fileimportCal_corrected = NULL,
     regStats_corrected = NULL,
-    result_list_type2_corrected = NULL
+    result_list_type2_corrected = NULL,
+    minmax = FALSE # initial minmax-value
   )
-  
-  # TODO minmax hard-coded
-  # if minmax = TRUE is not experimental anymore --> let user decide via checkbox e.g.
-  rv$minmax <- FALSE
   
   # run start function
   PCRBiasCorrection::onStart_(plotdir, csvdir, logfilename)
@@ -186,7 +183,13 @@ server <- function(input, output, session) {
         )
       })
       updateTabItems(session, "tabs", "panel_3")
+      
+      # disable run-analysis button
       shinyjs::disable("run")
+      
+      # disable some settings here
+      shinyjs::disable("moduleSettings-settings_minmax")
+      
     } else if (rv$type_locus_sample == "2"){
       showModal(modalDialog(
         "Please confirm the assignment of the calibration steps.",
@@ -236,6 +239,8 @@ server <- function(input, output, session) {
   ###### Regression Statistics
   callModule(moduleStatisticsServer, "moduleStatistics", rv=rv, input_re=reactive({input}))
   
+  ###### Plot Corrected Results
+  callModule(moduleCorrectedPlotsServer, "moduleCorrectedPlots", rv=rv, input_re=reactive({input}))
   
   ###### Model Selection
   callModule(moduleModelSelectionServer, "moduleModelSelection", rv=rv, input_re=reactive({input}))
@@ -286,7 +291,6 @@ server <- function(input, output, session) {
   ###### Calcluate Results
   callModule(moduleResultsServer, "moduleResults", rv=rv, input_re=reactive({input}))
   
-  
-  ###### Plot Corrected Results
-  callModule(moduleCorrectedPlotsServer, "moduleCorrectedPlots", rv=rv, input_re=reactive({input}))
+  ###### Settings
+  callModule(moduleSettingsServer, "moduleSettings", rv=rv, input_re=reactive({input}))
 }

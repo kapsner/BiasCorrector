@@ -36,9 +36,10 @@ source("./_modules/moduleExperimentalFile.R", encoding = "UTF-8")
 source("./_modules/moduleCalibrationFile.R", encoding = "UTF-8")
 source("./_modules/modulePlotting.R", encoding = "UTF-8")
 source("./_modules/moduleStatistics.R", encoding = "UTF-8")
+source("./_modules/moduleCorrectedPlots.R", encoding = "UTF-8")
 source("./_modules/moduleModelSelection.R", encoding = "UTF-8")
 source("./_modules/moduleResults.R", encoding = "UTF-8")
-source("./_modules/moduleCorrectedPlots.R", encoding = "UTF-8")
+source("./_modules/moduleSettings.R", encoding = "UTF-8")
 
 # include global functions
 source("./R/type2Files.R", echo = F, encoding = "UTF-8")
