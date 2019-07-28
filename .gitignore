@@ -6,6 +6,7 @@
 !/.gitignore
 !/README.md
 !/FAQ.md
+/FAQ.html
 !/LICENSE.md
 !/docker/
 /docker/addfolder/

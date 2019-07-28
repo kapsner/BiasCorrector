@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   biascorrector:
-    image: docker.miracum.org/biascorrector/biascorrector_img:0.0.1.9000
+    image: docker.miracum.org/biascorrector/biascorrector_img:0.1.0.9001
     restart: unless-stopped
     deploy:
       replicas: 1

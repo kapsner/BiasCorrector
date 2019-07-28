@@ -26,9 +26,9 @@ BiasCorrector is the user friendly implementation of the algorithms described by
 ### Using RStudio  
 
 - Make sure, you have R and RStudio installed:  
-
--- https://cran.r-project.org/  
--- https://www.rstudio.com/products/rstudio/download/#download  
+    
+    + https://cran.r-project.org/  
+    + https://www.rstudio.com/products/rstudio/download/#download  
 
 - Open a terminal window and clone this repository into a local directory:  
 ```
@@ -48,7 +48,7 @@ git clone https://github.com/kapsner/BiasCorrector.git
 
 - Make sure, you have Docker installed:  
 
--- https://www.docker.com/products/docker-desktop  
+    + https://www.docker.com/products/docker-desktop  
 
 - Open a terminal window and clone this repository into a local directory:  
 ```
@@ -57,7 +57,7 @@ git clone https://github.com/kapsner/BiasCorrector.git
 
 - Alternatively, you can download the repository directly using github's 'Download ZIP' option.  
 
-- Now, open a powershell/ terminal window and go into the cloned/ downloaded 'BiasCorrector' folder.  
+- Now, open a terminal window and navigate to the downloaded 'BiasCorrector' folder.  
 
 - To build the Docker image, you need to navigate into the folder 'docker' and execute the bash script 'build_image.sh' (to execute bash scipts on a windows host, you need to install e.g. [Git for Windows](https://gitforwindows.org/)):  
 ```
@@ -66,14 +66,14 @@ chmod +x build_image.sh
 ./build_image.sh
 ```
 
-- The docker image needs only to be build once!  
+- The docker image only needs to be build once!  
 
-- To start BiasCorrector, navigate into the directory 'docker' and execute the following command from your powershell/ terminal. Open a web browser and navigate to 'localhost:3838' to open BiasCorrector.  
+- To start BiasCorrector, navigate into the directory 'docker' and execute the following command from your terminal. Open a web browser and navigate to 'http://localhost:3838' to open BiasCorrector.  
 ```
 docker-compose -f docker-compose.local.yml up -d
 ```
 
-- To stop BiasCorrector, navigate into the directory 'docker' and execute the following command from your powershell/ terminal:  
+- To stop BiasCorrector, navigate into the directory 'docker' and execute the following command from your terminal:  
 ```
 docker-compose down
 ```

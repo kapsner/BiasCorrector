@@ -57,6 +57,8 @@ server <- function(input, output, session) {
   # run start function
   PCRBiasCorrection::onStart_(plotdir, csvdir, logfilename)
   
+  # TODO original selection of data type (hard coded to type 1 data)
+  rv$type_locus_sample <- 1
   
   # scientific purpose
   showModal(modalDialog(

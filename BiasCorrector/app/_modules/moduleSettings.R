@@ -31,7 +31,7 @@ moduleSettingsUI <- function(id){
       # type of data box
       box(
         title = "Settings",
-        checkboxInput(ns("settings_minmax"), label = "Use min-max (very experimental)", value = FALSE),
+        checkboxInput(ns("settings_minmax"), label = "Use 'min-max'-correction (default: off) [CAUTION: this feature is very experimental and neither tested nor validated!]", value = FALSE),
         width = 9
       ),
       box(

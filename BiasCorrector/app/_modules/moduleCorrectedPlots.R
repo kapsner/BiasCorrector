@@ -154,22 +154,22 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           withProgress(message = "Plotting BiasCorrected results", value = 0, {
             incProgress(1/1, detail = "... working hard ...")
             
-            for (b in names(rv$fileimportCal_corrected)){
+            for (locus in names(rv$fileimportCal_corrected)){
               rv$vec_cal <- names(rv$fileimportCal_corrected[[a]])[-1]
               #print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
               
-              regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", logfilename = logfilename, minmax = rv$minmax)
+              regression_results <- PCRBiasCorrection::regressionUtility_(rv$fileimportCal_corrected[[a]], samplelocusname=rv$sampleLocusName, locus_id = gsub("[[:punct:]]", "", locus), rv=rv, mode="corrected", logfilename = logfilename, minmax = rv$minmax)
               plotlistR <- regression_results[["plot_list"]]
               rv$result_list <- regression_results[["result_list"]]
               
-              PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", b), rv=rv, mode="corrected", plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
+              PCRBiasCorrection::plottingUtility_(rv$fileimportCal_corrected[[a]], plotlistR, type=2, samplelocusname=rv$sampleLocusName, locus_id=gsub("[[:punct:]]", "", locus), rv=rv, mode="corrected", plotdir = plotdir, logfilename = logfilename, minmax = rv$minmax)
               
               # save regression statistics to reactive value
-              rv$regStats_corrected[[b]] <- PCRBiasCorrection::statisticsList_(rv$result_list, minmax = rv$minmax)
-              rv$result_list_type2_corrected[[b]] <- rv$result_list
+              rv$regStats_corrected[[locus]] <- PCRBiasCorrection::statisticsList_(rv$result_list, minmax = rv$minmax)
+              rv$result_list_type2_corrected[[locus]] <- rv$result_list
               
               # create barplots
-              PCRBiasCorrection::createBarErrorPlots_(rv$regStats[[b]], rv$regStats_corrected[[b]], rv, type=2, b=b, plotdir=plotdir, logfilename = logfilename)
+              PCRBiasCorrection::createBarErrorPlots_(rv$regStats[[locus]], rv$regStats_corrected[[locus]], rv, type=2, locus_id=locus, plotdir=plotdir, logfilename = logfilename)
               
               a <- a + 1
             }

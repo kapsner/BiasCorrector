@@ -25,36 +25,38 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
               "SSE [h]", "R\u00B2 [h]", "a", "b", "d", "  ",
               "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
               "better_model")
+    ncols <- 14
+    hyperlength <- 7
     
   } else if (isTRUE(minmax)){
     cols <- c("Name", "Relative error",
-              "SSE [h]", "R\u00B2 [h]", "b", "y₀", "y₁", "  ",
+              "SSE [h]", "R\u00B2 [h]", "b", "y₀", "y₁", "m₀", "m₁", "  ",
               "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
               "better_model")
+    ncols <- 16
+    hyperlength <- 9
+    
   }
   
   if (is.null(mode)){
-    t <- DT::datatable(dt, colnames = c("Name", "Relative error",
-                                        "SSE [h]", "R\u00B2 [h]", "b", "y₀", "y₁", "  ",
-                                        "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
-                                        "better_model"),
+    t <- DT::datatable(dt, colnames = cols,
                        rownames = F,
                        options = list(scrollX = TRUE, 
                                       pageLength = 20,
-                                      columnDefs = list(list(targets = 14, visible = FALSE)), 
+                                      columnDefs = list(list(targets = ncols, visible = FALSE)), 
                                       dom="ltip"
                        )) %>%
-      formatRound(columns=c(2:14), digits=3) %>%
+      formatRound(columns=c(2:ncols), digits=3) %>%
       formatStyle(columns = 3,
                   valueColumns = "better_model",
                   fontWeight = styleEqual(0, "bold")) %>%
-      formatStyle(columns = 3:7,
+      formatStyle(columns = 3:hyperlength,
                   valueColumns = "better_model",
                   backgroundColor = styleEqual(0, "#7CFC005A")) %>%
-      formatStyle(columns = 9,
+      formatStyle(columns = hyperlength + 2,
                   valueColumns = "better_model",
                   fontWeight = styleEqual(1, "bold")) %>%
-      formatStyle(columns = 9:14,
+      formatStyle(columns = (hyperlength + 2):ncols,
                   valueColumns = "better_model",
                   backgroundColor = styleEqual(1, "#7CFC005A")) #%>%
     #formatStyle(columns = c(1:11), fontSize = "80%")
@@ -63,10 +65,10 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
                        rownames = F,
                        options = list(scrollX = TRUE, 
                                       pageLength = 20,
-                                      columnDefs = list(list(targets = 14, visible = FALSE)), 
+                                      columnDefs = list(list(targets = ncols, visible = FALSE)), 
                                       dom="ltip"
                        )) %>%
-      formatRound(columns=c(2:14), digits=3)
+      formatRound(columns=c(2:ncols), digits=3)
   } else {
     t <- "error"
   }

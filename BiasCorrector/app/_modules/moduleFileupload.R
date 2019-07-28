@@ -16,9 +16,17 @@
 
 moduleFileuploadServer <- function(input, output, session, rv, input_re){
   
-  # observe Radiobuttonevents 
-  observeEvent(input_re()[["moduleFileupload-type_locus_sample"]], {
-    rv$type_locus_sample <- input_re()[["moduleFileupload-type_locus_sample"]]
+  # TODO original selection of data type
+  # # observe Radiobuttonevents 
+  # observeEvent(input_re()[["moduleFileupload-type_locus_sample"]], {
+  #   rv$type_locus_sample <- input_re()[["moduleFileupload-type_locus_sample"]]
+  # })
+  observe({
+    req(rv$type_locus_sample)
+    output$type_locus_sample <- reactive({
+      return(TRUE)
+    })
+    outputOptions(output, 'type_locus_sample', suspendWhenHidden=FALSE)
   })
   
   
@@ -239,31 +247,41 @@ moduleFileuploadUI <- function(id){
     fluidRow(
       # type of data box
       box(
-        title = "Type of Data",
+        # TODO original selection of data type
+        # title = "Type of Data",
+        # # Radiobuttons: Type of data
+        # radioButtons(inputId = ns("type_locus_sample"), label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
+        #              choices = list("One locus in many samples (e.g. pyrosequencing data)" = 1,
+        #                             "Many loci in one sample (e.g. next-generation sequencing data or microarray data)" = 2),
+        #              selected = character(0)),
+        # 
+        # tags$hr(),
+        # 
+        # conditionalPanel(
+        #   condition = "input['moduleFileupload-type_locus_sample'] == 1",
+        #   textInput(ns("locusname"),
+        #             label = NULL,
+        #             placeholder = "Locus name")
+        # ),
         
-        # Radiobuttons: Type of data
-        radioButtons(inputId = ns("type_locus_sample"), label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
-                     choices = list("One locus in many samples (e.g. pyrosequencing data)" = 1,
-                                    "Many loci in one sample (e.g. next-generation sequencing data or microarray data)" = 2),
-                     selected = character(0)),
+        # conditionalPanel(
+        #   condition = "input['moduleFileupload-type_locus_sample'] == 2",
+        #   textInput(ns("samplename"),
+        #             label = NULL,
+        #             placeholder = "Sample-ID")
+        # ),
+        # conditionalPanel(
+        #   condition = "input['moduleFileupload-type_locus_sample'] != null",
+        #   verbatimTextOutput(ns("samplelocus_out"))
+        # ), width = 6)
         
-        tags$hr(),
-        
+        title = "File upload",
+        h5("Please insert the name of the locus under investigation"),
+        textInput(ns("locusname"),
+                  label = NULL,
+                  placeholder = "Locus name"),
         conditionalPanel(
-          condition = "input['moduleFileupload-type_locus_sample'] == 1",
-          textInput(ns("locusname"),
-                    label = NULL,
-                    placeholder = "Locus name")
-        ),
-        
-        conditionalPanel(
-          condition = "input['moduleFileupload-type_locus_sample'] == 2",
-          textInput(ns("samplename"),
-                    label = NULL,
-                    placeholder = "Sample-ID")
-        ),
-        conditionalPanel(
-          condition = "input['moduleFileupload-type_locus_sample'] != null",
+          condition = "output['moduleFileupload-type_locus_sample']",
           verbatimTextOutput(ns("samplelocus_out"))
         ), width = 6)
     ),
@@ -271,7 +289,7 @@ moduleFileuploadUI <- function(id){
     # experimental fileupload box
     fluidRow(
       conditionalPanel(
-        condition = "input['moduleFileupload-type_locus_sample'] != null",
+        condition = "output['moduleFileupload-type_locus_sample']",
         
         box(
           title = "Data Input: Experimental Data",

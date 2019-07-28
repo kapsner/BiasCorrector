@@ -71,7 +71,7 @@ RUN for package in $p_add; do \
 done
     
 # install PCRBiasCorrection
-RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@v0.0.1.9002')"
+RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@v0.1.0.9001')"
 
 RUN apt-get install -y --no-install-recommends \
     git
