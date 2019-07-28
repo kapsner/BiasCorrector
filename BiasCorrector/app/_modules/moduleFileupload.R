@@ -301,7 +301,7 @@ moduleFileuploadUI <- function(id){
                     accept = c(".csv", "text/csv")),
           h6(paste("Max. filesize: ", maxfilesize, " MB")),
           
-          h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/BiasCorrector/blob/master/FAQ.md")),
+          h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
           width = 6)
       ),
       
@@ -320,7 +320,7 @@ moduleFileuploadUI <- function(id){
           #             accept = c(".csv")),
           
           h6(paste("Max. filesize: ", maxfilesize, " MB")),
-          h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/BiasCorrector/blob/master/FAQ.md")),
+          h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
           width = 6)
       )
     )

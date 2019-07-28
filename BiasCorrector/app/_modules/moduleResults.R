@@ -134,7 +134,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           if (rv$type_locus_sample == "1"){
             PCRBiasCorrection::writeCSV_(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
             PCRBiasCorrection::writeCSV_(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats_corrected[,-(which(colnames(rv$regStats_corrected)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_h[,-(which(colnames(rv$regStats_corrected_h)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected_h.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_c[,-(which(colnames(rv$regStats_corrected_c)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected_c.csv"))
             
           } else if (rv$type_locus_sample == "2"){
             # regression stats
