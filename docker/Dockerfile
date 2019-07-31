@@ -37,7 +37,7 @@ ARG REPO_NAME=BiasCorrector
 
 # add shiny app
 RUN cd /home/shiny/${REPO_NAME}/docker && \
-    cp -r ../BiasCorrector/* /srv/shiny-server/
+    cp -r ../BiasCorrector/* /srv/shiny-server/ && \
     # add custom server conf (running shiny as user 'shiny' is more secure than running as 'root')
     cp shiny-server.conf /etc/shiny-server/ && \
     # add log-script
