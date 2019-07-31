@@ -16,7 +16,7 @@
 
 moduleStatisticsServer <- function(input, output, session, rv, input_re){
   observe({
-    req(rv$plotting_finished)
+    req(rv$regStats_corrected_c)
     
     output$description <- renderText({
       str1 <- "The table shows the regression parameters of the hyperbolic regression and the cubic regression.<br/>"
@@ -32,11 +32,17 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
     
     # type 1 data:
     if (rv$type_locus_sample == "1"){
+      
+      rv$better_model_stats <- PCRBiasCorrection::betterModel(statstable_pre = rv$regStats,
+                                                statstable_post_hyperbolic = rv$regStats_corrected_h,
+                                                statstable_post_cubic = rv$regStats_corrected_c,
+                                                selection_method = rv$selection_method)
+      
+      
       output$regression_statistics <- renderUI({
         output$dt_reg <- DT::renderDataTable({
-          dt <- rv$regStats
           # use formatstyle to highlight lower SSE values
-          renderRegressionStatisticTable(dt, minmax = rv$minmax)
+          renderRegressionStatisticTable(rv$regStats[,("better_model"):=rv$better_model_stats[,get("better_model")]], minmax = rv$minmax)
         })
         d <- DT::dataTableOutput("moduleStatistics-dt_reg")
         do.call(tagList, list(d))

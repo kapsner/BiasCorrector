@@ -21,6 +21,12 @@ moduleSettingsServer <- function(input, output, session, rv, input_re){
     PCRBiasCorrection::writeLog_(paste0("Settings: minmax = ", input_re()[["moduleSettings-settings_minmax"]]), logfilename)
     rv$minmax <- input_re()[["moduleSettings-settings_minmax"]]
   })
+  
+  # observe Radiobuttonevents 
+  observeEvent(input_re()[["moduleSettings-settings_selection_method"]], {
+    PCRBiasCorrection::writeLog_(paste0("Settings: selection_method = ", input_re()[["moduleSettings-settings_selection_method"]]), logfilename)
+    rv$selection_method <- input_re()[["moduleSettings-settings_selection_method"]]
+  })
 }
 
 moduleSettingsUI <- function(id){
@@ -31,7 +37,14 @@ moduleSettingsUI <- function(id){
       # type of data box
       box(
         title = "Settings",
-        checkboxInput(ns("settings_minmax"), label = "Use 'min-max'-correction (default: off) [CAUTION: this feature is very experimental and neither tested nor validated!]", value = FALSE),
+        checkboxInput(ns("settings_minmax"),
+                      label = HTML("Use 'min-max'-correction (default: off) <b>[CAUTION: this feature is very experimental and neither tested nor validated!]</b>"), 
+                      value = FALSE),
+        tags$hr(),
+        radioButtons(ns("settings_selection_method"),
+                     label = "Method to automatically (pre-) select the regression method for correction",
+                     choices = list("SSE" = "SSE", "Relative Error" = "RelError"),
+                     selected = "SSE"),
         width = 9
       ),
       box(

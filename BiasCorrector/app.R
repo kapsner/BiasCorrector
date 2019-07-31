@@ -34,5 +34,7 @@ shinyAppDir("app")
 # TODO add demo-data
 # TODO in type one data add checkbox, to select either all hyperbolic or all cubic at once
 
+# TODO add example data button and import to startpage
+
 # for package:
 # imports: ggplot2, data.table
