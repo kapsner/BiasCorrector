@@ -18,7 +18,6 @@ RUN for package in $p_base; do \
     done
 
 ARG p_add="DT \
-    shiny \
     shinyjs \
     shinydashboard"
 
