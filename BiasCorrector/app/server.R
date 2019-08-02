@@ -295,4 +295,7 @@ server <- function(input, output, session) {
   
   ###### Settings
   callModule(moduleSettingsServer, "moduleSettings", rv=rv, input_re=reactive({input}))
+  
+  ###### Info
+  callModule(moduleInfoServer, "moduleInfo", rv=rv, input_re=reactive({input}))
 }

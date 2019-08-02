@@ -24,10 +24,11 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       str3 <- "Column 2 presents the mean of the relative errors for every CpG-site. It is calculated for every CpG-site as a mean of relative errors between the true and the observed methylation degrees of each methylation step across all available calibrator DNAs for the respective CpG-site. <br/>Formula:<br/> <i>abs(methylation_true - methylation_observed) / methylation_true </i>"
       str4 <- "Columns 3-7 present the sum of squared error of the hyperbolic regression ('SSE [h]'), the coefficient of determination ('R² [h]') and the regression parameters used to calculate the hyperbolic regression curves for the respective CpG-site."
       str5 <- "Columns 8-13 present the sum of squared error of the cubic regression ('SSE [c]'), the coefficient of determination ('R² [c]') and the regression parameters used to calculate the cubic regression curves."
-      str6 <- "The rows highlighted with a green background colour indicate the regression equation, that in comparison of the sum of squared errors better fits the data points for the respecitve CpG-site."
+      str6 <- "The rows highlighted with a green background colour indicate the regression equation that is automatically selected for the correction of measurement biases based on the method, selected in the 'Settings'-tab."
+      str7 <- "The bold marked sum of squared errors indicate, that in comparison of the SSE this regression equation better fits the data points for the respecitve CpG-site."
       
       
-      HTML(paste(str1, str2, str3, str4, str5, str6, sep = "<br/><br/>"))
+      HTML(paste(str1, str2, str3, str4, str5, str6, str7, sep = "<br/><br/>"))
     })
     
     # type 1 data:

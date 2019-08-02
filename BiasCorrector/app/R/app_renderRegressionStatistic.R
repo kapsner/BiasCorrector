@@ -39,27 +39,33 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
   }
   
   if (is.null(mode)){
+    dt[,("better_sse") := ifelse(get("SSE_cubic") <= get("SSE_hyperbolic"), 1, 0)]
+    cols <- c(cols, "better_sse")
     t <- DT::datatable(dt, colnames = cols,
                        rownames = F,
                        options = list(scrollX = TRUE, 
                                       pageLength = 20,
-                                      columnDefs = list(list(targets = ncols, visible = FALSE)), 
+                                      columnDefs = list(list(targets = c(ncols, ncols + 1), visible = FALSE)), 
                                       dom="ltip"
                        )) %>%
       formatRound(columns=c(2:ncols), digits=3) %>%
+      # hyperbolic parameters
       formatStyle(columns = 3,
-                  valueColumns = "better_model",
+                  valueColumns = "better_sse",
                   fontWeight = styleEqual(0, "bold")) %>%
       formatStyle(columns = 3:hyperlength,
                   valueColumns = "better_model",
                   backgroundColor = styleEqual(0, "#7CFC005A")) %>%
+      
+      # cubic parameters
       formatStyle(columns = hyperlength + 2,
-                  valueColumns = "better_model",
+                  valueColumns = "better_sse",
                   fontWeight = styleEqual(1, "bold")) %>%
       formatStyle(columns = (hyperlength + 2):ncols,
                   valueColumns = "better_model",
                   backgroundColor = styleEqual(1, "#7CFC005A")) #%>%
     #formatStyle(columns = c(1:11), fontSize = "80%")
+    
   } else if (mode == "corrected"){
     t <- DT::datatable(dt, colnames = cols,
                        rownames = F,

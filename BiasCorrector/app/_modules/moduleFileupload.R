@@ -29,6 +29,23 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
     outputOptions(output, 'type_locus_sample', suspendWhenHidden=FALSE)
   })
   
+  # loading example data
+  observeEvent(input_re()[["moduleFileupload-load_example_data"]], {
+    # mimic normal fileimport
+    # experimental file
+    rv$expFileReq = T
+    rv$sampleLocusName = "Example_Locus"
+    PCRBiasCorrection::writeLog_(paste0("Locus name: Example_Locus\n(--> stored as: ", rv$sampleLocusName, ")"), logfilename = logfilename)
+    rv$fileimportExp <- PCRBiasCorrection::example.data_experimental[["dat"]]
+    
+    # calibration file
+    rv$fileimportCal <- PCRBiasCorrection::example.data_calibration[["dat"]]
+    rv$vec_cal <- PCRBiasCorrection::example.data_calibration[["vec_cal"]]
+    
+    # set upload flag
+    rv$type1cal_uploaded <- TRUE
+  })
+  
   
   # Experimental file
   observe({
@@ -283,7 +300,20 @@ moduleFileuploadUI <- function(id){
         conditionalPanel(
           condition = "output['moduleFileupload-type_locus_sample']",
           verbatimTextOutput(ns("samplelocus_out"))
-        ), width = 6)
+        ), 
+        width = 6),
+      box(
+        title = "Description",
+        h5("This application is a graphical user interface (GUI) to the alogrihms implemented in the R-package 'PCRBiasCorrection'."),
+        h5("If you use this 'BiasCorrector' or 'PCRBiasCorrection' to correct PCR measurement biases for a publication, please refere to the 'Info'-tab to find out how to cite them."),
+        tags$hr(),
+        h5("You can test this application with example data by pressing the 'Load Example Data'-button below."),
+        div(class="row", style="text-align: center",
+            actionButton(ns("load_example_data"), "Load Example Data",
+                         style="white-space: normal; text-align:center; 
+        padding: 9.5px 9.5px 9.5px 9.5px;
+        margin: 6px 10px 6px 10px;"))
+      )
     ),
     
     # experimental fileupload box
