@@ -1,5 +1,5 @@
 # BiasCorrector: Correct PCR-bias in DNA methylation analyses
-# Copyright (C) 2019 Lorenz Kapsner
+# Copyright (C) 201A GUI to Correct PCR Bias in DNA Methylation Analyses9 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
             })
 
             # check here, if there are calibration steps outside the range 0 <= CS <= 100
-            if (rv$fileimportCal[,min(as.numeric(as.character(true_methylation)))] < 0 || rv$fileimportCal[,max(as.numeric(as.character(true_methylation)))] > 100){
+            if (rv$fileimportCal[,min(as.numeric(as.character(get("true_methylation"))))] < 0 || rv$fileimportCal[,max(as.numeric(as.character(get("true_methylation"))))] > 100){
               openModal("calibrange", rv)
             } else {
 

@@ -13,20 +13,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gpg-agent \
     git
 
+ARG p_base="devtools"
+
 RUN for package in $p_base; do \
     R -q -e "p <- \"$package\"; if (isFALSE(p %in% installed.packages()[,\"Package\"])){; cat(paste(\"Installing package:\", p, \"\n\n\")); install.packages(p, repos = \"https://ftp.fau.de/cran/\", quiet=T);} else {;cat(paste(\"Package\", p, \"is already installed\n\n\"));}"; \
     done
 
-ARG p_add="DT \
-    shinyjs \
-    shinydashboard"
 
-RUN for package in $p_add; do \
-    R -q -e "p <- \"$package\"; if (isFALSE(p %in% installed.packages()[,\"Package\"])){; cat(paste(\"Installing package:\", p, \"\n\n\")); install.packages(p, repos = \"https://ftp.fau.de/cran/\", quiet=T);} else {;cat(paste(\"Package\", p, \"is already installed\n\n\"));}"; \
-done
-    
 # install PCRBiasCorrection
-RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@v0.1.0.9001')"
+RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@latest')"
+RUN R -q -e "devtools::install_github('kapsner/BiasCorrector@latest')"
 
 # clone repo
 RUN cd /home/shiny &&\
@@ -36,7 +32,7 @@ ARG REPO_NAME=BiasCorrector
 
 # add shiny app
 RUN cd /home/shiny/${REPO_NAME}/docker && \
-    cp -r ../BiasCorrector/* /srv/shiny-server/ && \
+    cp app.R /srv/shiny-server/ && \
     # add custom server conf (running shiny as user 'shiny' is more secure than running as 'root')
     cp shiny-server.conf /etc/shiny-server/ && \
     # add log-script

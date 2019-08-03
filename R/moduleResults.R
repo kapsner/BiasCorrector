@@ -1,4 +1,4 @@
-# BiasCorrector: Correct PCR-bias in DNA methylation analyses
+# BiasCorrector: A GUI to Correct PCR Bias in DNA Methylation Analyses
 # Copyright (C) 2019 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
         rv$choices_list <- data.table::data.table("Name" = character(), "better_model" = numeric())
         lapply(1:length(rv$vec_cal), function(x) {
           radioname <- paste0("radio", x)
-          rv$choices_list <- rbind(rv$choices_list, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()\u0024", radioname))))))
+          rv$choices_list <- rbind(rv$choices_list, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
         })
         print(rv$choices_list)
 
@@ -70,16 +70,18 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
           # Experimental data
           # iterate over unique locus ids in experimental file
-          for (b in rv$fileimportExp[,unique(locus_id)]){
+          for (locus in rv$fileimportExp[,unique(get("locus_id"))]){
             # get regression results
-            rv$result_list <- rv$result_list_type2[[b]]
+            rv$result_list <- rv$result_list_type2[[locus]]
             # get copy of experimental data for that specific locus
-            expdata <- rv$fileimportExp[locus_id==b,]
+            expdata <- rv$fileimportExp[get("locus_id")==locus,]
             # get colnames of that specific locus (different loci can have different numbers of CpG-sites)
-            vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(CpG_count)]+1)], "row_means")
+            vec <- c("locus_id", colnames(expdata)[2:(expdata[,min(get("CpG_count"))]+1)], "row_means")
             # solve equations for that locus and append temp_results
-            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F], rv$regStats[[b]][,.(Name, better_model)], type = 2, rv = rv, logfilename = logfilename, minmax = rv$minmax)
-            rv$temp_results[[b]] <- solved_eq[["results"]]
+            solved_eq <- PCRBiasCorrection::solvingEquations_(expdata[,vec,with=F],
+                                                              rv$regStats[[locus]][,c("Name", "better_model"),with=F],
+                                                              type = 2, rv = rv, logfilename = logfilename, minmax = rv$minmax)
+            rv$temp_results[[locus]] <- solved_eq[["results"]]
             rv$substitutions <- rbind(rv$substitutions, solved_eq[["substitutions"]])
           }
 
@@ -95,7 +97,9 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           }
           vec <- colnames(rv$finalResults)[grepl("row_means", colnames(rv$finalResults))]
           # reorder the columns so that the rownames are at the end!
-          rv$finalResults <- cbind(rv$finalResults[,-vec, with=F], rv$finalResults[,vec,with=F], CpG_sites = unique(rv$fileimportExp[,CpG_count,by=locus_id])$CpG_count)
+          rv$finalResults <- cbind(rv$finalResults[,-vec, with=F],
+                                   rv$finalResults[,vec,with=F],
+                                   CpG_sites = unique(rv$fileimportExp[,get("CpG_count"),by=get("locus_id")])$CpG_count)
         })
       }
 
@@ -145,19 +149,19 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           # create other files
           if (rv$type_locus_sample == "1"){
             PCRBiasCorrection::writeCSV_(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats[,-(which(colnames(rv$regStats)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_h[,-(which(colnames(rv$regStats_corrected_h)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected_h.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_c[,-(which(colnames(rv$regStats_corrected_c)=="better_model")), with=F], paste0(csvdir, "BC_regression_stats_corrected_c.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats, paste0(csvdir, "BC_regression_stats.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_h, paste0(csvdir, "BC_regression_stats_corrected_h.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_c, paste0(csvdir, "BC_regression_stats_corrected_c.csv"))
 
           } else if (rv$type_locus_sample == "2"){
             # regression stats
             for (key in names(rv$fileimportCal)){
-              PCRBiasCorrection::writeCSV_(rv$regStats[[key]][,-(which(colnames(rv$regStats[[key]])=="better_model")), with=F],
+              PCRBiasCorrection::writeCSV_(rv$regStats[[key]],
                        paste0(csvdir, "BC_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
             }
 
             for (key in names(rv$fileimportCal_corrected)){
-              PCRBiasCorrection::writeCSV_(rv$regStats_corrected[[key]][,-(which(colnames(rv$regStats_corrected[[key]])=="better_model")), with=F],
+              PCRBiasCorrection::writeCSV_(rv$regStats_corrected[[key]],
                        paste0(csvdir, "BC_regression_stats_corrected_", gsub("[[:punct:]]", "", key), ".csv"))
             }
 
@@ -215,8 +219,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
     output$description_sub <- renderText({
       str1 <- "Substitutions occur, when no result is found in the range of plausible values between 0 and 100 during the BiasCorrection."
-      str2 <- "A 'border zone' is implemented in the ranges 0 – 10\u0025 and 100 + 10\u0025."
-      str3 <- "If a result is in the range -10 < x < 0 percentage or 100  < x < 110 percentage, the value is substituted in the final results with 0\u0025 or 100\u0025 respectively."
+      str2 <- "A 'border zone' is implemented in the ranges 0 - 10% and 100 + 10%."
+      str3 <- "If a result is in the range -10 < x < 0 percentage or 100  < x < 110 percentage, the value is substituted in the final results with 0% or 100% respectively."
       str4 <- "Values beyond these border zones will be substituted with a blank value in the final output, as they seem implausible and could indicate substantial errors in the underlying data."
       str5 <- "For a detailed feedback, the substitutions table shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG-site."
 

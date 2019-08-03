@@ -1,4 +1,4 @@
-# BiasCorrector: Correct PCR-bias in DNA methylation analyses
+# BiasCorrector: A GUI to Correct PCR Bias in DNA Methylation Analyses
 # Copyright (C) 2019 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
                       radioButtons(inputId = radioname,
                                    label = NULL,
                                    choices = list("hyperbolic" = 0, "cubic" = 1),
-                                   selected = as.character(rv$better_model_stats[Name==rv$vec_cal[g], better_model]),
+                                   selected = as.character(rv$better_model_stats[get("Name")==rv$vec_cal[g], get("better_model")]),
                                    inline = TRUE))
               ),
               div(class="col-sm-4",
@@ -72,8 +72,6 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
     req(rv$better_model_stats)
 
       if (rv$type_locus_sample == "1"){
-
-        beter <<- rv$better_model_stats
 
         lapply(1:length(rv$vec_cal), function(k) {
           radioname <- paste0("radio", k)

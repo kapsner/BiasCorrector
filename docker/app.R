@@ -1,0 +1,2 @@
+library(BiasCorrector)
+launchApp()

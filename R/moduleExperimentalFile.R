@@ -1,4 +1,4 @@
-# BiasCorrector: Correct PCR-bias in DNA methylation analyses
+# BiasCorrector: A GUI to Correct PCR Bias in DNA Methylation Analyses
 # Copyright (C) 2019 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
@@ -41,14 +41,14 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         })
 
         output$exp_samples <- reactive({
-          len <- unique(rv$fileimportExp[,sample_id])
+          len <- unique(rv$fileimportExp[,get("sample_id")])
           message <- paste0("Unique samples: ", length(len))
           PCRBiasCorrection::writeLog_(message, logfilename)
           message
         })
 
         output$exp_samples_raw <- reactive({
-          len <- sort(unique(rv$fileimportExp[,sample_id]))
+          len <- sort(unique(rv$fileimportExp[,get("sample_id")]))
           message <- paste0("Unique sample IDs:\n", paste(len, collapse = "\n"))
           PCRBiasCorrection::writeLog_(message, logfilename)
           message
@@ -63,14 +63,14 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
         })
 
         output$exp_samples <- reactive({
-          len <- unique(rv$fileimportExp[,locus_id])
+          len <- unique(rv$fileimportExp[,get("locus_id")])
           message <- paste0("Unique loci: ", length(len))
           PCRBiasCorrection::writeLog_(message, logfilename)
           message
         })
 
         output$exp_samples_raw <- reactive({
-          len <- sort(unique(rv$fileimportExp[,locus_id]))
+          len <- sort(unique(rv$fileimportExp[,get("locus_id")]))
           message <- paste0("Unique locus IDs:\n", paste(len, collapse = "\n"))
           PCRBiasCorrection::writeLog_(message, logfilename)
           message

@@ -1,4 +1,4 @@
-# BiasCorrector: Correct PCR-bias in DNA methylation analyses
+# BiasCorrector: A GUI to Correct PCR Bias in DNA Methylation Analyses
 # Copyright (C) 2019 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
@@ -59,14 +59,14 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         })
 
         output$cal_samples <- reactive({
-          len <- unique(rv$fileimportCal[,true_methylation])
+          len <- unique(rv$fileimportCal[,get("true_methylation")])
           message <- paste0("Unique calibration samples: ", length(len))
           PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
 
         output$cal_samples_raw <- reactive({
-          len <- unique(rv$fileimportCal[,true_methylation])
+          len <- unique(rv$fileimportCal[,get("true_methylation")])
           message <- paste0("Unique calibration steps:\n", paste(len, collapse = "\n"))
           PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
@@ -92,14 +92,14 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
             selectname <- paste0("select", g)
             div(class="row",
                 div(class="col-sm-6", style="text-align: left",
-                    h5(tags$b(paste0(rv$calibr_steps[g, name], ":")))),
+                    h5(tags$b(paste0(rv$calibr_steps[g, get("name")], ":")))),
                 div(class="col-sm-6", style="text-align: center",
                     numericInput(inputId = selectname,
                                  min = 0,
                                  max = 100,
                                  label = NULL,
                                  step = 0.01,
-                                 value = rv$calibr_steps[g, step],
+                                 value = rv$calibr_steps[g, get("step")],
                                  width = "100%")),
                 tags$hr(style="margin: 0.5%"))
           })
@@ -117,7 +117,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
         })
 
         output$cal_samples_raw <- reactive({
-          message <- paste0("Unique calibration steps:\n", paste(levels(factor(rv$calibr_steps[,step])), collapse = "\n"))
+          message <- paste0("Unique calibration steps:\n", paste(levels(factor(rv$calibr_steps[,get("step")])), collapse = "\n"))
           PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
@@ -129,7 +129,7 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
     rv$choices_list <- data.table::data.table("name" = character(), "step" = numeric())
     lapply(1:nrow(rv$calibr_steps), function(g) {
       selectname <- paste0("select", g)
-      rv$choices_list <- rbind(rv$choices_list, cbind("name" = rv$calibr_steps[g,name], "step" = as.numeric(eval(parse(text=paste0("input_re()$", selectname))))))
+      rv$choices_list <- rbind(rv$choices_list, cbind("name" = rv$calibr_steps[g,get("name")], "step" = as.numeric(eval(parse(text=paste0("input_re()$", selectname))))))
     })
     print(rv$choices_list)
 
