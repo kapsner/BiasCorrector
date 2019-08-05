@@ -12,10 +12,24 @@ fi
 printf "\n\nPlease insert your login credentials to registry: $REGISTRY_PREFIX ...\n"
 docker login "https://$REGISTRY_PREFIX"
 
+printf "\n\ncloning repo ...\n"
+# create folder to add to Dockerfile
+mkdir addfolder
+cd addfolder
+
+# clone repository
+git clone https://github.com/kapsner/BiasCorrector.git
+
+# build image
+cd ..
+
 printf "\n\nbuilding images ...\n"
 
 printf "building image: $REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG \n\n\n"
-docker build -f ../Dockerfile -t "$REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG" .
+docker build -f Dockerfile -t "$REGISTRY_PREFIX/$IMAGE_NAME$VERSION_TAG" .
+
+# remove addfolder
+rm -rf ./addfolder
 
 printf "\n\npushing images ...\n"
 

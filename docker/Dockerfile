@@ -22,13 +22,16 @@ RUN for package in $p_base; do \
 
 # install PCRBiasCorrection
 RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@latest')"
-RUN R -q -e "devtools::install_github('kapsner/BiasCorrector@latest')"
 
-# clone repo
-RUN cd /home/shiny &&\
-    git clone https://github.com/kapsner/BiasCorrector.git
-
+# repository name
 ARG REPO_NAME=BiasCorrector
+
+# add cloned repo
+ADD ./addfolder /home/shiny/
+
+# install our R-Package
+RUN cd /home/shiny/${REPO_NAME}/ && \
+    R -q -e "devtools::install('.')"
 
 # add shiny app
 RUN cd /home/shiny/${REPO_NAME}/docker && \
@@ -37,6 +40,7 @@ RUN cd /home/shiny/${REPO_NAME}/docker && \
     cp shiny-server.conf /etc/shiny-server/ && \
     # add log-script
     cp show-log.sh /
+
 
 # fix permissions of directories, where R/ the app need rights to write
 RUN chown -R shiny:shiny /srv/shiny-server/
