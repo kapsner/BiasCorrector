@@ -14,6 +14,7 @@ test_that("correct startup",{
   # print(list.files())
   # print(list.files(utildir))
   skip_on_cran()
+  skip("Skipping during R check")
   x <- process$new(
     "R",
     c(
