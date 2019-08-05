@@ -144,6 +144,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           PCRBiasCorrection::writeCSV_(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
           PCRBiasCorrection::writeCSV_(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
           PCRBiasCorrection::writeCSV_(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
+          PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_h, paste0(csvdir, "BC_substituted_values_corrected_h.csv"))
+          PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_c, paste0(csvdir, "BC_substituted_values_corrected_c.csv"))
           write(rv$logfile, paste0(csvdir, "BC_logfile.txt"))
 
           # create other files
@@ -234,7 +236,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       do.call(tagList, list(t))
     })
     # change colnames for better display
-    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "BiasCorrected value", "Substituted value")
+    colnames(rv$substitutions) <- c("Sample ID", "CpG site", "BiasCorrected value", "Substituted value", "Regression")
 
 
     output$downloadSubstituted <- downloadHandler(
@@ -250,7 +252,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
     output$substituted_values <- DT::renderDataTable({
       DT::datatable(rv$substitutions, options = list(scrollX = TRUE, pageLength = 20, dom="ltip"), rownames = F) %>%
-        DT::formatRound(columns=c(2:ncol(rv$fileimportExp)), digits=3)
+        DT::formatRound(columns=c(3:4), digits=3)
     })
 
     #msg2 <- "Please refer to the tab 'Substituted values' for further information."

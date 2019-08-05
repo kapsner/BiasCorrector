@@ -43,6 +43,8 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           solved_eq_h <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename, minmax = rv$minmax)
           rv$fileimportCal_corrected_h <- solved_eq_h[["results"]]
           colnames(rv$fileimportCal_corrected_h) <- colnames(rv$fileimportCal)
+          
+          rv$substitutions_corrected_h <- solved_eq_h[["substitutions"]]
         })
       } else if (rv$type_locus_sample == "2"){
         cat("fileimportCal_corrected_h: Not implemented yet.\n")
@@ -94,6 +96,8 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           solved_eq_c <- PCRBiasCorrection::solvingEquations_(rv$fileimportCal, rv$choices_list, type = 1, rv = rv, mode = "corrected", logfilename = logfilename, minmax = rv$minmax)
           rv$fileimportCal_corrected_c <- solved_eq_c[["results"]]
           colnames(rv$fileimportCal_corrected_c) <- colnames(rv$fileimportCal)
+          
+          rv$substitutions_corrected_c <- solved_eq_c[["substitutions"]]
         })
       } else if (rv$type_locus_sample == "2"){
         cat("fileimportCal_corrected_c: Not implemented yet.\n")

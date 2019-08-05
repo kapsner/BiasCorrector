@@ -31,7 +31,7 @@ moduleInfoServer <- function(input, output, session, rv, input_re){
     utils::citation("PCRBiasCorrection")
   })
   output$citation_corrector <- renderPrint({
-    utils::citation("PCRBiasCorrection")
+    utils::citation("BiasCorrector")
   })
 }
 
