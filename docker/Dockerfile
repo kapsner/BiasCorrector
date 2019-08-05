@@ -27,7 +27,7 @@ RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@latest')"
 ARG REPO_NAME=BiasCorrector
 
 # add cloned repo
-ADD ./addfolder /home/shiny/
+COPY ./addfolder /home/shiny/
 
 # install our R-Package
 RUN cd /home/shiny/${REPO_NAME}/ && \
