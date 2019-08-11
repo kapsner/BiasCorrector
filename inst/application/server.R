@@ -195,8 +195,9 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
           shinydashboard::menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
                                    shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist")),
+                                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("angellist")),
+                                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("chart-line")),
+                                   shinydashboard::menuSubItem("Corrected Regression Statistics", tabName = "panel_8", icon = icon("angellist")),
                                    shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
           )
         )
@@ -222,6 +223,9 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Plot Corrected Results
   shiny::callModule(moduleCorrectedPlotsServer, "moduleCorrectedPlots", rv=rv, input_re=reactive({input}))
+  
+  ###### Statistics Corrected Results
+  shiny::callModule(moduleCorrectedStatisticsServer, "moduleCorrectedStatistics", rv=rv, input_re=reactive({input}))
 
   ###### Model Selection
   shiny::callModule(moduleModelSelectionServer, "moduleModelSelection", rv=rv, input_re=reactive({input}))

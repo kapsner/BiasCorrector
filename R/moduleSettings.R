@@ -57,14 +57,15 @@ moduleSettingsUI <- function(id){
       # type of data box
       box(
         title = "Settings",
-        checkboxInput(ns("settings_minmax"),
-                      label = HTML("Use 'min-max'-correction (default: off) <b>[CAUTION: this feature is very experimental and neither tested nor validated!]</b>"),
-                      value = FALSE),
-        tags$hr(),
         radioButtons(ns("settings_selection_method"),
                      label = "Method to automatically (pre-) select the regression method for correction",
                      choices = list("SSE" = "SSE", "Relative Error" = "RelError"),
                      selected = "SSE"),
+        tags$hr(),
+        checkboxInput(ns("settings_minmax"),
+                      label = "Use 'min-max'-correction (default: off)",
+                      value = FALSE),
+        helpText("[CAUTION: this feature is very experimental and neither tested nor validated!]"),
         width = 9
       ),
       box(

@@ -29,11 +29,11 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
     hyperlength <- 7
 
   } else if (isTRUE(minmax)){
-    cols <- c("Name", "Relative error",
-              "SSE [h]", "R\u00B2 [h]", "b", "y\u2080", "y\u2081", "m\u2080", "m\u2081", "  ",
-              "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
+    cols <- c("Name", "Relative error", "y\u2080", "y\u2081", "m\u2080", "m\u2081", 
+              "SSE [h]", "R\u00B2 [h]", "b", "  ",
+              "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", 
               "better_model")
-    ncols <- 16
+    ncols <- 14
     hyperlength <- 9
 
   }

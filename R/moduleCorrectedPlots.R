@@ -45,6 +45,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           colnames(rv$fileimportCal_corrected_h) <- colnames(rv$fileimportCal)
           
           rv$substitutions_corrected_h <- solved_eq_h[["substitutions"]]
+          colnames(rv$substitutions_corrected_h) <- c("Sample ID", "CpG site", "BiasCorrected value", "Substituted value", "Regression")
         })
       } else if (rv$type_locus_sample == "2"){
         cat("fileimportCal_corrected_h: Not implemented yet.\n")
@@ -98,6 +99,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
           colnames(rv$fileimportCal_corrected_c) <- colnames(rv$fileimportCal)
           
           rv$substitutions_corrected_c <- solved_eq_c[["substitutions"]]
+          colnames(rv$substitutions_corrected_c) <- c("Sample ID", "CpG site", "BiasCorrected value", "Substituted value", "Regression")
         })
       } else if (rv$type_locus_sample == "2"){
         cat("fileimportCal_corrected_c: Not implemented yet.\n")
@@ -303,53 +305,6 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       }, deleteFile = FALSE)
 
 
-
-      ## regression statistics
-      output$regression_statistics_corrected_h <- renderUI({
-        output$dt_reg_corrected_h <- DT::renderDataTable({
-          dt <- rv$regStats_corrected_h
-          # use formatstyle to highlight lower SSE values
-          renderRegressionStatisticTable(dt, mode = "corrected", minmax = rv$minmax)
-        })
-        d <- DT::dataTableOutput("moduleCorrectedPlots-dt_reg_corrected_h")
-        do.call(tagList, list(d))
-      })
-
-      output$regression_statistics_corrected_c <- renderUI({
-        output$dt_reg_corrected_c <- DT::renderDataTable({
-          dt <- rv$regStats_corrected_c
-          # use formatstyle to highlight lower SSE values
-          renderRegressionStatisticTable(dt, mode = "corrected", minmax = rv$minmax)
-        })
-        d <- DT::dataTableOutput("moduleCorrectedPlots-dt_reg_corrected_c")
-        do.call(tagList, list(d))
-      })
-
-      # create download button for regression statistics
-      output$downloadRegStat_corrected_h <- downloadHandler(
-        filename = function(){
-          paste0("BC_regression_stats_corrected_h_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
-                 gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
-        },
-        content = function(file){
-          PCRBiasCorrection::writeCSV_(rv$regStats_corrected_h[,-(which(colnames(rv$regStats_corrected_h)=="better_model")), with=F], file)
-        },
-        contentType = "text/csv"
-      )
-      output$downloadRegStat_corrected_c <- downloadHandler(
-        filename = function(){
-          paste0("BC_regression_stats_corrected_c_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
-                 gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
-        },
-        content = function(file){
-          PCRBiasCorrection::writeCSV_(rv$regStats_corrected_c[,-(which(colnames(rv$regStats_corrected_c)=="better_model")), with=F], file)
-        },
-        contentType = "text/csv"
-      )
-
-
-
-
       # type 2 data:
     } else if (rv$type_locus_sample == "2"){
 
@@ -447,37 +402,6 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
         list(src = filename)
       }, deleteFile = FALSE)
 
-
-
-      ## regression statistics
-      # create reactive df-selection:
-      df_regs <- reactive({
-        dt <- rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]]
-      })
-
-      output$dt_regs_corrected <- DT::renderDataTable({
-        dt <- df_regs()
-        renderRegressionStatisticTable(dt, minmax = rv$minmax)
-      })
-
-      # render head of page with selectInput and downloadbutton
-
-      output$regression_statistics_corrected <- renderUI({
-        dt <- DT::dataTableOutput("moduleCorrectedPlots-dt_regs_corrected")
-        do.call(tagList, list(dt))
-      })
-
-      # create download button for regression statistics
-      output$downloadRegStat_corrected <- downloadHandler(
-        filename = function(){
-          paste0("BC_regression_stats_corrected_", gsub("[[:punct:]]", "", input_re()$selectPlotLocus_corrected), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
-                 gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
-        },
-        content = function(file){
-          PCRBiasCorrection::writeCSV_(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]][,-(which(colnames(rv$regStats_corrected[[input_re()$selectPlotLocus_corrected]])=="better_model")), with=F], file)
-        },
-        contentType = "text/csv"
-      )
     }
   })
 }
@@ -536,34 +460,6 @@ moduleCorrectedPlotsUI <- function(id){
       column(3,
              box(title = "Plot Selection",
                  uiOutput(ns("selectPlotInput_corrected")),
-                 width = 12
-             )
-      )
-    ),
-
-    fluidRow(
-      column(9,
-             box(title = "Regression Statistics (corrected)",
-                 tabsetPanel(
-                   tabPanel("Hyperbolic Correction",
-                            uiOutput(ns("regression_statistics_corrected_h"))
-                   ),
-                   tabPanel("Cubic Correction",
-                            uiOutput(ns("regression_statistics_corrected_c"))
-                   )
-                 ),
-                 width = 12
-             )),
-      column(3,
-             box(title = "Download Regression Statistics [corrected]",
-                 uiOutput(ns("statistics_select")),
-                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat_corrected_h"), "Download regression statistics (hyperbolic correction)", style="white-space: normal; text-align:center;
-                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
-                                                                                               margin: 6px 10px 6px 10px;")),
-                 div(class="row", style="text-align: center", downloadButton(ns("downloadRegStat_corrected_c"), "Download regression statistics (cubic correction)", style="white-space: normal; text-align:center;
-                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
-                                                                                               margin: 6px 10px 6px 10px;")),
-                 tags$hr(),
                  width = 12
              )
       )

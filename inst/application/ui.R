@@ -83,6 +83,11 @@ shiny::shinyUI(shinydashboard::dashboardPage(skin = "black",
                                                  shinydashboard::tabItem(tabName = "panel_7",
                                                                          moduleCorrectedPlotsUI("moduleCorrectedPlots")
                                                  ),
+                                                 
+                                                 # select regression model
+                                                 shinydashboard::tabItem(tabName = "panel_8",
+                                                                         moduleCorrectedStatisticsUI("moduleCorrectedStatistics")
+                                                 ),
 
                                                  shinydashboard::tabItem(tabName = "panel_9",
                                                                          moduleLogUI("moduleLog")
