@@ -27,14 +27,17 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
               "better_model")
     ncols <- 14
     hyperlength <- 7
+    lastcolor <- ncols
 
   } else if (isTRUE(minmax)){
-    cols <- c("Name", "Relative error", "y\u2080", "y\u2081", "m\u2080", "m\u2081", 
+    cols <- c("Name", "Relative error", 
               "SSE [h]", "R\u00B2 [h]", "b", "  ",
-              "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", 
+              "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "   ",
+              "y\u2080", "y\u2081", "m\u2080", "m\u2081", 
               "better_model")
-    ncols <- 14
-    hyperlength <- 9
+    ncols <- 15
+    hyperlength <- 5
+    lastcolor <- 10
 
   }
 
@@ -61,7 +64,7 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
       DT::formatStyle(columns = hyperlength + 2,
                   valueColumns = "better_sse",
                   fontWeight = DT::styleEqual(1, "bold")) %>%
-      DT::formatStyle(columns = (hyperlength + 2):ncols,
+      DT::formatStyle(columns = (hyperlength + 2):lastcolor,
                   valueColumns = "better_model",
                   backgroundColor = DT::styleEqual(1, "#7CFC005A")) #%>%
     #formatStyle(columns = c(1:11), fontSize = "80%")
