@@ -19,15 +19,18 @@ RUN for package in $p_base; do \
     R -q -e "p <- \"$package\"; if (isFALSE(p %in% installed.packages()[,\"Package\"])){; cat(paste(\"Installing package:\", p, \"\n\n\")); install.packages(p, repos = \"https://ftp.fau.de/cran/\", quiet=T);} else {;cat(paste(\"Package\", p, \"is already installed\n\n\"));}"; \
     done
 
+# add cloned repo
+COPY ./addfolder /home/shiny/
 
-# install PCRBiasCorrection
-RUN R -q -e "devtools::install_github('kapsner/PCRBiasCorrection@latest')"
+# repository name
+ARG REPO_NAME=PCRBiasCorrection
+
+# install our R-Package
+RUN cd /home/shiny/${REPO_NAME}/ && \
+    R -q -e "devtools::install('.')"
 
 # repository name
 ARG REPO_NAME=BiasCorrector
-
-# add cloned repo
-COPY ./addfolder /home/shiny/
 
 # install our R-Package
 RUN cd /home/shiny/${REPO_NAME}/ && \

@@ -6,6 +6,7 @@ cd addfolder
 
 # clone repository
 git clone -b latest https://github.com/kapsner/BiasCorrector.git
+git clone -b latest https://github.com/kapsner/PCRBiasCorrection.git
 
 # build image
 cd ..
