@@ -128,7 +128,9 @@ shiny::shinyServer(function(input, output, session) {
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shiny::actionButton("run", "Run Analysis", width = "80%")
+          shiny::actionButton("run", "Run Analysis", style="white-space: normal; text-align:center;
+                              padding: 9.5px 9.5px 9.5px 9.5px;
+                              margin: 6px 10px 6px 10px;")
         )
       })
       shinydashboard::updateTabItems(session, "tabs", "panel_2")
@@ -198,7 +200,10 @@ shiny::shinyServer(function(input, output, session) {
                                    shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("angellist")),
                                    shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("chart-line")),
                                    shinydashboard::menuSubItem("Corrected Regression Statistics", tabName = "panel_8", icon = icon("angellist")),
-                                   shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
+                                   shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line")),
+                                   shiny::actionButton("results", "BiasCorrect experimental data", style="white-space: normal; text-align:center;
+                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
+                                                                                               margin: 6px 10px 6px 10px;")
           )
         )
       })
