@@ -29,8 +29,10 @@
 modulePlottingServer <- function(input, output, session, rv, input_re){
   observe({
     # this is needed, to open new tab (Regression plots) before rendering the plots!
-    if (input_re()$tabs == "panel_3"){
+    #if (input_re()$tabs == "panel_3"){
 
+    req(rv$run)
+    
       # type 1 data:
       if (rv$type_locus_sample == "1"){
         if (isFALSE(rv$plotting_finished)){
@@ -75,7 +77,6 @@ modulePlottingServer <- function(input, output, session, rv, input_re){
           PCRBiasCorrection::writeLog_("Finished plotting", logfilename = logfilename)
         }
       }
-    }
   })
 
   # when plotting has finished
@@ -212,7 +213,7 @@ modulePlottingUI <- function(id){
              box(
                title = "Regression Plot",
                imageOutput(ns("plots")),
-               tags$head(tags$style(type="text/css", "#modulePlotting-plots img {height: auto; max-width: 100%; width: auto}")),
+               #tags$head(tags$style(type="text/css", "#modulePlotting-plots img {height: auto; max-width: 100%; width: auto}")),
                width=12
              )
       ),

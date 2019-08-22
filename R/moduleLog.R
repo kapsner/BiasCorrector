@@ -66,7 +66,7 @@ moduleLogUI <- function(id){
       box(
         title = "Log",
         verbatimTextOutput(ns("log_out")),
-        tags$head(tags$style("#moduleLog-log_out{overflow-y:scroll; max-height: 80vh; background: ghostwhite;}")),
+        tags$head(tags$style("#moduleLog-log_out{overflow-y:scroll; max-height: 70vh; background: ghostwhite;}")),
         width = 9
       ),
       box(title = "Download Log File",

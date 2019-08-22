@@ -36,10 +36,17 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
       if (rv$type_locus_sample == "1"){
 
-        rv$choices_list <- data.table::data.table("Name" = character(), "better_model" = numeric())
-        lapply(1:length(rv$vec_cal), function(x) {
-          radioname <- paste0("radio", x)
-          rv$choices_list <- rbind(rv$choices_list, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
+        rv$choices_list <- tryCatch({
+          o <- data.table::data.table("Name" = character(), "better_model" = numeric())
+          lapply(1:length(rv$vec_cal), function(x) {
+            radioname <- paste0("radio", x)
+            o <- rbind(o, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
+          })
+        }, error = function(e){
+          print(e)
+          o <- rv$better_model_stats[,c("Name", "better_model"),with=F]
+        }, finally = function(f){
+          return(o)
         })
         print(rv$choices_list)
 
