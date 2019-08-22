@@ -212,7 +212,7 @@ modulePlottingUI <- function(id){
              box(
                title = "Regression Plot",
                imageOutput(ns("plots")),
-               tags$head(tags$style(type="text/css", "#modulePlotting-plots img {max-height: 100%; max-width: 100%; width: auto}")),
+               tags$head(tags$style(type="text/css", "#modulePlotting-plots img {height: auto; max-width: 100%; width: auto}")),
                width=12
              )
       ),

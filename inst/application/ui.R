@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # define UI
-shiny::shinyUI(shinydashboard::dashboardPage(skin = "black",
+shiny::shinyUI(shiny::tagList(shinydashboard::dashboardPage(skin = "black",
 
                                              # App title --> change for development
                                              shinydashboard::dashboardHeader(title = "BiasCorrector"),
@@ -35,7 +35,10 @@ shiny::shinyUI(shinydashboard::dashboardPage(skin = "black",
                                                                            shinydashboard::menuItem("Settings", tabName = "settings", icon = icon("user-cog")),
                                                                            shinydashboard::menuItem("Info", tabName = "info", icon = icon("info-circle")),
                                                                            shiny::actionButton("reset", "Reset App", width = "80%") # Restart session
-                                               )
+                                               ),
+                                               shiny::div(class = "sidebar-menu", style = "position:fixed; bottom:0; left:0; white-space: normal; text-align:left;
+                                                                              padding: 9.5px 9.5px 9.5px 9.5px; margin: 6px 10px 6px 10px; box-sizing:border-box; heigth: auto; width: 230px;",
+                                                          shiny::HTML("\u00A9 Lorenz A. Kapsner</i>"))
                                              ),
 
                                              shinydashboard::dashboardBody(
@@ -102,4 +105,4 @@ shiny::shinyUI(shinydashboard::dashboardPage(skin = "black",
                                                  )
                                                )
                                              )
-))
+)))

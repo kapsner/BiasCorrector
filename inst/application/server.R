@@ -195,8 +195,8 @@ shiny::shinyServer(function(input, output, session) {
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = T,
+                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"), selected = T),
                                    shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("angellist")),
                                    shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("chart-line")),
                                    shinydashboard::menuSubItem("Corrected Regression Statistics", tabName = "panel_8", icon = icon("angellist")),
@@ -212,15 +212,14 @@ shiny::shinyServer(function(input, output, session) {
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
+          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = T,
+                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"), selected = T),
                                    shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
                                    shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist"))
           )
         )
       })
     }
-    shinydashboard::updateTabItems(session, "tabs", "panel_3")
   })
 
   ###### Regression Statistics
@@ -247,7 +246,7 @@ shiny::shinyServer(function(input, output, session) {
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = F,
                                    shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
                                    shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("angellist")),
                                    shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("chart-line")),
@@ -263,7 +262,7 @@ shiny::shinyServer(function(input, output, session) {
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
           shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", tabName = "panel_0", icon = icon("chart-line"),
+          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = F,
                                    shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
                                    shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
                                    shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist"))
