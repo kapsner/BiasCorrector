@@ -38,10 +38,11 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
         rv$choices_list <- tryCatch({
           o <- data.table::data.table("Name" = character(), "better_model" = numeric())
-          lapply(1:length(rv$vec_cal), function(x) {
-            radioname <- paste0("radio", x)
-            o <- rbind(o, cbind("Name" = rv$vec_cal[x], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
-          })
+          for (l in 1:length(rv$vec_cal)){
+            radioname <- paste0("radio", l)
+            o <- rbind(o, cbind("Name" = rv$vec_cal[l], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
+          }
+          o
         }, error = function(e){
           print(e)
           o <- rv$better_model_stats[,c("Name", "better_model"),with=F]
