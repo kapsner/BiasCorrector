@@ -52,7 +52,7 @@ moduleInfoUI <- function(id){
         title = "Info",
         tabsetPanel(
           tabPanel(title = "Citation",
-                   h5("If you use this 'BiasCorrector' or 'PCRBiasCorrection' to correct PCR measurement biases for a publication, please cite these packages as follows:"),
+                   h5("If you use these 'BiasCorrector' or 'PCRBiasCorrection' packages to correct DNA methylation data for a publication, please cite them as follows:"),
                    h5(tags$b("PCRBiasCorrection:")),
                    verbatimTextOutput(ns("citation_correction")),
                    h5(tags$b("BiasCorrector:")),

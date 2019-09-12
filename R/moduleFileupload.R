@@ -324,8 +324,8 @@ moduleFileuploadUI <- function(id){
         width = 6),
       box(
         title = "Description",
-        h5("This application is a graphical user interface (GUI) to the alogrihms implemented in the R-package 'PCRBiasCorrection'."),
-        h5("If you use this 'BiasCorrector' or 'PCRBiasCorrection' to correct PCR measurement biases for a publication, please refere to the 'Info'-tab to find out how to cite them."),
+        h5("This application is a graphical user interface (GUI) to the algorithms implemented in the R-package 'PCRBiasCorrection'."),
+        h5("If you use these 'BiasCorrector' or 'PCRBiasCorrection' packages to correct DNA methylation data for a publication, please refer to the 'Info'-tab to find out how to cite them."),
         tags$hr(),
         h5("You can test this application with example data by pressing the 'Load Example Data'-button below."),
         div(class="row", style="text-align: center",
@@ -343,15 +343,15 @@ moduleFileuploadUI <- function(id){
 
         box(
           title = "Data Input: Experimental Data",
-          h5("Please upload the CSV files* containing the experimental data."),
+          h5("Please upload the CSV file* containing the experimental data."),
 
           # Input: Select a file
-          fileInput(ns("experimentalFile"), "Please choose one CSV file containing the experimental data that is to be corrected.",
+          fileInput(ns("experimentalFile"), "Please choose one CSV file containing the experimental data that are to be corrected.",
                     multiple = FALSE,
                     accept = c(".csv", "text/csv")),
           h6(paste("Max. filesize: ", maxfilesize, " MB")),
 
-          h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
+          h6("*For the specific CSV file requirements please refer to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
           width = 6)
       ),
 

@@ -40,7 +40,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
           o <- data.table::data.table("Name" = character(), "better_model" = numeric())
           for (l in 1:length(rv$vec_cal)){
             radioname <- paste0("radio", l)
-            o <- rbind(o, cbind("Name" = rv$vec_cal[l], "better_model" = as.numeric(eval(parse(text=paste0("input_re()$", radioname))))))
+            o <- rbind(o, cbind("Name" = rv$vec_cal[l], "better_model" = as.numeric(eval(parse(text=paste0("input_re()[[\"moduleModelSelection-", radioname, "\"]]"))))))
           }
           o
         }, error = function(e){

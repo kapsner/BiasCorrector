@@ -59,13 +59,13 @@ moduleSettingsUI <- function(id){
         title = "Settings",
         radioButtons(ns("settings_selection_method"),
                      label = "Method to automatically (pre-) select the regression method for correction",
-                     choices = list("SSE" = "SSE", "Relative Error" = "RelError"),
+                     choices = list("Sum of squared errors (SSE)" = "SSE", "Relative Error" = "RelError"),
                      selected = "SSE"),
         tags$hr(),
         checkboxInput(ns("settings_minmax"),
                       label = "Use 'min-max'-correction (default: off)",
                       value = FALSE),
-        helpText("[CAUTION: this feature is very experimental and neither tested nor validated!]"),
+        helpText("[CAUTION: this is an experimental feature and has neither been tested nor validated!]"),
         width = 9
       ),
       box(

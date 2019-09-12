@@ -25,61 +25,24 @@ BiasCorrector is the user friendly implementation of the algorithms described by
 
 ### Using RStudio  
 
-- Make sure, you have R and RStudio installed:  
+- Make sure, you have R and RStudio installed on your system:  
     
     + https://cran.r-project.org/  
     + https://www.rstudio.com/products/rstudio/download/#download  
 
-- Open a terminal window and clone this repository into a local directory:  
+- Then open R and install this R package:
+
 ```
-git clone https://github.com/kapsner/BiasCorrector.git
-```
-
-- Alternatively, you can download the repository directly using github's 'Download ZIP' option.  
-
-- Now, create a new project in RStudio and choose the cloned folder 'BiasCorrector' as 'existing directory' for your new project.  
-
-- Install all required R-packages using our R-script 'install_required_packages.R'. You can do this by opening the script in RStudio, select all lines ('Ctrl-A') and click the 'Run'-Button in RStudio's GUI.  
-
-- To start BiasCorrector, just open the file 'app.R' in RStudio and click the 'Run App'-Button. A web browser should open displaying BiasCorrector.  
-
-
-### Using the containerized Version  
-
-- Make sure, you have Docker installed:  
-
-    + https://www.docker.com/products/docker-desktop  
-
-- Open a terminal window and clone this repository into a local directory:  
-```
-git clone https://github.com/kapsner/BiasCorrector.git
+library(devtools)
+devtools::install_github("kapsner/BiasCorrector")
 ```
 
-- Alternatively, you can download the repository directly using github's 'Download ZIP' option.  
+- To start BiasCorrector, just run the following command in R. A browser tab should open displaying BiasCorrector. Alternatively you can type the URL "localhost:3838/" in your browser.
 
-- Now, open a terminal window and navigate to the downloaded 'BiasCorrector' folder.  
-
-- To build the Docker image, you need to navigate into the folder 'docker' and execute the bash script 'build_image.sh' (to execute bash scipts on a windows host, you need to install e.g. [Git for Windows](https://gitforwindows.org/)):  
 ```
-cd docker/
-chmod +x build_image.sh
-./build_image.sh
+library(BiasCorrector)
+launchApp()
 ```
-
-- The docker image only needs to be build once!  
-
-- To start BiasCorrector, navigate into the directory 'docker' and execute the following command from your terminal. Open a web browser and navigate to 'http://localhost:3838' to open BiasCorrector.  
-```
-docker-compose -f docker-compose.local.yml up -d
-```
-
-- To stop BiasCorrector, navigate into the directory 'docker' and execute the following command from your terminal:  
-```
-docker-compose down
-```
-
-- All above instructions can also be executed on a remote server.  
-
 
 # More Infos:
 

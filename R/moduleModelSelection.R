@@ -32,6 +32,16 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
     req(rv$better_model_stats)
     # model selection only implemented for type 1 data
     if (rv$type_locus_sample == "1"){
+      
+      # select all at once
+      observeEvent(input_re()[["moduleModelSelection-reg_all"]], {
+        if (input_re()[["moduleModelSelection-reg_all"]] %in% c("0", "1")){
+          rv$radioselection <- rep(input_re()[["moduleModelSelection-reg_all"]], times = length(rv$vec_cal))
+        } else {
+          rv$radioselection <- as.character(rv$better_model_stats[, get("better_model")])
+        }
+      })
+      
       # render radio buttons for tab 5
       output$reg_radios <- renderUI({
         radio_output_list <- lapply(1:length(rv$vec_cal), function(g) {
@@ -41,10 +51,12 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
                   h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
               div(class="col-sm-4", style = "text-align: left;",
                   div(class = "row", style = "text-align: center;",
-                      radioButtons(inputId = radioname,
+                      radioButtons(inputId = paste0("moduleModelSelection-", radioname),
                                    label = NULL,
-                                   choices = list("hyperbolic" = 0, "cubic" = 1),
-                                   selected = as.character(rv$better_model_stats[get("Name")==rv$vec_cal[g], get("better_model")]),
+                                   choices = list("hyperbolic" = "0",
+                                                  "cubic" = "1"),
+                                   #selected = as.character(rv$better_model_stats[get("Name")==rv$vec_cal[g], get("better_model")]),
+                                   selected = as.character(rv$radioselection[g]),
                                    inline = TRUE))
               ),
               div(class="col-sm-4",
@@ -70,12 +82,12 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
       lapply(1:length(rv$vec_cal), function(k) {
         radioname <- paste0("radio", k)
         
-        if (!is.null(input_re()[[radioname]])){
+        if (!is.null(input_re()[[paste0("moduleModelSelection-", radioname)]])){
           
           if (rv$selection_method == "SSE"){
             output[[paste0("text_", radioname)]] <- reactive({
               paste("SSE:",
-                    as.character(ifelse(input_re()[[radioname]] == "1",
+                    as.character(ifelse(input_re()[[paste0("moduleModelSelection-", radioname)]] == "1",
                                         rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("SSE_cubic"),3)],
                                         rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("SSE_hyperbolic"), 3)]))
               )
@@ -84,7 +96,7 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
           } else if (rv$selection_method == "RelError"){
             output[[paste0("text_", radioname)]] <- reactive({
               paste("Rel.Error:",
-                    as.character(ifelse(input_re()[[radioname]] == "1",
+                    as.character(ifelse(input_re()[[paste0("moduleModelSelection-", radioname)]] == "1",
                                         rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("relative_error_c"),3)],
                                         rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("relative_error_h"), 3)]))
               )
@@ -110,6 +122,11 @@ moduleModelSelectionUI <- function(id){
   tagList(
     fluidRow(
       box(title = "Select Regression Model",
+          radioButtons(ns("reg_all"), label = "Select algorithm for all CpG sites",
+                       choices = list("best" = "2",
+                                      "hyperbolic" = "0",
+                                      "cubic" = "1"), 
+                       selected = character(0), inline = TRUE),
           uiOutput(ns("reg_radios")),
           width=12
       )

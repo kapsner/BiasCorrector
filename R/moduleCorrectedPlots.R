@@ -432,7 +432,7 @@ moduleCorrectedPlotsUI <- function(id){
                         h5(tags$b("Calibration data corrected with cubic regression:")),
                         imageOutput(ns("plots_corrected_c")),
                         tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plots_corrected_c img {max-height: 100%; max-width: 100%; width: auto}")),
-                        div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected_c", "Download Corrected Plot (hyperbolic correction)", style="white-space: normal; text-align:center;
+                        div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlots_corrected_c", "Download Corrected Plot (cubic correction)", style="white-space: normal; text-align:center;
                                                                                                padding: 9.5px 9.5px 9.5px 9.5px;
                                                                                                margin: 6px 10px 6px 10px;"))
                  ),
@@ -440,6 +440,7 @@ moduleCorrectedPlotsUI <- function(id){
              ),
              box(title = "Efficiency of BiasCorrection",
                  column(6,
+                        h5(tags$b("Theoretical efficiency of BiasCorrection with hyperbolic regression:")),
                         imageOutput(ns("plotsSSE_corrected_h")),
                         tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected_h img {max-height: 100%; max-width: 100%; width: auto}")),
                         div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected_h", "Download Error Plot (hyperbolic correction)", style="white-space: normal; text-align:center;
@@ -447,9 +448,10 @@ moduleCorrectedPlotsUI <- function(id){
                                                                                                margin: 6px 10px 6px 10px;"))
                  ),
                  column(6,
+                        h5(tags$b("Theoretical efficiency of BiasCorrection with cubic regression:")),
                         imageOutput(ns("plotsSSE_corrected_c")),
                         tags$head(tags$style(type="text/css", "#moduleCorrectedPlots-plotsSSE_corrected_c img {max-height: 100%; max-width: 100%; width: auto}")),
-                        div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected_c", "Download Error Plot (hyperbolic correction)", style="white-space: normal; text-align:center;
+                        div(class="row", style="text-align: center", downloadButton("moduleCorrectedPlots-downloadPlotsSSE_corrected_c", "Download Error Plot (cubic correction)", style="white-space: normal; text-align:center;
                                                                                                padding: 9.5px 9.5px 9.5px 9.5px;
                                                                                                margin: 6px 10px 6px 10px;"))
                  ),

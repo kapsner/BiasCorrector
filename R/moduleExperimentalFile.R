@@ -42,7 +42,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
 
         output$exp_samples <- reactive({
           len <- unique(rv$fileimportExp[,get("sample_id")])
-          message <- paste0("Unique samples: ", length(len))
+          message <- paste0("Number of unique samples: ", length(len))
           PCRBiasCorrection::writeLog_(message, logfilename)
           message
         })
@@ -64,7 +64,7 @@ moduleExperimentalFileServer <- function(input, output, session, rv){
 
         output$exp_samples <- reactive({
           len <- unique(rv$fileimportExp[,get("locus_id")])
-          message <- paste0("Unique loci: ", length(len))
+          message <- paste0("Number of unique loci: ", length(len))
           PCRBiasCorrection::writeLog_(message, logfilename)
           message
         })

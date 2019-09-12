@@ -60,14 +60,14 @@ moduleCalibrationFileServer <- function(input, output, session, rv, input_re){
 
         output$cal_samples <- reactive({
           len <- unique(rv$fileimportCal[,get("true_methylation")])
-          message <- paste0("Unique calibration samples: ", length(len))
+          message <- paste0("Number of unique calibration samples: ", length(len))
           PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
 
         output$cal_samples_raw <- reactive({
           len <- unique(rv$fileimportCal[,get("true_methylation")])
-          message <- paste0("Unique calibration steps:\n", paste(len, collapse = "\n"))
+          message <- paste0("Unique calibration steps (% methylation):\n", paste(len, collapse = "\n"))
           PCRBiasCorrection::writeLog_(message, logfilename = logfilename)
           message
         })
