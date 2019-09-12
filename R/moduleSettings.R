@@ -65,7 +65,7 @@ moduleSettingsUI <- function(id){
         checkboxInput(ns("settings_minmax"),
                       label = "Use 'min-max'-correction (default: off)",
                       value = FALSE),
-        helpText("[CAUTION: this is an experimental feature and has neither been tested nor validated!]"),
+        helpText("[CAUTION: This is an experimental feature and has neither been tested nor validated!]"),
         width = 9
       ),
       box(

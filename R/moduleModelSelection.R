@@ -41,6 +41,9 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
           rv$radioselection <- as.character(rv$better_model_stats[, get("better_model")])
         }
       })
+      if (is.null(rv$radioselection)){
+        rv$radioselection <- as.character(rv$better_model_stats[, get("better_model")])
+      }
       
       # render radio buttons for tab 5
       output$reg_radios <- renderUI({
