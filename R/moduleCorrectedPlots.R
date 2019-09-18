@@ -215,7 +215,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
 
       # create reactive selectinput:
       selIn2 <- reactive({
-        selectInput(inputId="selectPlot_corrected", label = "Select CpG-site:", multiple = F, selectize = F, choices = plot_output_list)
+        selectInput(inputId="selectPlot_corrected", label = "Select CpG site:", multiple = F, selectize = F, choices = plot_output_list)
       })
 
       # create download button for each plot
@@ -334,7 +334,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
 
       # always wrap selectInput into reactive-function
       selectPlotCpG <- reactive({
-        selectInput(inputId="selectPlotType2_corrected", label = "Select CpG-site:", multiple = F, selectize = F, choices = cpg_output())
+        selectInput(inputId="selectPlotType2_corrected", label = "Select CpG site:", multiple = F, selectize = F, choices = cpg_output())
       })
 
       # render second selectInput

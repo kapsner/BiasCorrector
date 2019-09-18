@@ -214,8 +214,8 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       output$description <- renderText({
         str1 <- "The results table shows the BiasCorrected experimental data."
         str2 <- "Column 1 shows the sample ID (type 1 data) or the locus ID (type 2 data)."
-        str3 <- "All other columns represent the BiasCorrected experimental data for the CpG-sites and the row-means of all CpG-sites respectively."
-        str4 <- "The suffixes '_h' and '_c' in the column names indicate the regression algorithm used for BiasCorrection of the respective CpG-site ('_h': hyperbolic regression; '_c': cubic regression)."
+        str3 <- "All other columns represent the BiasCorrected experimental data for the CpG sites and the row-means of all CpG sites respectively."
+        str4 <- "The suffixes '_h' and '_c' in the column names indicate the regression algorithm used for BiasCorrection of the respective CpG site ('_h': hyperbolic regression; '_c': cubic regression)."
         HTML(paste(str1, str2, str3, str4, sep = "<br/><br/>"))
       })
 
@@ -232,7 +232,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       str2 <- "A 'border zone' is implemented in the ranges 0 - 10% and 100 + 10%."
       str3 <- "If a result is in the range -10 < x < 0 percentage or 100  < x < 110 percentage, the value is substituted in the final results with 0% or 100% respectively."
       str4 <- "Values beyond these border zones will be substituted with a blank value in the final output, as they seem implausible and could indicate substantial errors in the underlying data."
-      str5 <- "For a detailed feedback, the substitutions table shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG-site."
+      str5 <- "For a detailed feedback, the substitutions table shows the results of the algorithm 'BiasCorrected value' and the corresponding substitution 'Substituted value' for the respective CpG site."
 
       HTML(paste(str1, str2, str3, str4, str5, sep = "<br/><br/>"))
     })
