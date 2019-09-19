@@ -21,19 +21,21 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
   # https://stackoverflow.com/questions/49636423/how-to-change-the-cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
 
   if (isFALSE(minmax)){
-    cols <- c("Name", "Relative error",
-              "SSE [h]", "R\u00B2 [h]", "a", "b", "d", "  ",
-              "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
+    cols <- c("Name", "Relative error", # 2
+              "SSE [h]", "R\u00B2 [h]", "a", "b", "d", "b1", "p3", "  ", # 8
+              #"SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
+              "SSE [c]", "R\u00B2 [c]", "a", "b", "c", "d", # 6
               "better_model")
-    ncols <- 14
-    hyperlength <- 7
+    ncols <- 16
+    hyperlength <- 9
     lastcolor <- ncols
 
   } else if (isTRUE(minmax)){
-    cols <- c("Name", "Relative error", 
-              "SSE [h]", "R\u00B2 [h]", "b", "  ",
-              "SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "   ",
-              "y\u2080", "y\u2081", "m\u2080", "m\u2081", 
+    cols <- c("Name", "Relative error", # 2
+              "SSE [h]", "R\u00B2 [h]", "b", "  ", # 4
+              #"SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "   ",
+              "SSE [c]", "R\u00B2 [c]", "a", "b", "   ", # 5
+              "y\u2080", "y\u2081", "m\u2080", "m\u2081", # 4
               "better_model")
     ncols <- 15
     hyperlength <- 5
