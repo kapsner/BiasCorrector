@@ -313,10 +313,10 @@ moduleFileuploadUI <- function(id){
         # ), width = 6)
 
         title = "File upload",
-        h5("Please insert the name of the locus under investigation"),
+        h5("Please type in the ID of the interrogated locus"),
         textInput(ns("locusname"),
                   label = NULL,
-                  placeholder = "Locus name"),
+                  placeholder = "Locus ID"),
         conditionalPanel(
           condition = "output['moduleFileupload-type_locus_sample']",
           verbatimTextOutput(ns("samplelocus_out"))
@@ -349,7 +349,7 @@ moduleFileuploadUI <- function(id){
           fileInput(ns("experimentalFile"), "Please choose one CSV file containing the experimental data that are to be corrected.",
                     multiple = FALSE,
                     accept = c(".csv", "text/csv")),
-          h6(paste("Max. filesize: ", maxfilesize, " MB")),
+          h6(paste("Max. file size: ", maxfilesize, " MB")),
 
           h6("*For the specific CSV file requirements please refer to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
           width = 6)
@@ -369,7 +369,7 @@ moduleFileuploadUI <- function(id){
           #             multiple = rv$import_type2,
           #             accept = c(".csv")),
 
-          h6(paste("Max. filesize: ", maxfilesize, " MB")),
+          h6(paste("Max. file size: ", maxfilesize, " MB")),
           h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
           width = 6)
       )

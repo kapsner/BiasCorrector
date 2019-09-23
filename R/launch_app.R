@@ -18,6 +18,10 @@
 #' @title Launch BiasCorrector
 #'
 #' @param port The port, BiasCorrector is running on (default: 3838)
+#' @param logfilename A character string. The name of the logfile (default = biascorrector.log).
+#' @param tempdir A character string. Defaults to `tempdir()`.
+#' @param plotdir A character string. Defaults to 'plots'. This directory is being created inside tempdir.
+#' @param csvdir A character string. Defaults to 'csv'. This directory is being created inside tempdir.
 #'
 #' @return BiasCorrector shiny application
 #'
@@ -27,7 +31,22 @@
 #'
 #' @export
 #'
-launchApp <- function(port=3838){
+launchApp <- function(port=3838, logfilename = "biascorrector.log", tempdir = tempdir(), plotdir = "plots", csvidr = "csv"){
+  
+  # directories
+  tempdir <- tempdir()
+  plotdir <- paste0(tempdir, "/", plotdir)
+  csvdir <- paste0(tempdir, "/", csvdir)
+  
+  # logfilename
+  logfilename <- paste0(tempdir, "/", logfilename)
+  
+  # maximum filesize in MB
+  maxfilesize <- maxfilesize
+  
+  # set shiny option here
+  options(shiny.maxRequestSize = maxfilesize*1024^2)
   options(shiny.port = port)
+  
   shiny::shinyAppDir(appDir = system.file("application", package = "BiasCorrector"))
 }

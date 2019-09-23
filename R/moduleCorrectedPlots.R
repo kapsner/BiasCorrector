@@ -228,9 +228,9 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       )
 
       output$downloadPlotsSSE_corrected_h <- downloadHandler(
-        filename = function(){paste0("Errorplot_", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_h.png")},
+        filename = function(){paste0(rv$sampleLocusName, "_error_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_h.png")},
         content = function(file){
-          file.copy(paste0(plotdir, "Errorplot_", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_h.png"), file)
+          file.copy(paste0(plotdir, rv$sampleLocusName, "_error_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_h.png"), file)
         },
         contentType = "image/png"
       )
@@ -244,9 +244,9 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       )
 
       output$downloadPlotsSSE_corrected_c <- downloadHandler(
-        filename = function(){paste0("Errorplot_", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_c.png")},
+        filename = function(){paste0(rv$sampleLocusName, "_error_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_c.png")},
         content = function(file){
-          file.copy(paste0(plotdir, "Errorplot_", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_c.png"), file)
+          file.copy(paste0(plotdir, rv$sampleLocusName, "_error_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_c.png"), file)
         },
         contentType = "image/png"
       )
@@ -287,7 +287,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       output$plotsSSE_corrected_h <- renderImage({
         #width  <- session$clientData[["output_moduleCorrectedPlots-plotsSSE_corrected_width"]]
 
-        filename <- paste0(plotdir, "Errorplot_", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_h.png")
+        filename <- paste0(plotdir, rv$sampleLocusName, "_error_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_h.png")
         # Return a list containing the filename
         # list(src = filename,
         #      width = width)
@@ -297,7 +297,7 @@ moduleCorrectedPlotsServer <- function(input, output, session, rv, input_re){
       output$plotsSSE_corrected_c <- renderImage({
         #width  <- session$clientData[["output_moduleCorrectedPlots-plotsSSE_corrected_width"]]
 
-        filename <- paste0(plotdir, "Errorplot_", rv$sampleLocusName, "_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_c.png")
+        filename <- paste0(plotdir, rv$sampleLocusName, "_error_", gsub("[[:punct:]]", "", input_re()$selectPlot_corrected), "_corrected_c.png")
         # Return a list containing the filename
         # list(src = filename,
         #      width = width)

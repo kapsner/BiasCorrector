@@ -55,7 +55,7 @@ moduleCorrectedStatisticsServer <- function(input, output, session, rv, input_re
       # create download button for regression statistics
       output$downloadRegStat_corrected_h <- downloadHandler(
         filename = function(){
-          paste0("BC_regression_stats_corrected_h_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+          paste0(rv$sampleLocusName, "_corrected_regression_stats_h_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
@@ -65,7 +65,7 @@ moduleCorrectedStatisticsServer <- function(input, output, session, rv, input_re
       )
       output$downloadRegStat_corrected_c <- downloadHandler(
         filename = function(){
-          paste0("BC_regression_stats_corrected_c_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+          paste0(rv$sampleLocusName, "_corrected_regression_stats_c_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
@@ -89,7 +89,7 @@ moduleCorrectedStatisticsServer <- function(input, output, session, rv, input_re
       output$downloadSubstitutions_corrected_h <- downloadHandler(
         
         filename = function(){
-          paste0("BC_substituted_values_corrected_h_", rv$sampleLocusName, "_", PCRBiasCorrection::getTimestamp_(), ".csv")
+          paste0(rv$sampleLocusName, "_substituted_corrected_h_", PCRBiasCorrection::getTimestamp_(), ".csv")
         },
         content = function(file){
           PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_h, file)
@@ -100,7 +100,7 @@ moduleCorrectedStatisticsServer <- function(input, output, session, rv, input_re
       output$downloadSubstitutions_corrected_c <- downloadHandler(
         
         filename = function(){
-          paste0("BC_substituted_values_corrected_c_", rv$sampleLocusName, "_", PCRBiasCorrection::getTimestamp_(), ".csv")
+          paste0(rv$sampleLocusName, "_substituted_corrected_c_", PCRBiasCorrection::getTimestamp_(), ".csv")
         },
         content = function(file){
           PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_c, file)

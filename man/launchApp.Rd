@@ -4,10 +4,19 @@
 \alias{launchApp}
 \title{Launch BiasCorrector}
 \usage{
-launchApp(port = 3838)
+launchApp(port = 3838, logfilename = "biascorrector.log",
+  tempdir = tempdir(), plotdir = "plots", csvidr = "csv")
 }
 \arguments{
 \item{port}{The port, BiasCorrector is running on (default: 3838)}
+
+\item{logfilename}{A character string. The name of the logfile (default = biascorrector.log).}
+
+\item{tempdir}{A character string. Defaults to `tempdir()`.}
+
+\item{plotdir}{A character string. Defaults to 'plots'. This directory is being created inside tempdir.}
+
+\item{csvdir}{A character string. Defaults to 'csv'. This directory is being created inside tempdir.}
 }
 \value{
 BiasCorrector shiny application

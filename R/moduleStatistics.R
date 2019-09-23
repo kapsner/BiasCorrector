@@ -64,7 +64,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       # create download button for regression statistics
       output$downloadRegStat <- downloadHandler(
         filename = function(){
-          paste0("BC_regression_stats_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+          paste0(rv$sampleLocusName, "_regression_stats_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){
@@ -112,7 +112,7 @@ moduleStatisticsServer <- function(input, output, session, rv, input_re){
       # create download button for regression statistics
       output$downloadRegStat <- downloadHandler(
         filename = function(){
-          paste0("BC_regression_stats_", gsub("[[:punct:]]", "", input_re()$selectRegStatsLocus), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+          paste0(rv$sampleLocusName, "_regression_stats_", gsub("[[:punct:]]", "", input_re()$selectRegStatsLocus), "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
                  gsub("\\:", "", substr(Sys.time(), 12, 16)), ".csv")
         },
         content = function(file){

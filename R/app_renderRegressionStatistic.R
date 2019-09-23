@@ -22,7 +22,7 @@ renderRegressionStatisticTable <- function(dt, mode = NULL, minmax){
 
   if (isFALSE(minmax)){
     cols <- c("Name", "Relative error", # 2
-              "SSE [h]", "R\u00B2 [h]", "a", "b", "d", "b1", "p3", "  ", # 8
+              "SSE [h]", "R\u00B2 [h]", "a", "b", "d", "b1", "s", "  ", # 8
               #"SSE [c]", "R\u00B2 [c]", "ax\u00B3", "bx\u00B2", "cx", "d",
               "SSE [c]", "R\u00B2 [c]", "a", "b", "c", "d", # 6
               "better_model")

@@ -128,7 +128,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
       output$downloadFinal <- downloadHandler(
 
         filename = function(){
-          paste0("BC_corrected_values_", rv$sampleLocusName, "_", PCRBiasCorrection::getTimestamp_(), ".csv")
+          paste0(rv$sampleLocusName, "_corrected_values_", PCRBiasCorrection::getTimestamp_(), ".csv")
         },
         content = function(file){
           PCRBiasCorrection::writeCSV_(rv$finalResults, file)
@@ -138,7 +138,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
 
       output$downloadAllData <- downloadHandler(
-        filename = paste0("BC_all_results_", rv$sampleLocusName, "_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
+        filename = paste0(rv$sampleLocusName, "_all-results_", gsub("\\-", "", substr(Sys.time(), 1, 10)), "_",
                           gsub("\\:", "", substr(Sys.time(), 12, 16)), ".zip"),
         content = function(fname) {
           print(getwd())
@@ -150,24 +150,24 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
 
           # create files where is no difference in export between type 1 and 2
           PCRBiasCorrection::writeCSV_(rv$fileimportExp, paste0(csvdir, "raw_experimental_data.csv"))
-          PCRBiasCorrection::writeCSV_(rv$finalResults, paste0(csvdir, "BC_corrected_values.csv"))
-          PCRBiasCorrection::writeCSV_(rv$substitutions, paste0(csvdir, "BC_substituted_values.csv"))
-          PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_h, paste0(csvdir, "BC_substituted_values_corrected_h.csv"))
-          PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_c, paste0(csvdir, "BC_substituted_values_corrected_c.csv"))
+          PCRBiasCorrection::writeCSV_(rv$finalResults, paste0(csvdir, rv$sampleLocusName, "_corrected_values.csv"))
+          PCRBiasCorrection::writeCSV_(rv$substitutions, paste0(csvdir, rv$sampleLocusName, "_substituted_values.csv"))
+          PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_h, paste0(csvdir, rv$sampleLocusName, "_substituted_corrected_h.csv"))
+          PCRBiasCorrection::writeCSV_(rv$substitutions_corrected_c, paste0(csvdir, rv$sampleLocusName, "_substituted_corrected_c.csv"))
           write(rv$logfile, paste0(csvdir, "BC_logfile.txt"))
 
           # create other files
           if (rv$type_locus_sample == "1"){
             PCRBiasCorrection::writeCSV_(rv$fileimportCal, paste0(csvdir, "raw_calibration_data.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats, paste0(csvdir, "BC_regression_stats.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_h, paste0(csvdir, "BC_regression_stats_corrected_h.csv"))
-            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_c, paste0(csvdir, "BC_regression_stats_corrected_c.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats, paste0(csvdir, rv$sampleLocusName, "_regression_stats.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_h, paste0(csvdir, rv$sampleLocusName, "_corrected_regression_stats_h.csv"))
+            PCRBiasCorrection::writeCSV_(rv$regStats_corrected_c, paste0(csvdir, rv$sampleLocusName, "_corrected_regression_stats_c.csv"))
 
           } else if (rv$type_locus_sample == "2"){
             # regression stats
             for (key in names(rv$fileimportCal)){
               PCRBiasCorrection::writeCSV_(rv$regStats[[key]],
-                       paste0(csvdir, "BC_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
+                       paste0(csvdir, rv$sampleLocusName, "_regression_stats_", gsub("[[:punct:]]", "", key), ".csv"))
             }
 
             for (key in names(rv$fileimportCal_corrected)){
@@ -250,7 +250,7 @@ moduleResultsServer <- function(input, output, session, rv, input_re){
     output$downloadSubstituted <- downloadHandler(
 
       filename = function(){
-        paste0("BC_substituted_values_", rv$sampleLocusName, "_", PCRBiasCorrection::getTimestamp_(), ".csv")
+        paste0(rv$sampleLocusName, "_substituted_values_", PCRBiasCorrection::getTimestamp_(), ".csv")
       },
       content = function(file){
         PCRBiasCorrection::writeCSV_(rv$substitutions, file)
