@@ -18,8 +18,8 @@
 #' @title Launch BiasCorrector
 #'
 #' @param port The port, BiasCorrector is running on (default: 3838)
+#' @param maxfilesize A positive integer. The maximum file size allowed for upload.
 #' @param logfilename A character string. The name of the logfile (default = biascorrector.log).
-#' @param tempdir A character string. Defaults to `tempdir()`.
 #' @param plotdir A character string. Defaults to 'plots'. This directory is being created inside tempdir.
 #' @param csvdir A character string. Defaults to 'csv'. This directory is being created inside tempdir.
 #'
@@ -31,7 +31,16 @@
 #'
 #' @export
 #'
-launchApp <- function(port=3838, logfilename = "biascorrector.log", tempdir = tempdir(), plotdir = "plots", csvdir = "csv"){
+launchApp <- function(port=3838, maxfilesize = 100, logfilename = "biascorrector.log", plotdir = "plots", csvdir = "csv"){
+  
+  stopifnot(
+    is.numeric(maxfilesize),
+    maxfilesize > 0,
+    is.character(logfilename),
+    is.character(plotdir),
+    is.character(csvdir),
+    is.numeric(port)
+  )
   
   # directories
   tempdir <- tempdir()
