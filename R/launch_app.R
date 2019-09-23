@@ -31,18 +31,18 @@
 #'
 #' @export
 #'
-launchApp <- function(port=3838, logfilename = "biascorrector.log", tempdir = tempdir(), plotdir = "plots", csvidr = "csv"){
+launchApp <- function(port=3838, logfilename = "biascorrector.log", tempdir = tempdir(), plotdir = "plots", csvdir = "csv"){
   
   # directories
   tempdir <- tempdir()
-  plotdir <- paste0(tempdir, "/", plotdir)
-  csvdir <- paste0(tempdir, "/", csvdir)
+  assign("plotdir", paste0(tempdir, "/", plotdir), envir = .GlobalEnv)
+  assign("csvdir", paste0(tempdir, "/", csvdir), envir = .GlobalEnv)
   
   # logfilename
-  logfilename <- paste0(tempdir, "/", logfilename)
+  assign("logfilename", paste0(tempdir, "/", logfilename), envir = .GlobalEnv)
   
   # maximum filesize in MB
-  maxfilesize <- maxfilesize
+  assign("maxfilesize", maxfilesize, envir = .GlobalEnv)
   
   # set shiny option here
   options(shiny.maxRequestSize = maxfilesize*1024^2)

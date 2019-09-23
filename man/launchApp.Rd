@@ -5,7 +5,7 @@
 \title{Launch BiasCorrector}
 \usage{
 launchApp(port = 3838, logfilename = "biascorrector.log",
-  tempdir = tempdir(), plotdir = "plots", csvidr = "csv")
+  tempdir = tempdir(), plotdir = "plots", csvdir = "csv")
 }
 \arguments{
 \item{port}{The port, BiasCorrector is running on (default: 3838)}
