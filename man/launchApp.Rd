@@ -4,20 +4,19 @@
 \alias{launchApp}
 \title{Launch BiasCorrector}
 \usage{
-launchApp(port = 3838, maxfilesize = 100,
-  logfilename = "biascorrector.log", plotdir = "plots",
-  csvdir = "csv")
+launchApp(port = 3838, plotdir = "plots", csvdir = "csv",
+  logfilename = "biascorrector.log", maxfilesize = 100)
 }
 \arguments{
 \item{port}{The port, BiasCorrector is running on (default: 3838)}
 
-\item{maxfilesize}{A positive integer. The maximum file size allowed for upload.}
-
-\item{logfilename}{A character string. The name of the logfile (default = biascorrector.log).}
-
 \item{plotdir}{A character string. Defaults to 'plots'. This directory is being created inside tempdir.}
 
 \item{csvdir}{A character string. Defaults to 'csv'. This directory is being created inside tempdir.}
+
+\item{logfilename}{A character string. The name of the logfile (default = biascorrector.log).}
+
+\item{maxfilesize}{A positive integer. The maximum file size allowed for upload.}
 }
 \value{
 BiasCorrector shiny application

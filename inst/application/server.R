@@ -56,6 +56,10 @@ shiny::shinyServer(function(input, output, session) {
 
   # run start function
   PCRBiasCorrection::onStart_(plotdir, csvdir, logfilename)
+  
+  print(plotdir)
+  print(csvdir)
+  print(tempdir)
 
   # TODO original selection of data type (hard coded to type 1 data)
   rv$type_locus_sample <- 1
