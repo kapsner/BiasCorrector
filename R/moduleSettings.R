@@ -21,12 +21,17 @@
 #' @param output Shiny server output object
 #' @param session Shiny session object
 #' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive expression: input_re = reactive({input})
+#' @param input_re The Shiny server input object, wrapped into a reactive
+#'   expression: input_re = reactive({input})
 #'
 #' @export
 #'
 # moduleSettingsServer
-moduleSettingsServer <- function(input, output, session, rv, input_re){
+moduleSettingsServer <- function(input,
+                                 output,
+                                 session,
+                                 rv,
+                                 input_re) {
 
   # observe Radiobuttonevents
   observeEvent(input_re()[["moduleSettings-settings_minmax"]], {
@@ -49,7 +54,7 @@ moduleSettingsServer <- function(input, output, session, rv, input_re){
 #' @export
 #'
 # moduleSettingsUI
-moduleSettingsUI <- function(id){
+moduleSettingsUI <- function(id) {
   ns <- NS(id)
 
   tagList(
@@ -58,13 +63,15 @@ moduleSettingsUI <- function(id){
       box(
         title = "Settings",
         radioButtons(ns("settings_selection_method"),
-                     label = "Method to automatically (pre-) select the regression method for correction",
-                     choices = list("Sum of squared errors (SSE)" = "SSE", "Relative Error" = "RelError"),
-                     selected = "SSE"),
+          label = "Method to automatically (pre-) select the regression method for correction",
+          choices = list("Sum of squared errors (SSE)" = "SSE", "Relative Error" = "RelError"),
+          selected = "SSE"
+        ),
         tags$hr(),
         checkboxInput(ns("settings_minmax"),
-                      label = "Use 'min-max'-correction (default: off)",
-                      value = FALSE),
+          label = "Use 'min-max'-correction (default: off)",
+          value = FALSE
+        ),
         helpText("[CAUTION: This is an experimental feature and has neither been tested nor validated!]"),
         width = 9
       ),

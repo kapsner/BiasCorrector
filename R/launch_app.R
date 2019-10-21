@@ -18,10 +18,14 @@
 #' @title Launch BiasCorrector
 #'
 #' @param port The port, BiasCorrector is running on (default: 3838)
-#' @param maxfilesize A positive integer. The maximum file size allowed for upload.
-#' @param logfilename A character string. The name of the logfile (default = biascorrector.log).
-#' @param plotdir A character string. Defaults to 'plots'. This directory is being created inside tempdir.
-#' @param csvdir A character string. Defaults to 'csv'. This directory is being created inside tempdir.
+#' @param maxfilesize A positive integer. The maximum file size allowed
+#'   for upload.
+#' @param logfilename A character string. The name of the logfile
+#'   (default = biascorrector.log).
+#' @param plotdir A character string. Defaults to 'plots'. This directory
+#'   is being created inside tempdir.
+#' @param csvdir A character string. Defaults to 'csv'. This directory is
+#'   being created inside tempdir.
 #'
 #' @return BiasCorrector shiny application
 #'
@@ -31,31 +35,46 @@
 #'
 #' @export
 #'
-launchApp <- function(port=3838, plotdir = "plots", csvdir = "csv", logfilename = "biascorrector.log", maxfilesize = 100){
+launch_app <- function(port = 3838,
+                       plotdir = "plots",
+                       csvdir = "csv",
+                       logfilename = "biascorrector.log",
+                       maxfilesize = 100) {
   
-  # stopifnot(
-  #   is.numeric(maxfilesize),
-  #   maxfilesize > 0,
-  #   is.character(logfilename),
-  #   is.character(plotdir),
-  #   is.character(csvdir),
-  #   is.numeric(port)
-  # )
+  #" stopifnot(
+  #"   is.numeric(maxfilesize),
+  #"   maxfilesize > 0,
+  #"   is.character(logfilename),
+  #"   is.character(plotdir),
+  #"   is.character(csvdir),
+  #"   is.numeric(port)
+  #" )
   
   tempdir <- tempdir()
-  assign("plotdir", paste0(tempdir, "/", plotdir, "/"), envir = .GlobalEnv)
-  assign("csvdir", paste0(tempdir, "/", csvdir, "/"), envir = .GlobalEnv)
+  assign("plotdir",
+         paste0(tempdir, "/", plotdir, "/"),
+         envir = .GlobalEnv)
+  assign("csvdir",
+         paste0(tempdir, "/", csvdir, "/"),
+         envir = .GlobalEnv)
   
   # logfilename
-  assign("logfilename", paste0(tempdir, "/", logfilename), envir = .GlobalEnv)
+  assign("logfilename",
+         paste0(tempdir, "/", logfilename),
+         envir = .GlobalEnv)
   
   # maximum filesize in MB
-  assign("maxfilesize", maxfilesize, envir = .GlobalEnv)
+  assign("maxfilesize",
+         maxfilesize,
+         envir = .GlobalEnv)
   
   
   # set shiny option here
-  options(shiny.maxRequestSize = maxfilesize*1024^2)
+  options(shiny.maxRequestSize = maxfilesize * 1024^2)
   options(shiny.port = port)
   
-  shiny::shinyAppDir(appDir = system.file("application", package = "BiasCorrector"))
+  shiny::shinyAppDir(
+    appDir = system.file("application",
+                         package = "BiasCorrector")
+  )
 }

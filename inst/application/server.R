@@ -15,26 +15,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 shiny::shinyServer(function(input, output, session) {
-
+  
   rv <- shiny::reactiveValues(
     ending = NULL,
-    expFileReq = F,
+    exp_filereq = F,
     type_locus_sampe = NULL, # 1, # currently there is only type 1 correction implemented
-    fileimportExp = NULL,
-    fileimportCal = NULL,
-    fileimportList = NULL,
-    regStats = NULL,
+    fileimport_experimental = NULL,
+    fileimport_calibration = NULL,
+    fileimport_list = NULL,
+    reg_stats = NULL,
     modal_closed = T,
     modal_type = NULL,
     calculate_results = FALSE,
-    finalResults = NULL,
-    sampleLocusName = NULL,
+    final_results = NULL,
+    sample_locus_name = NULL,
     type2cal_uploaded = FALSE,
     type1cal_uploaded = FALSE,
     plotting_finished = FALSE,
     substitutions = NULL,
-    substitutionsCalc = NULL,
-    type2CalcRes = NULL,
+    substitutions_calc = NULL,
+    type2_calcres = NULL,
     choices_list = NULL,
     result_list_type2 = NULL,
     result_list = NULL,
@@ -48,60 +48,73 @@ shiny::shinyServer(function(input, output, session) {
     calibr_steps = NULL,
     logfile = NULL,
     corrected_finished = FALSE,
-    fileimportCal_corrected = NULL,
-    regStats_corrected = NULL,
+    fileimport_cal_corrected = NULL,
+    reg_stats_corrected = NULL,
     result_list_type2_corrected = NULL,
     minmax = FALSE # initial minmax-value
   )
-
+  
   # run start function
-  PCRBiasCorrection::onStart_(plotdir, csvdir, logfilename)
+  rBiasCorrection::on_start(plotdir,
+                            csvdir,
+                            logfilename)
   
   print(plotdir)
   print(csvdir)
   print(tempdir)
-
+  
   # TODO original selection of data type (hard coded to type 1 data)
   rv$type_locus_sample <- 1
-
+  
   # scientific purpose
   shiny::showModal(shiny::modalDialog(
-    title = "This program is to be used for scientific research purposes only",
-    "I hereby confirm to use this program only for scientific research purposes.",
-    footer = shiny::tagList(shiny::actionButton("dismiss_modal",label = "Cancel"),
-                            shiny::modalButton("Confirm"))
+    title = paste0("This program is to be used for scientific ",
+                   "research purposes only"),
+    paste0("I hereby confirm to use this program only for ",
+           "scientific research purposes."),
+    footer = shiny::tagList(
+      shiny::actionButton("dismiss_modal",label = "Cancel"),
+      shiny::modalButton("Confirm"))
   ))
-
+  
   shiny::observeEvent(input$dismiss_modal, {
-    PCRBiasCorrection::writeLog_("dismiss modal", logfilename = logfilename)
+    rBiasCorrection::write_log(message = "dismiss modal",
+                               logfilename = logfilename)
     rv$modal_closed <- T
     rv$modal_type <- NULL
     shiny::removeModal()
     shinyjs::js$reset()
   })
-
+  
   shiny::observeEvent(input$reset, {
-    PCRBiasCorrection::writeLog_("restarting app", logfilename = logfilename)
-    PCRBiasCorrection::cleanUp_(plotdir, csvdir)
+    rBiasCorrection::write_log(message = "restarting app",
+                               logfilename = logfilename)
+    rBiasCorrection::clean_up(plotdir, csvdir)
     shinyjs::js$reset()
   })
-
+  
   output$samplelocus_out <- shiny::reactive({
-    paste(rv$sampleLocusName)
+    paste(rv$sample_locus_name)
   })
-
-
+  
+  
   ###### Experimental data
   # Fileupload module
-  shiny::callModule(moduleFileuploadServer, "moduleFileupload", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_fileupload_server,
+                    "moduleFileupload",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   # table rendering module
-  shiny::callModule(moduleExperimentalFileServer, "moduleExperimentalFile", rv=rv)
-
+  shiny::callModule(module_experimentalfile_server,
+                    "module_experimentalfile",
+                    rv = rv)
+  
   # some ui stuff
   shiny::observe({
-    shiny::req(rv$fileimportExp)
-    cat("\nSome UI Stuff: disable Radiobuttons, experimentalFile and textInput\n")
+    shiny::req(rv$fileimport_experimental)
+    cat(paste0("\nSome UI Stuff: disable Radiobuttons, ",
+               "experimentalFile and textInput\n"))
     # disable exampledata-button
     shinyjs::disable("moduleFileupload-load_example_data")
     # enable logfile-download
@@ -123,60 +136,82 @@ shiny::shinyServer(function(input, output, session) {
       )
     })
   })
-
+  
   shiny::observeEvent(
-    if (isTRUE(rv$type2cal_uploaded) | isTRUE(rv$type1cal_uploaded)) TRUE
+    if (isTRUE(rv$type2cal_uploaded) |
+        isTRUE(rv$type1cal_uploaded)) TRUE
     else return(), {
       # error handling, when uploading new data in same session
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
-          shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shiny::actionButton("run", "Run Analysis", style="white-space: normal; text-align:center;
-                              padding: 9.5px 9.5px 9.5px 9.5px;
-                              margin: 6px 10px 6px 10px;")
+          shinydashboard::menuItem("Experimental Data",
+                                   tabName = "panel_1",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Calibration Data",
+                                   tabName = "panel_2",
+                                   icon = icon("table")),
+          shiny::actionButton("run", "Run Analysis",
+                              style = paste0("white-space: normal; ",
+                                             "text-align:center; ",
+                                             "padding: 9.5px 9.5px 9.5px 9.5px;",
+                                             "margin: 6px 10px 6px 10px;")
+          )
         )
       })
       shinydashboard::updateTabItems(session, "tabs", "panel_2")
-
+      
       cat("\nSome UI Stuff: disable calibrationFile\n")
       # disable upload possibility of calibration file
       shinyjs::disable("calibrationFile")
     })
-
-
+  
+  
   # ###### Calibration data
   # table rendering module
-  shiny::callModule(moduleCalibrationFileServer, "moduleCalibrationFile", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_calibrationfile_server,
+                    "moduleCalibrationfile",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   shiny::observe({
-    shiny::req(rv$fileimportCal)
+    shiny::req(rv$fileimport_calibration)
     # enable calibrationfile download button
     shinyjs::enable("moduleCalibrationFile-downloadCalibration")
   })
-
-
+  
+  
   ###### Run Analysis
   shiny::observeEvent(input$run, {
-    if (!is.null(rv$fileimportCal)){
-
+    if (!is.null(rv$fileimport_calibration)){
+      
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
-          shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = T,
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"), selected = T)
+          shinydashboard::menuItem("Experimental Data",
+                                   tabName = "panel_1",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Calibration Data",
+                                   tabName = "panel_2",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Regression Results",
+                                   icon = icon("chart-line"),
+                                   startExpanded = T,
+                                   shinydashboard::menuSubItem(
+                                     "Regression Plots",
+                                     tabName = "panel_3",
+                                     icon = icon("chart-line"),
+                                     selected = T
+                                   )
           )
         )
       })
       shinydashboard::updateTabItems(session, "tabs", "panel_3")
-
+      
       # disable run-analysis button
       shinyjs::disable("run")
-
+      
       # disable some settings here
       shinyjs::disable("moduleSettings-settings_minmax")
-
+      
     } else if (rv$type_locus_sample == "2"){
       shiny::showModal(shiny::modalDialog(
         "Please confirm the assignment of the calibration steps.",
@@ -185,119 +220,247 @@ shiny::shinyServer(function(input, output, session) {
       ))
     }
   })
-
-
+  
+  
   ###### Plotting
   observe({
-    # this is needed, to open new tab (Regression plots) before rendering the plots!
+    # this is needed, to open new tab (Regression plots)
+    # before rendering the plots!
     if (input$tabs == "panel_3"){
       rv$run <- TRUE
     }
   })
-  shiny::callModule(modulePlottingServer, "modulePlotting", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_plotting_server,
+                    "modulePlotting",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   # when plotting has finished
   shiny::observe({
     shiny::req(rv$plotting_finished)
-
+    
     if (rv$type_locus_sample == "1"){
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
-          shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = F,
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"), selected = T),
-                                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("angellist")),
-                                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Corrected Regression Statistics", tabName = "panel_8", icon = icon("angellist")),
-                                   shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line")),
-                                   shiny::actionButton("results", "BiasCorrect experimental data", style="white-space: normal; text-align:center;
-                                                                                               padding: 9.5px 9.5px 9.5px 9.5px;
-                                                                                               margin: 6px 10px 6px 10px;")
+          shinydashboard::menuItem("Experimental Data",
+                                   tabName = "panel_1",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Calibration Data",
+                                   tabName = "panel_2",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Regression Results",
+                                   icon = icon("chart-line"),
+                                   startExpanded = F,
+                                   shinydashboard::menuSubItem(
+                                     "Regression Plots",
+                                     tabName = "panel_3",
+                                     icon = icon("chart-line"),
+                                     selected = T
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Regression Statistics",
+                                     tabName = "panel_4",
+                                     icon = icon("angellist")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Corrected Regression Plots",
+                                     tabName = "panel_7",
+                                     icon = icon("chart-line")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Corrected Regression Statistics",
+                                     tabName = "panel_8",
+                                     icon = icon("angellist")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Select Regression Model",
+                                     tabName = "panel_5",
+                                     icon = icon("chart-line")
+                                   ),
+                                   shiny::actionButton(
+                                     "results",
+                                     "BiasCorrect experimental data",
+                                     style = paste0(
+                                       "white-space: normal; ",
+                                       "text-align:center; ",
+                                       "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                                       "margin: 6px 10px 6px 10px;")
+                                   )
           )
         )
       })
     } else {
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
-          shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = F,
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line"), selected = T),
-                                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist"))
+          shinydashboard::menuItem("Experimental Data",
+                                   tabName = "panel_1",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Calibration Data",
+                                   tabName = "panel_2",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Regression Results",
+                                   icon = icon("chart-line"),
+                                   startExpanded = F,
+                                   shinydashboard::menuSubItem(
+                                     "Regression Plots",
+                                     tabName = "panel_3",
+                                     icon = icon("chart-line"),
+                                     selected = T
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Regression Statistics",
+                                     tabName = "panel_4",
+                                     icon = icon("chart-line")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Corrected Regression Plots",
+                                     tabName = "panel_7",
+                                     icon = icon("angellist")
+                                   )
           )
         )
       })
     }
     shinydashboard::updateTabItems(session, "tabs", "panel_3")
   })
-
+  
   ###### Regression Statistics
-  shiny::callModule(moduleStatisticsServer, "moduleStatistics", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_statistics_server,
+                    "moduleStatistics",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   ###### Plot Corrected Results
-  shiny::callModule(moduleCorrectedPlotsServer, "moduleCorrectedPlots", rv=rv, input_re=reactive({input}))
+  shiny::callModule(module_correctedplots_server,
+                    "moduleCorrectedPlots",
+                    rv = rv,
+                    input_re = reactive({input}))
   
   ###### Statistics Corrected Results
-  shiny::callModule(moduleCorrectedStatisticsServer, "moduleCorrectedStatistics", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_correctedstatistics_server,
+                    "moduleCorrectedStatistics",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   ###### Model Selection
-  shiny::callModule(moduleModelSelectionServer, "moduleModelSelection", rv=rv, input_re=reactive({input}))
-
-
+  shiny::callModule(module_modelselection_server,
+                    "moduleModelSelection",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
+  
   # Calculate results for experimental data
   shiny::observeEvent(input$results, {
-
+    
     # disable Biascorrection-Button
     shinyjs::disable("results")
-
+    
     if (rv$type_locus_sample == "1"){
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
-          shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = F,
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("angellist")),
-                                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Corrected Regression Statistics", tabName = "panel_8", icon = icon("angellist")),
-                                   shinydashboard::menuSubItem("Select Regression Model", tabName = "panel_5", icon = icon("chart-line"))
+          shinydashboard::menuItem("Experimental Data",
+                                   tabName = "panel_1",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Calibration Data",
+                                   tabName = "panel_2",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Regression Results",
+                                   icon = icon("chart-line"),
+                                   startExpanded = F,
+                                   shinydashboard::menuSubItem(
+                                     "Regression Plots",
+                                     tabName = "panel_3",
+                                     icon = icon("chart-line")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Regression Statistics",
+                                     tabName = "panel_4",
+                                     icon = icon("angellist")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Corrected Regression Plots",
+                                     tabName = "panel_7",
+                                     icon = icon("chart-line")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Corrected Regression Statistics",
+                                     tabName = "panel_8",
+                                     icon = icon("angellist")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Select Regression Model",
+                                     tabName = "panel_5",
+                                     icon = icon("chart-line")
+                                   )
           ),
-          shinydashboard::menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
+          shinydashboard::menuItem("BiasCorrected Results",
+                                   tabName = "panel_6",
+                                   icon = icon("angellist"))
         )
       })
-
+      
     } else if (rv$type_locus_sample == "2"){
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
-          shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table")),
-          shinydashboard::menuItem("Calibration Data", tabName = "panel_2", icon = icon("table")),
-          shinydashboard::menuItem("Regression Results", icon = icon("chart-line"), startExpanded = F,
-                                   shinydashboard::menuSubItem("Regression Plots", tabName = "panel_3", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Regression Statistics", tabName = "panel_4", icon = icon("chart-line")),
-                                   shinydashboard::menuSubItem("Corrected Regression Plots", tabName = "panel_7", icon = icon("angellist"))
+          shinydashboard::menuItem("Experimental Data",
+                                   tabName = "panel_1",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Calibration Data",
+                                   tabName = "panel_2",
+                                   icon = icon("table")),
+          shinydashboard::menuItem("Regression Results",
+                                   icon = icon("chart-line"),
+                                   startExpanded = F,
+                                   shinydashboard::menuSubItem(
+                                     "Regression Plots",
+                                     tabName = "panel_3", 
+                                     icon = icon("chart-line")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Regression Statistics",
+                                     tabName = "panel_4",
+                                     icon = icon("chart-line")
+                                   ),
+                                   shinydashboard::menuSubItem(
+                                     "Corrected Regression Plots",
+                                     tabName = "panel_7",
+                                     icon = icon("angellist")
+                                   )
           ),
-          shinydashboard::menuItem("BiasCorrected Results", tabName = "panel_6", icon = icon("angellist"))
+          shinydashboard::menuItem("BiasCorrected Results",
+                                   tabName = "panel_6",
+                                   icon = icon("angellist"))
         )
       })
     }
     shinydashboard::updateTabItems(session, "tabs", "panel_6")
-
+    
     # reset reactive values
     rv$calculate_results <- TRUE
-    rv$finalResults <- NULL
+    rv$final_results <- NULL
   })
-
+  
   ###### Calcluate Results
-  shiny::callModule(moduleResultsServer, "moduleResults", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_results_server,
+                    "moduleResults",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   ###### Logs
-  shiny::callModule(moduleLogServer, "moduleLog", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_log_server,
+                    "moduleLog",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   ###### Settings
-  shiny::callModule(moduleSettingsServer, "moduleSettings", rv=rv, input_re=reactive({input}))
-
+  shiny::callModule(module_settings_server,
+                    "moduleSettings",
+                    rv = rv,
+                    input_re = reactive({input}))
+  
   ###### Info
-  shiny::callModule(moduleInfoServer, "moduleInfo", rv=rv, input_re=reactive({input}))
+  shiny::callModule(module_info_server,
+                    "moduleInfo",
+                    rv = rv,
+                    input_re = reactive({input}))
 })

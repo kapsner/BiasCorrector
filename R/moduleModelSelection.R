@@ -15,64 +15,98 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @title moduleModelSelectionServer
+#' @title module_modelselection_server
 #'
 #' @param input Shiny server input object
 #' @param output Shiny server output object
 #' @param session Shiny session object
 #' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive expression: input_re = reactive({input})
+#' @param input_re The Shiny server input object, wrapped into a reactive
+#'   expression: input_re = reactive({input})
 #'
 #' @export
 #'
-# moduleModelSelectionServer
-moduleModelSelectionServer <- function(input, output, session, rv, input_re){
-  
+# module_modelselection_server
+module_modelselection_server <- function(input,
+                                         output,
+                                         session,
+                                         rv,
+                                         input_re) {
   observe({
     req(rv$better_model_stats)
     # model selection only implemented for type 1 data
-    if (rv$type_locus_sample == "1"){
+    if (rv$type_locus_sample == "1") {
       
       # select all at once
-      observeEvent(input_re()[["moduleModelSelection-reg_all"]], {
-        if (input_re()[["moduleModelSelection-reg_all"]] %in% c("0", "1")){
-          rv$radioselection <- rep(input_re()[["moduleModelSelection-reg_all"]], times = length(rv$vec_cal))
-        } else {
-          rv$radioselection <- as.character(rv$better_model_stats[, get("better_model")])
-        }
-      })
-      if (is.null(rv$radioselection)){
-        rv$radioselection <- as.character(rv$better_model_stats[, get("better_model")])
+      observeEvent(
+        eventExpr = input_re()[["moduleModelSelection-reg_all"]],
+        handlerExpr = {
+          if (input_re()[["moduleModelSelection-reg_all"]] %in% c("0", "1")) {
+            rv$radioselection <- rep(
+              input_re()[["moduleModelSelection-reg_all"]],
+              times = length(rv$vec_cal)
+            )
+          } else {
+            rv$radioselection <- as.character(
+              rv$better_model_stats[, get("better_model")]
+            )
+          }
+        })
+      if (is.null(rv$radioselection)) {
+        rv$radioselection <- as.character(
+          rv$better_model_stats[, get("better_model")]
+        )
       }
       
       # render radio buttons for tab 5
       output$reg_radios <- renderUI({
-        radio_output_list <- lapply(1:length(rv$vec_cal), function(g) {
-          radioname <- paste0("radio", g)
-          div(class="row", style = "margin: 0.5%; text-align: center;",
-              div(class="col-sm-4", style="text-align: left;",
-                  h5(tags$b(paste0("Regression type for ", rv$vec_cal[g], ":")))),
-              div(class="col-sm-4", style = "text-align: left;",
-                  div(class = "row", style = "text-align: center;",
-                      radioButtons(inputId = paste0("moduleModelSelection-", radioname),
-                                   label = NULL,
-                                   choices = list("hyperbolic" = "0",
-                                                  "cubic" = "1"),
-                                   #selected = as.character(rv$better_model_stats[get("Name")==rv$vec_cal[g], get("better_model")]),
-                                   selected = as.character(rv$radioselection[g]),
-                                   inline = TRUE))
+        radio_output_list <- lapply(
+          seq_len(length(rv$vec_cal)),
+          function(g) {
+            radioname <- paste0("radio", g)
+            div(
+              class = "row",
+              style = "margin: 0.5%; text-align: center;",
+              div(
+                class = "col-sm-4",
+                style = "text-align: left;",
+                h5(tags$b(paste0("Regression type for ",
+                                 rv$vec_cal[g], ":")))
               ),
-              div(class="col-sm-4",
-                  verbatimTextOutput(paste0("moduleModelSelection-text_", radioname)))
-          )
-        })
-        do.call(tagList, list(radio_output_list)) # needed to display properly.
+              div(
+                class = "col-sm-4",
+                style = "text-align: left;",
+                div(
+                  class = "row",
+                  style = "text-align: center;",
+                  radioButtons(
+                    inputId = paste0("moduleModelSelection-",
+                                     radioname),
+                    label = NULL,
+                    choices = list(
+                      "hyperbolic" = "0",
+                      "cubic" = "1"
+                    ),
+                    selected = as.character(rv$radioselection[g]),
+                    inline = TRUE
+                  )
+                )
+              ),
+              div(
+                class = "col-sm-4",
+                verbatimTextOutput(
+                  paste0("moduleModelSelection-text_",
+                         radioname))
+              )
+            )
+          })
+        do.call(tagList,
+                list(radio_output_list)) # needed to display properly.
       })
-      
-    } else if (rv$type_locus_sample == "2"){
+    } else if (rv$type_locus_sample == "2") {
       # type 2 data:
       # trigger claculation of results (bypass manual model selection)
-      #shinyjs::click("results")
+      #% shinyjs::click("results")
     }
   })
   
@@ -80,28 +114,51 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
   observe({
     req(rv$better_model_stats)
     
-    if (rv$type_locus_sample == "1"){
-      
-      lapply(1:length(rv$vec_cal), function(k) {
+    if (rv$type_locus_sample == "1") {
+      lapply(seq_len(length(rv$vec_cal)), function(k) {
         radioname <- paste0("radio", k)
         
-        if (!is.null(input_re()[[paste0("moduleModelSelection-", radioname)]])){
-          
-          if (rv$selection_method == "SSE"){
+        if (!is.null(input_re()[[paste0("moduleModelSelection-",
+                                        radioname)]])) {
+          if (rv$selection_method == "SSE") {
             output[[paste0("text_", radioname)]] <- reactive({
-              paste("SSE:",
-                    as.character(ifelse(input_re()[[paste0("moduleModelSelection-", radioname)]] == "1",
-                                        rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("SSE_cubic"),3)],
-                                        rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("SSE_hyperbolic"), 3)]))
+              paste(
+                "SSE:",
+                as.character(
+                  ifelse(
+                    input_re()[[paste0("moduleModelSelection-",
+                                       radioname)]] == "1",
+                    rv$better_model_stats[
+                      get("Name") == rv$vec_cal[k], round(
+                        get("SSE_cubic"),
+                        3)
+                      ],
+                    rv$better_model_stats[
+                      get("Name") == rv$vec_cal[k], round(
+                        get("SSE_hyperbolic"),
+                        3)
+                      ]
+                  ))
               )
             })
-            
-          } else if (rv$selection_method == "RelError"){
+          } else if (rv$selection_method == "RelError") {
             output[[paste0("text_", radioname)]] <- reactive({
-              paste("Rel.Error:",
-                    as.character(ifelse(input_re()[[paste0("moduleModelSelection-", radioname)]] == "1",
-                                        rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("relative_error_c"),3)],
-                                        rv$better_model_stats[get("Name")==rv$vec_cal[k], round(get("relative_error_h"), 3)]))
+              paste(
+                "Rel.Error:",
+                as.character(
+                  ifelse(input_re()[[paste0("moduleModelSelection-",
+                                            radioname)]] == "1",
+                         rv$better_model_stats[
+                           get("Name") == rv$vec_cal[k], round(
+                             get("relative_error_c"),
+                             3)
+                           ],
+                         rv$better_model_stats[
+                           get("Name") == rv$vec_cal[k], round(
+                             get("relative_error_h"),
+                             3)
+                           ]
+                  ))
               )
             })
           }
@@ -112,26 +169,32 @@ moduleModelSelectionServer <- function(input, output, session, rv, input_re){
 }
 
 
-#' @title moduleModelSelectionUI
+#' @title module_modelselection_ui
 #'
 #' @param id A character. The identifier of the shiny object
 #'
 #' @export
 #'
-# moduleModelSelectionUI
-moduleModelSelectionUI <- function(id){
+# module_modelselection_ui
+module_modelselection_ui <- function(id) {
   ns <- NS(id)
   
   tagList(
     fluidRow(
-      box(title = "Select Regression Model",
-          radioButtons(ns("reg_all"), label = "Select algorithm for all CpG sites",
-                       choices = list("best" = "2",
-                                      "hyperbolic" = "0",
-                                      "cubic" = "1"), 
-                       selected = character(0), inline = TRUE),
-          uiOutput(ns("reg_radios")),
-          width=12
+      box(
+        title = "Select Regression Model",
+        radioButtons(
+          ns("reg_all"),
+          label = "Select algorithm for all CpG sites",
+          choices = list(
+            "best" = "2",
+            "hyperbolic" = "0",
+            "cubic" = "1"
+          ),
+          selected = character(0), inline = TRUE
+        ),
+        uiOutput(ns("reg_radios")),
+        width = 12
       )
     )
   )

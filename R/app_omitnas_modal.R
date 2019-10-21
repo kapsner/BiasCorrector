@@ -15,19 +15,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # give back deleted rows
-omitnasModal <- function(omitnas, data_type){
-  if (data_type == "experimental"){
+omitnas_modal <- function(omitnas,
+                          data_type) {
+  if (data_type == "experimental") {
     data_type <- "experimental data"
   } else {
     data_type <- "calibration data"
   }
-  if (omitnas == 1){
-    message = paste0("Deleted 1 row containing missing values from ", data_type, ".")
+  if (omitnas == 1) {
+    message <- paste0("Deleted 1 row containing missing ",
+                      "values from ", data_type, ".")
   } else {
-    message = paste0("Deleted ", omitnas, " rows containing missing values from ", data_type, ".")
+    message <- paste0("Deleted ", omitnas, " rows containing ",
+                      "missing values from ", data_type, ".")
   }
   # show modal here
-  showModal(modalDialog(
+  shiny::showModal(shiny::modalDialog(
     message,
     title = "Missing values deleted"
   ))

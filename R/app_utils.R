@@ -15,8 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # open modal help function -> handling reactive values
-openModal <- function(description, rv){
+open_modal <- function(description, rv) {
   rv$modal_closed <- F
   rv$modal_type <- description
-  requirementsError(description)
+  requirements_error(description)
 }

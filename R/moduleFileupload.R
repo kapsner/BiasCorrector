@@ -15,44 +15,61 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @title moduleFileuploadServer
+#' @title module_fileupload_server
 #'
 #' @param input Shiny server input object
 #' @param output Shiny server output object
 #' @param session Shiny session object
 #' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive expression: input_re = reactive({input})
+#' @param input_re The Shiny server input object, wrapped into a reactive
+#'   expression: input_re = reactive({input})
 #'
 #' @export
 #'
-# moduleFileuploadServer
-moduleFileuploadServer <- function(input, output, session, rv, input_re){
+# module_fileupload_server
+module_fileupload_server <- function(input,
+                                   output,
+                                   session,
+                                   rv,
+                                   input_re) {
 
   # TODO original selection of data type
-  # # observe Radiobuttonevents
-  # observeEvent(input_re()[["moduleFileupload-type_locus_sample"]], {
-  #   rv$type_locus_sample <- input_re()[["moduleFileupload-type_locus_sample"]]
-  # })
+  # observe Radiobuttonevents
+  #% observeEvent(
+  #%   eventExpr = input_re()[["moduleFileupload-type_locus_sample"]],
+  #%   handlerExpr = {
+  #%     waround <- input_re()[["moduleFileupload-type_locus_sample"]]
+  #%     rv$type_locus_sample <- waround
+  #%   }
+  #% )
+  
   observe({
     req(rv$type_locus_sample)
     output$type_locus_sample <- reactive({
       return(TRUE)
     })
-    outputOptions(output, 'type_locus_sample', suspendWhenHidden=FALSE)
+    outputOptions(output, "type_locus_sample", suspendWhenHidden = FALSE)
   })
 
   # loading example data
-  observeEvent(input_re()[["moduleFileupload-load_example_data"]], {
+  observeEvent(
+    eventExpr = input_re()[["moduleFileupload-load_example_data"]],
+    handlerExpr = {
     # mimic normal fileimport
     # experimental file
-    rv$expFileReq = T
-    rv$sampleLocusName = "Example_Locus"
-    PCRBiasCorrection::writeLog_(paste0("Locus name: Example_Locus\n(--> stored as: ", rv$sampleLocusName, ")"), logfilename = logfilename)
-    rv$fileimportExp <- PCRBiasCorrection::example.data_experimental[["dat"]]
+    rv$exp_filereq <- T
+    rv$sample_locus_name <- "Example_Locus"
+    rBiasCorrection::write_log(
+      message = paste0("Locus name: Example_Locus\n(--> stored as: ",
+                       rv$sample_locus_name, ")"),
+      logfilename = logfilename)
+    waround_ex <- rBiasCorrection::example.data_experimental[["dat"]]
+    rv$fileimport_experimental <- waround_ex
 
     # calibration file
-    rv$fileimportCal <- PCRBiasCorrection::example.data_calibration[["dat"]]
-    rv$vec_cal <- PCRBiasCorrection::example.data_calibration[["vec_cal"]]
+    waround_ca <- rBiasCorrection::example.data_calibration[["dat"]]
+    rv$fileimport_calibration <- waround_ca
+    rv$vec_cal <- rBiasCorrection::example.data_calibration[["vec_cal"]]
 
     # set upload flag
     rv$type1cal_uploaded <- TRUE
@@ -63,89 +80,132 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
   observe({
     req(input_re()[["moduleFileupload-experimentalFile"]])
 
-    if (isFALSE(rv$expFileReq)){
-      PCRBiasCorrection::writeLog_("(app) Entered observation for experimental file.", logfilename = logfilename)
+    if (isFALSE(rv$exp_filereq)) {
+      rBiasCorrection::write_log(
+        message = "(app) Entered observation for experimental file.",
+        logfilename = logfilename)
       # check file ending
-      rv$ending <- strsplit(input_re()[["moduleFileupload-experimentalFile"]]$name, ".", fixed = T)[[1]]
+      rv$ending <- strsplit(
+        input_re()[["moduleFileupload-experimentalFile"]]$name,
+        ".",
+        fixed = T)[[1]]
 
       # if type 1 data
-      if (rv$type_locus_sample == "1"){
+      if (rv$type_locus_sample == "1") {
         # render fileInput with option "multiple = F"
-        output$fileInputCal <- renderUI({
-          fileInput("calibrationFile", "Please choose one CSV file containing the calibration DNA samples.",
-                    multiple = FALSE,
-                    accept = c(".csv", "text/csv"))
+        output$fileinput_cal <- renderUI({
+          fileInput("calibrationFile",
+                    paste0("Please choose one CSV file containing ",
+                           "the calibration DNA samples."),
+            multiple = FALSE,
+            accept = c(".csv", "text/csv")
+          )
         })
 
         # check userinput of locusname
-        if (input_re()[["moduleFileupload-locusname"]] == ""){
-          openModal("locusname", rv)
+        if (input_re()[["moduleFileupload-locusname"]] == "") {
+          open_modal("locusname", rv)
         } else {
-          rv$expFileReq = T
-          rv$sampleLocusName = PCRBiasCorrection::handleTextInput_(input_re()[["moduleFileupload-locusname"]])
-          PCRBiasCorrection::writeLog_(paste0("Locus name: ", input_re()[["moduleFileupload-locusname"]], "\n(--> stored as: ", rv$sampleLocusName, ")"), logfilename = logfilename)
-          #shinyjs::disable("moduleFileupload-locusname")
-          #removeUI(selector = "#locusname", immediate = T)
+          rv$exp_filereq <- T
+          rv$sample_locus_name <- rBiasCorrection::handle_text_input(
+            input_re()[["moduleFileupload-locusname"]])
+          rBiasCorrection::write_log(
+            message = paste0("Locus name: ",
+                             input_re()[["moduleFileupload-locusname"]],
+                             "\n(--> stored as: ",
+                             rv$sample_locus_name, ")"),
+            logfilename = logfilename)
+          #% shinyjs::disable("moduleFileupload-locusname")
+          #% removeUI(selector = "#locusname", immediate = T)
         }
 
         # if type 2 data
-      } else if (rv$type_locus_sample == "2"){
+      } else if (rv$type_locus_sample == "2") {
         # render fileInput with option "multiple = TRUE"
-        output$fileInputCal <- renderUI({
-          fileInput("calibrationFile", "Please choose at least 4 different CSV files containing the calibration data (one file per distinct calibration DNA sample; for specific file naming please refer to our FAQ).",
-                    multiple = TRUE,
-                    accept = c(".csv", "text/csv"))
+        output$fileinput_cal <- renderUI({
+          fileInput("calibrationFile",
+                    paste0("Please choose at least 4 different CSV files ",
+                           "containing the calibration data (one file per ",
+                           "distinct calibration DNA sample; for specific ",
+                           "file naming please refer to our FAQ)."),
+            multiple = TRUE,
+            accept = c(".csv", "text/csv")
+          )
         })
 
         # check userinput of samplename
-        if (input_re()[["moduleFileupload-samplename"]] == ""){
-          openModal("samplename", rv)
+        if (input_re()[["moduleFileupload-samplename"]] == "") {
+          open_modal("samplename", rv)
         } else {
-          rv$expFileReq = T
-          rv$sampleLocusName = PCRBiasCorrection::handleTextInput_(input_re()[["moduleFileupload-samplename"]])
-          PCRBiasCorrection::writeLog_(paste0("Sample name: ", input_re()[["moduleFileupload-samplename"]], "\n(--> stored as: ", rv$sampleLocusName, ")"), logfilename = logfilename)
-          #shinyjs::disable("moduleFileupload-samplename")
-          #removeUI(selector = "#samplename", immediate = T)
+          rv$exp_filereq <- T
+          rv$sample_locus_name <- rBiasCorrection::handle_text_input(
+            input_re()[["moduleFileupload-samplename"]]
+            )
+          rBiasCorrection::write_log(
+            message = paste0("Sample name: ",
+                             input_re()[["moduleFileupload-samplename"]],
+                             "\n(--> stored as: ",
+                             rv$sample_locus_name, ")"),
+            logfilename = logfilename)
+          #% shinyjs::disable("moduleFileupload-samplename")
+          #% removeUI(selector = "#samplename", immediate = T)
         }
       }
     }
 
-    if (rv$expFileReq == T && is.null(rv$fileimportExp)){
-      #removeUI(selector = "#tag1", immediate = T)
-      #shinyjs::disable("moduleFileupload-type_locus_sample")
+    if (rv$exp_filereq == T && is.null(rv$fileimport_experimental)) {
+      #% removeUI(selector = "#tag1", immediate = T)
+      #% shinyjs::disable("moduleFileupload-type_locus_sample")
 
-      if (rv$ending[2] %in% c("csv", "CSV")){
+      if (rv$ending[2] %in% c("csv", "CSV")) {
         file <- reactiveFileReader(1000, session,
-                                   input_re()[["moduleFileupload-experimentalFile"]]$datapath,
-                                   data.table::fread, header = T)
-        tryCatch({
-          rv$fileimportExp <- PCRBiasCorrection::cleanDT_(file(), description = "experimental", type = rv$type_locus_sample, logfilename = logfilename)[["dat"]]
+          input_re()[["moduleFileupload-experimentalFile"]]$datapath,
+          data.table::fread,
+          header = T
+        )
+        tryCatch(
+          expr = {
+            rv$fileimport_experimental <- rBiasCorrection::clean_dt(
+              datatable = file(),
+              description = "experimental",
+              type = rv$type_locus_sample,
+              logfilename = logfilename
+              )[["dat"]]
 
-          #updateTabItems(session, "tabs", "panel_1")
-        }, error = function(e){
-          print(e)
-          # error handling fileimport
-          openModal("experimentalFile", rv)
-        })
+            #% updateTabItems(session, "tabs", "panel_1")
+          },
+          error = function(e) {
+            print(e)
+            # error handling fileimport
+            open_modal("experimentalFile", rv)
+          }
+        )
 
         # test, if we imported valid file
-        if (is.null(rv$fileimportExp)){
+        if (is.null(rv$fileimport_experimental)) {
           # error handling fileimport
-          openModal("experimentalFile", rv)
+          open_modal("experimentalFile", rv)
         } else {
-          # check here, if there have been deleted rows containing missing values
-          tryCatch({
-            omitnasModal(rv$omitnas, "experimental")
-            rv$omitnas <- NULL
-          }, error = function(e){
-            PCRBiasCorrection::writeLog_(paste0("Errormessage: ", e), logfilename = logfilename)
-          })
+          # check here, if there have been deleted rows containing
+          # missing values
+          tryCatch(
+            expr = {
+              omitnas_modal(rv$omitnas, "experimental")
+              rv$omitnas <- NULL
+            },
+            error = function(e) {
+              rBiasCorrection::write_log(
+                message = paste0("Errormessage: ", e),
+                logfilename = logfilename)
+            }
+          )
 
           # workaround to tell ui, that experimental file is there
-          output$fileUploaded <- reactive({
+          output$file_uploaded <- reactive({
             return(TRUE)
           })
-          outputOptions(output, 'fileUploaded', suspendWhenHidden=FALSE)
+          outputOptions(output, "file_uploaded",
+                        suspendWhenHidden = FALSE)
         }
       } else {
         # error handling fileimport
@@ -162,105 +222,149 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
 
     rv$ending <- NULL
 
-    if (is.null(rv$fileimportCal) | is.null(rv$fileimportList)){
+    if (is.null(rv$fileimport_calibration) | 
+        is.null(rv$fileimport_list)) {
       # if calibration file is of data type 1
-      if (rv$type_locus_sample == "1"){
+      if (rv$type_locus_sample == "1") {
 
         # check file ending
-        rv$ending <- strsplit(input_re()[["calibrationFile"]]$name, ".", fixed = T)[[1]]
+        rv$ending <- strsplit(
+          input_re()[["calibrationFile"]]$name,
+          ".",
+          fixed = T)[[1]]
 
         # if ending suggests it might be a csv file
-        if (rv$ending[2] %in% c("csv", "CSV")){
+        if (rv$ending[2] %in% c("csv", "CSV")) {
           file <- reactiveFileReader(1000, session,
-                                     input_re()[["calibrationFile"]]$datapath,
-                                     data.table::fread, header = T)
+            input_re()[["calibrationFile"]]$datapath,
+            data.table::fread,
+            header = T
+          )
 
           # try to import file
-          tryCatch({
-            if (is.null(rv$fileimportCal)){
-              cal_type_1 <- PCRBiasCorrection::cleanDT_(file(), "calibration", type = "1", logfilename = logfilename)
-              rv$fileimportCal <- cal_type_1[["dat"]]
-              rv$vec_cal <- cal_type_1[["vec_cal"]]
-            }
-          }, error = function(e){
-            print(e)
-            # error handling fileimport
-            openModal("calibrationFile", rv)
-          })
-
-          # go on, if we imported valid file
-          if (!is.null(rv$fileimportCal)){
-
-            # try to check, if colnames of experimental data are same as those of calibration data
-            tryCatch({
-              # check, if colnames of experimental and calibration data are equal:
-              if(!all.equal(colnames(rv$fileimportCal)[-1], colnames(rv$fileimportExp)[-1])){
-                # error handling fileimport
-                openModal("calibrationFile", rv)
+          tryCatch(
+            expr = {
+              if (is.null(rv$fileimport_calibration)) {
+                cal_type_1 <- rBiasCorrection::clean_dt(
+                  datatable = file(),
+                  description = "calibration",
+                  type = "1",
+                  logfilename = logfilename)
+                rv$fileimport_calibration <- cal_type_1[["dat"]]
+                rv$vec_cal <- cal_type_1[["vec_cal"]]
               }
-            }, error = function(e){
+            },
+            error = function(e) {
               print(e)
               # error handling fileimport
-              openModal("calibrationFile", rv)
-            })
+              open_modal("calibrationFile", rv)
+            }
+          )
 
-            # check here, if there are calibration steps outside the range 0 <= CS <= 100
-            if (rv$fileimportCal[,min(as.numeric(as.character(get("true_methylation"))))] < 0 || rv$fileimportCal[,max(as.numeric(as.character(get("true_methylation"))))] > 100){
-              openModal("calibrange", rv)
+          # go on, if we imported valid file
+          if (!is.null(rv$fileimport_calibration)) {
+
+            # try to check, if colnames of experimental data are 
+            # same as those of calibration data
+            tryCatch(
+              expr = {
+                # check, if colnames of experimental and calibration 
+                # data are equal:
+                if (!all.equal(colnames(rv$fileimport_calibration)[-1],
+                               colnames(rv$fileimport_experimental)[-1])) {
+                  # error handling fileimport
+                  open_modal("calibrationFile", rv)
+                }
+              },
+              error = function(e) {
+                print(e)
+                # error handling fileimport
+                open_modal("calibrationFile", rv)
+              }
+            )
+
+            # check here, if there are calibration steps 
+            # outside the range 0 <= CS <= 100
+            if (rv$fileimport_calibration[, min(
+              as.numeric(
+                as.character(get("true_methylation")))
+              )] < 0 || 
+              rv$fileimport_calibration[, max(
+                as.numeric(
+                  as.character(get("true_methylation")))
+                )] > 100) {
+              open_modal("calibrange", rv)
             } else {
 
-              # # check here, if there have been deleted rows containing missin values
-              # tryCatch({
-              #   omitnasModal(rv$omitnas, "calibration")
-              #   rv$omitnas <- NULL
-              # }, error = function(e){
-              #   print(e)
-              # })
+              # check here, if there have been deleted rows 
+              # containing missin values
+              #% tryCatch(expr = {
+              #%   omitnasModal(rv$omitnas, "calibration")
+              #%   rv$omitnas <- NULL
+              #% }, error = function(e) {
+              #%   print(e)
+              #% })
 
               rv$type1cal_uploaded <- TRUE
             }
 
-            # if we have the value "NULL" in our file-variable; this happens, when cleanDT returns error
+            # if we have the value "NULL" in our file-variable; 
+            # this happens, when cleanDT returns error
           } else {
             # error handling fileimport
-            openModal("calibrationFile", rv)
+            open_modal("calibrationFile", rv)
           }
 
           # else, if ending is no csv-file
         } else {
           # error handling fileimport
-          openModal("calibrationFile", rv)
+          open_modal("calibrationFile", rv)
         }
 
 
         # if calibration file is of data type 2
-      } else if (rv$type_locus_sample == "2"){
-
-        if (isFALSE(rv$type2cal_uploaded)){
+      } else if (rv$type_locus_sample == "2") {
+        if (isFALSE(rv$type2cal_uploaded)) {
 
           # loop through calibration files
-          for (i in 1:nrow(input_re()[["calibrationFile"]])){
+          for (i in seq_len(nrow(input_re()[["calibrationFile"]]))) {
             # check file ending
-            rv$ending <- strsplit(input_re()[["calibrationFile"]]$name[i], ".", fixed = T)[[1]]
+            rv$ending <- strsplit(
+              input_re()[["calibrationFile"]]$name[i],
+              ".",
+              fixed = T
+              )[[1]]
 
             file <- reactiveFileReader(1000, session,
-                                       input_re()[["calibrationFile"]]$datapath[i],
-                                       data.table::fread, header = T)
+              input_re()[["calibrationFile"]]$datapath[i],
+              data.table::fread,
+              header = T
+            )
 
-            if (rv$ending[2] %in% c("csv", "CSV")){
-              rv$fileimportList[[input_re()[["calibrationFile"]]$name[i]]] <- PCRBiasCorrection::cleanDT_(file(), "calibration", type = "2", logfilename = logfilename)[["dat"]]
+            if (rv$ending[2] %in% c("csv", "CSV")) {
+              waround_fup <- rBiasCorrection::clean_dt(
+                datatable = file(),
+                description = "calibration",
+                type = "2",
+                logfilename = logfilename
+                )[["dat"]]
+              ind <- input_re()[["calibrationFile"]]$name[i]
+              rv$fileimport_list[[ind]] <- waround_fup
             } else {
               # error handling fileimport
-              openModal("csv", rv)
+              open_modal("csv", rv)
             }
           }
 
           # chech type 2 file requirements here
-          filecheck <- PCRBiasCorrection::type2FileReq_(rv$fileimportList, rv, logfilename = logfilename)
+          filecheck <- rBiasCorrection::type2_filereq(
+            filelist = rv$fileimport_list,
+            rv = rv,
+            logfilename = logfilename)
 
-          if (is.character(filecheck)){
-            openModal(filecheck, rv)
-          } else if (isTRUE(filecheck)){
+          if (is.character(filecheck)) {
+            open_modal(filecheck, rv)
+          } else if (isTRUE(filecheck)) {
             rv$type2cal_uploaded <- TRUE
           }
         }
@@ -270,14 +374,14 @@ moduleFileuploadServer <- function(input, output, session, rv, input_re){
 }
 
 
-#' @title moduleFileuploadUI
+#' @title module_fileupload_ui
 #'
 #' @param id A character. The identifier of the shiny object
 #'
 #' @export
 #'
-# moduleFileuploadUI
-moduleFileuploadUI <- function(id){
+# module_fileupload_ui
+module_fileupload_ui <- function(id) {
   ns <- NS(id)
 
   tagList(
@@ -285,54 +389,75 @@ moduleFileuploadUI <- function(id){
       # type of data box
       box(
         # TODO original selection of data type
-        # title = "Type of Data",
-        # # Radiobuttons: Type of data
-        # radioButtons(inputId = ns("type_locus_sample"), label = h5("Please specify the type of DNA methylation data to be corrected for measurement biases"),
-        #              choices = list("One locus in many samples (e.g. pyrosequencing data)" = 1,
-        #                             "Many loci in one sample (e.g. next-generation sequencing data or microarray data)" = 2),
-        #              selected = character(0)),
-        #
-        # tags$hr(),
-        #
-        # conditionalPanel(
-        #   condition = "input['moduleFileupload-type_locus_sample'] == 1",
-        #   textInput(ns("locusname"),
-        #             label = NULL,
-        #             placeholder = "Locus name")
-        # ),
-
-        # conditionalPanel(
-        #   condition = "input['moduleFileupload-type_locus_sample'] == 2",
-        #   textInput(ns("samplename"),
-        #             label = NULL,
-        #             placeholder = "Sample-ID")
-        # ),
-        # conditionalPanel(
-        #   condition = "input['moduleFileupload-type_locus_sample'] != null",
-        #   verbatimTextOutput(ns("samplelocus_out"))
-        # ), width = 6)
-
+        #% title = "Type of Data",
+        #% # Radiobuttons: Type of data
+        #% radioButtons(
+        #%   inputId = ns("type_locus_sample"),
+        #%   label = h5(paste0("Please specify the type of DNA methylation ",
+        #%                     "data to be corrected for measurement biases")),
+        #%   choices = list(
+        #%     paste0("One locus in many samples ",
+        #%            "(e.g. pyrosequencing data)") = 1,
+        #%     paste0("Many loci in one sample ",
+        #%            "(e.g. next-generation sequencing ",
+        #%            "data or microarray data)") = 2),
+        #%   selected = character(0)),
+        #% 
+        #% tags$hr(),
+        #% 
+        #% conditionalPanel(
+        #%   condition = "input['moduleFileupload-type_locus_sample'] == 1",
+        #%   textInput(ns("locusname"),
+        #%             label = NULL,
+        #%             placeholder = "Locus name")
+        #% ),
+        #% 
+        #% conditionalPanel(
+        #%   condition = "input['moduleFileupload-type_locus_sample'] == 2",
+        #%   textInput(ns("samplename"),
+        #%             label = NULL,
+        #%             placeholder = "Sample-ID")
+        #% ),
+        #% conditionalPanel(
+        #%   condition = "input['moduleFileupload-type_locus_sample'] != null",
+        #%   verbatimTextOutput(ns("samplelocus_out"))
+        #% ), width = 6)
         title = "File upload",
         h5("Please type in the ID of the interrogated locus"),
         textInput(ns("locusname"),
-                  label = NULL,
-                  placeholder = "Locus ID"),
+          label = NULL,
+          placeholder = "Locus ID"
+        ),
         conditionalPanel(
           condition = "output['moduleFileupload-type_locus_sample']",
           verbatimTextOutput(ns("samplelocus_out"))
         ),
-        width = 6),
+        width = 6
+      ),
       box(
         title = "Description",
-        h5("This application is a graphical user interface (GUI) to the algorithms implemented in the R-package 'PCRBiasCorrection'."),
-        h5("If you use these 'BiasCorrector' or 'PCRBiasCorrection' packages to correct DNA methylation data for a publication, please refer to the 'Info'-tab to find out how to cite them."),
+        h5(paste0("This application is a graphical user interface (GUI) ",
+                  "to the algorithms implemented in the R-package ",
+                  "'rBiasCorrection'.")),
+        h5(paste0("If you use these 'BiasCorrector' or 'rBiasCorrection' ",
+                  "packages to correct DNA methylation data for a ",
+                  "publication, please refer to the 'Info'-tab to find out ",
+                  "how to cite them.")),
         tags$hr(),
-        h5("You can test this application with example data by pressing the 'Load Example Data'-button below."),
-        div(class="row", style="text-align: center",
-            actionButton(ns("load_example_data"), "Load Example Data",
-                         style="white-space: normal; text-align:center;
-        padding: 9.5px 9.5px 9.5px 9.5px;
-        margin: 6px 10px 6px 10px;"))
+        h5(paste0("You can test this application with example data by ",
+                  "pressing the 'Load Example Data'-button below.")),
+        div(
+          class = "row", style = "text-align: center",
+          actionButton(
+            ns("load_example_data"),
+            "Load Example Data",
+            style = paste0(
+              "white-space: normal; ",
+              "text-align:center; ",
+              "padding: 9.5px 9.5px 9.5px 9.5px; ",
+              "margin: 6px 10px 6px 10px;")
+          )
+        )
       )
     ),
 
@@ -343,35 +468,57 @@ moduleFileuploadUI <- function(id){
 
         box(
           title = "Data Input: Experimental Data",
-          h5("Please upload the CSV file* containing the experimental data."),
+          h5(paste0("Please upload the CSV file* containing ",
+                    "the experimental data.")),
 
           # Input: Select a file
-          fileInput(ns("experimentalFile"), "Please choose one CSV file containing the experimental data that are to be corrected.",
-                    multiple = FALSE,
-                    accept = c(".csv", "text/csv")),
-          h6(paste("Max. file size: ", maxfilesize, " MB")),
+          fileInput(
+            ns("experimentalFile"),
+            paste0("Please choose one CSV file containing the experimental ",
+                   "data that are to be corrected."),
+            multiple = FALSE,
+            accept = c(".csv", "text/csv")
+          ),
+          h6(paste("Max. file size: ",
+                   maxfilesize,
+                   " MB")),
 
-          h6("*For the specific CSV file requirements please refer to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
-          width = 6)
+          h6(paste0("*For the specific CSV file requirements ",
+                    "please refer to our"),
+             a("FAQ!",
+               href = paste0("https://github.com/kapsner/",
+                             "rBiasCorrection/blob/master/FAQ.md"))),
+          width = 6
+        )
       ),
 
       # calibration fileupload box
       conditionalPanel(
-        condition =  "output['moduleFileupload-fileUploaded']",
+        condition = "output['moduleFileupload-file_uploaded']",
 
         box(
           title = "Data Input: Calibration Data",
-          h5("Please upload the CSV files* containing the calibration data."),
+          h5(paste0("Please upload the CSV files* containing ",
+                    "the calibration data.")),
 
-          uiOutput(ns("fileInputCal")),
+          uiOutput(ns("fileinput_cal")),
 
-          # fileInput("calibrationFile", "Calibration data: choose one CSV file containing the calibration data",
-          #             multiple = rv$import_type2,
-          #             accept = c(".csv")),
+          #% fileInput("calibrationFile",
+          #%           paste0("Calibration data: choose one CSV file ",
+          #%                  "containing the calibration data"),
+          #%           multiple = rv$import_type2,
+          #%           accept = c(".csv")),
 
-          h6(paste("Max. file size: ", maxfilesize, " MB")),
-          h6("*For the specific CSV file requirements please refere to our", a("FAQ!", href="https://github.com/kapsner/PCRBiasCorrection/blob/master/FAQ.md")),
-          width = 6)
+          h6(paste("Max. file size: ",
+                   maxfilesize,
+                   " MB")),
+          h6(paste0("*For the specific CSV file requirements ",
+                    "please refere to our"),
+             a("FAQ!",
+               href = paste0("https://github.com/kapsner/",
+                             "rBiasCorrection/blob/master/FAQ.md"))),
+          width = 6
+        )
       )
     )
   )

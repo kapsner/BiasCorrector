@@ -1,14 +1,14 @@
 context("test startup")
 
 # debugging prefix
-#prefix <- "./tests/testthat/"
-#utildir <- paste0(prefix, "../../")
+# prefix <- "./tests/testthat/"
+# utildir <- paste0(prefix, "../../")
 # prefix <- "./"
 # utildir <- paste0(prefix, "../../baseApp/")
 
 library(processx)
 
-test_that("correct startup",{
+test_that("correct startup", {
   # from here: https://www.r-bloggers.com/building-a-shiny-app-as-a-package/
   # We're creating a new process that runs the app
   # print(list.files())
