@@ -1,5 +1,5 @@
-# BiasCorrector: Correct PCR-bias in DNA methylation analyses
-# Copyright (C) 201A GUI to Correct PCR Bias in DNA Methylation Analyses9 Lorenz Kapsner
+# BiasCorrector: A GUI to Correct Measurement Bias in DNA Methylation Analyses
+# Copyright (C) 2019 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
