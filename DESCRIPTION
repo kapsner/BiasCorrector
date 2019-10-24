@@ -30,5 +30,6 @@ Suggests:
     testthat,
     processx,
     lintr
-Remotes:  
+Remotes: 
     kapsner/rBiasCorrection
+RoxygenNote: 6.1.1

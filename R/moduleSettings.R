@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @title moduleSettingsServer
+#' @title module_settings_server
 #'
 #' @param input Shiny server input object
 #' @param output Shiny server output object
@@ -26,53 +26,77 @@
 #'
 #' @export
 #'
-# moduleSettingsServer
-moduleSettingsServer <- function(input,
+# module_settings_server
+module_settings_server <- function(input,
                                  output,
                                  session,
                                  rv,
                                  input_re) {
-
+  
   # observe Radiobuttonevents
-  observeEvent(input_re()[["moduleSettings-settings_minmax"]], {
-    PCRBiasCorrection::writeLog_(paste0("Settings: minmax = ", input_re()[["moduleSettings-settings_minmax"]]), logfilename)
-    rv$minmax <- input_re()[["moduleSettings-settings_minmax"]]
-  })
-
+  observeEvent(
+    eventExpr = input_re()[["moduleSettings-settings_minmax"]],
+    handlerExpr = {
+      rBiasCorrection::write_log(
+        message = paste0(
+          "Settings: minmax = ",
+          input_re()[["moduleSettings-settings_minmax"]]), 
+        logfilename = logfilename
+      )
+      rv$minmax <- input_re()[["moduleSettings-settings_minmax"]]
+    })
+  
   # observe Radiobuttonevents
-  observeEvent(input_re()[["moduleSettings-settings_selection_method"]], {
-    PCRBiasCorrection::writeLog_(paste0("Settings: selection_method = ", input_re()[["moduleSettings-settings_selection_method"]]), logfilename)
-    rv$selection_method <- input_re()[["moduleSettings-settings_selection_method"]]
-  })
+  observeEvent(
+    eventExpr = input_re()[["moduleSettings-settings_selection_method"]],
+    handlerExpr = {
+      rBiasCorrection::write_log(
+        message = paste0(
+          "Settings: selection_method = ",
+          input_re()[["moduleSettings-settings_selection_method"]]),
+        logfilename = logfilename
+      )
+      waround12 <- input_re()[["moduleSettings-settings_selection_method"]]
+      rv$selection_method <- waround12
+    })
 }
 
 
-#' @title moduleSettingsUI
+#' @title module_settings_ui
 #'
 #' @param id A character. The identifier of the shiny object
 #'
 #' @export
 #'
-# moduleSettingsUI
-moduleSettingsUI <- function(id) {
+# module_settings_ui
+module_settings_ui <- function(id) {
   ns <- NS(id)
-
+  
   tagList(
     fluidRow(
       # type of data box
       box(
         title = "Settings",
         radioButtons(ns("settings_selection_method"),
-          label = "Method to automatically (pre-) select the regression method for correction",
-          choices = list("Sum of squared errors (SSE)" = "SSE", "Relative Error" = "RelError"),
-          selected = "SSE"
+                     label = paste0(
+                       "Method to automatically (pre-) select ",
+                       "the regression method for correction"),
+                     choices = list(
+                       "Sum of squared errors (SSE)" = "SSE",
+                       "Relative Error" = "RelError"
+                     ),
+                     selected = "SSE"
         ),
         tags$hr(),
         checkboxInput(ns("settings_minmax"),
-          label = "Use 'min-max'-correction (default: off)",
-          value = FALSE
+                      label = "Use 'min-max'-correction (default: off)",
+                      value = FALSE
         ),
-        helpText("[CAUTION: This is an experimental feature and has neither been tested nor validated!]"),
+        helpText(
+          paste0(
+            "[CAUTION: This is an experimental feature ",
+            "and has neither been tested nor validated!]")
+        ),
         width = 9
       ),
       box(

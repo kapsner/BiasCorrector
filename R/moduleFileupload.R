@@ -209,7 +209,7 @@ module_fileupload_server <- function(input,
         }
       } else {
         # error handling fileimport
-        openModal("experimentalFile", rv)
+        open_modal("experimentalFile", rv)
       }
     }
   })

@@ -18,8 +18,8 @@
 render_regressionstatistics <- function(dt,
                                         mode = NULL,
                                         minmax) {
-  # col2rgb("lawngreen"): red=124, green=252, blue=0
-  #" rgb (124, 252, 0, max=255, alpha=90) --> "#7CFC005A"
+  #% col2rgb("lawngreen"): red=124, green=252, blue=0
+  #% rgb (124, 252, 0, max=255, alpha=90) --> "#7CFC005A"
   # https://stackoverflow.com/questions/49636423/how-to-change-the-
   # cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
   
@@ -61,7 +61,12 @@ render_regressionstatistics <- function(dt,
                        options = list(
                          scrollX = TRUE,
                          pageLength = 20,
-                         columnDefs = list(list(targets = c(ncols, ncols + 1), visible = FALSE)),
+                         columnDefs = list(
+                           list(
+                             targets = c(ncols, ncols + 1),
+                             visible = FALSE
+                           )
+                         ),
                          dom = "ltip"
                        )
     ) %>%
@@ -97,7 +102,12 @@ render_regressionstatistics <- function(dt,
                        options = list(
                          scrollX = TRUE,
                          pageLength = 20,
-                         columnDefs = list(list(targets = ncols, visible = FALSE)),
+                         columnDefs = list(
+                           list(
+                             targets = ncols,
+                             visible = FALSE
+                           )
+                         ),
                          dom = "ltip"
                        )
     ) %>%

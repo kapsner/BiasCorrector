@@ -41,7 +41,7 @@ devtools::install_github("kapsner/BiasCorrector")
 
 ```
 library(BiasCorrector)
-launchApp()
+launch_app()
 ```
 
 # More Infos:

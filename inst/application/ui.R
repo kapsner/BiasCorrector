@@ -20,9 +20,9 @@ shiny::shinyUI(
     # https://github.com/rstudio/shinydashboard/issues/255
     shiny::tags$head(
       shiny::tags$style(
-        shiny::HTML(paste0('.wrapper {height: auto !important; ',
-                           'position:relative; overflow-x:hidden; ',
-                           'overflow-y:hidden}')
+        shiny::HTML(paste0(".wrapper {height: auto !important; ",
+                           "position:relative; overflow-x:hidden; ",
+                           "overflow-y:hidden}")
         )
       )),
     

@@ -19,7 +19,8 @@ shiny::shinyServer(function(input, output, session) {
   rv <- shiny::reactiveValues(
     ending = NULL,
     exp_filereq = F,
-    type_locus_sampe = NULL, # 1, # currently there is only type 1 correction implemented
+    type_locus_sampe = NULL, # 1
+    # currently there is only type 1 correction implemented
     fileimport_experimental = NULL,
     fileimport_calibration = NULL,
     fileimport_list = NULL,
@@ -73,7 +74,7 @@ shiny::shinyServer(function(input, output, session) {
     paste0("I hereby confirm to use this program only for ",
            "scientific research purposes."),
     footer = shiny::tagList(
-      shiny::actionButton("dismiss_modal",label = "Cancel"),
+      shiny::actionButton("dismiss_modal", label = "Cancel"),
       shiny::modalButton("Confirm"))
   ))
   
@@ -97,17 +98,22 @@ shiny::shinyServer(function(input, output, session) {
     paste(rv$sample_locus_name)
   })
   
+  input_reactive <- reactive({
+    input
+  })
+  
   
   ###### Experimental data
   # Fileupload module
   shiny::callModule(module_fileupload_server,
                     "moduleFileupload",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   # table rendering module
   shiny::callModule(module_experimentalfile_server,
-                    "module_experimentalfile",
+                    "moduleExperimentalFile",
                     rv = rv)
   
   # some ui stuff
@@ -118,21 +124,23 @@ shiny::shinyServer(function(input, output, session) {
     # disable exampledata-button
     shinyjs::disable("moduleFileupload-load_example_data")
     # enable logfile-download
-    shinyjs::enable("moduleLog-downloadLogfile")
+    shinyjs::enable("moduleLog-download_logfile")
     # disable radiobuttons
     shinyjs::disable("moduleFileupload-type_locus_sample")
     # disable upload possibility of experimental file
     shinyjs::disable("moduleFileupload-experimentalFile")
     # disable textinput
-    if (rv$type_locus_sample == "1"){
+    if (rv$type_locus_sample == "1") {
       shinyjs::disable("moduleFileupload-locusname")
-    } else if (rv$type_locus_sample == "1"){
+    } else if (rv$type_locus_sample == "1") {
       shinyjs::disable("moduleFileupload-samplename")
     }
     # render menu with experimental file
     output$menu <- shinydashboard::renderMenu({
       shinydashboard::sidebarMenu(
-        shinydashboard::menuItem("Experimental Data", tabName = "panel_1", icon = icon("table"))
+        shinydashboard::menuItem("Experimental Data",
+                                 tabName = "panel_1",
+                                 icon = icon("table"))
       )
     })
   })
@@ -150,11 +158,13 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem("Calibration Data",
                                    tabName = "panel_2",
                                    icon = icon("table")),
-          shiny::actionButton("run", "Run Analysis",
-                              style = paste0("white-space: normal; ",
-                                             "text-align:center; ",
-                                             "padding: 9.5px 9.5px 9.5px 9.5px;",
-                                             "margin: 6px 10px 6px 10px;")
+          shiny::actionButton(
+            "run",
+            "Run Analysis",
+            style = paste0("white-space: normal; ",
+                           "text-align:center; ",
+                           "padding: 9.5px 9.5px 9.5px 9.5px;",
+                           "margin: 6px 10px 6px 10px;")
           )
         )
       })
@@ -169,20 +179,21 @@ shiny::shinyServer(function(input, output, session) {
   # ###### Calibration data
   # table rendering module
   shiny::callModule(module_calibrationfile_server,
-                    "moduleCalibrationfile",
+                    "moduleCalibrationFile",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   shiny::observe({
     shiny::req(rv$fileimport_calibration)
     # enable calibrationfile download button
-    shinyjs::enable("moduleCalibrationFile-downloadCalibration")
+    shinyjs::enable("moduleCalibrationFile-download_calibration")
   })
   
   
   ###### Run Analysis
   shiny::observeEvent(input$run, {
-    if (!is.null(rv$fileimport_calibration)){
+    if (!is.null(rv$fileimport_calibration)) {
       
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
@@ -212,7 +223,7 @@ shiny::shinyServer(function(input, output, session) {
       # disable some settings here
       shinyjs::disable("moduleSettings-settings_minmax")
       
-    } else if (rv$type_locus_sample == "2"){
+    } else if (rv$type_locus_sample == "2") {
       shiny::showModal(shiny::modalDialog(
         "Please confirm the assignment of the calibration steps.",
         title = "Confirmation needed",
@@ -226,20 +237,21 @@ shiny::shinyServer(function(input, output, session) {
   observe({
     # this is needed, to open new tab (Regression plots)
     # before rendering the plots!
-    if (input$tabs == "panel_3"){
+    if (input$tabs == "panel_3") {
       rv$run <- TRUE
     }
   })
   shiny::callModule(module_plotting_server,
                     "modulePlotting",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   # when plotting has finished
   shiny::observe({
     shiny::req(rv$plotting_finished)
     
-    if (rv$type_locus_sample == "1"){
+    if (rv$type_locus_sample == "1") {
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data",
@@ -328,25 +340,29 @@ shiny::shinyServer(function(input, output, session) {
   shiny::callModule(module_statistics_server,
                     "moduleStatistics",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   ###### Plot Corrected Results
   shiny::callModule(module_correctedplots_server,
                     "moduleCorrectedPlots",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   ###### Statistics Corrected Results
-  shiny::callModule(module_correctedstatistics_server,
+  shiny::callModule(module_correctedstats_server,
                     "moduleCorrectedStatistics",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   ###### Model Selection
   shiny::callModule(module_modelselection_server,
                     "moduleModelSelection",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   
   # Calculate results for experimental data
@@ -355,7 +371,7 @@ shiny::shinyServer(function(input, output, session) {
     # disable Biascorrection-Button
     shinyjs::disable("results")
     
-    if (rv$type_locus_sample == "1"){
+    if (rv$type_locus_sample == "1") {
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data",
@@ -399,7 +415,7 @@ shiny::shinyServer(function(input, output, session) {
         )
       })
       
-    } else if (rv$type_locus_sample == "2"){
+    } else if (rv$type_locus_sample == "2") {
       output$menu <- shinydashboard::renderMenu({
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Experimental Data",
@@ -444,23 +460,27 @@ shiny::shinyServer(function(input, output, session) {
   shiny::callModule(module_results_server,
                     "moduleResults",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   ###### Logs
   shiny::callModule(module_log_server,
                     "moduleLog",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   ###### Settings
   shiny::callModule(module_settings_server,
                     "moduleSettings",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
   
   ###### Info
   shiny::callModule(module_info_server,
                     "moduleInfo",
                     rv = rv,
-                    input_re = reactive({input}))
+                    input_re = input_reactive
+  )
 })

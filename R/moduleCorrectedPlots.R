@@ -50,7 +50,7 @@ module_correctedplots_server <- function(input,
           
           # correct calibration data (to show corrected calibration curves)
           solved_eq_h <- rBiasCorrection::solving_equations(
-            datatable = rv$fileimport_cal,
+            datatable = rv$fileimport_calibration,
             regmethod = rv$choices_list,
             type = 1,
             rv = rv,
@@ -60,7 +60,7 @@ module_correctedplots_server <- function(input,
           )
           rv$fileimport_cal_corrected_h <- solved_eq_h[["results"]]
           colnames(rv$fileimport_cal_corrected_h) <- colnames(
-            rv$fileimport_cal
+            rv$fileimport_calibration
           )
           
           rv$substitutions_corrected_h <- solved_eq_h[["substitutions"]]
@@ -138,7 +138,7 @@ module_correctedplots_server <- function(input,
           
           # correct calibration data (to show corrected calibration curves)
           solved_eq_c <- rBiasCorrection::solving_equations(
-            datatable = rv$fileimport_cal,
+            datatable = rv$fileimport_calibration,
             regmethod = rv$choices_list,
             type = 1,
             rv = rv,
@@ -148,7 +148,7 @@ module_correctedplots_server <- function(input,
           )
           rv$fileimport_cal_corrected_c <- solved_eq_c[["results"]]
           colnames(rv$fileimport_cal_corrected_c) <- colnames(
-            rv$fileimport_cal
+            rv$fileimport_calibration
           )
           
           rv$substitutions_corrected_c <- solved_eq_c[["substitutions"]]
@@ -426,7 +426,7 @@ module_correctedplots_server <- function(input,
         contentType = "image/png"
       )
       
-      output$download_plotssse_corrected_h <- downloadHandler(
+      output$download_plot_sse_corrected_h <- downloadHandler(
         filename = function() {
           paste0(rv$sample_locus_name,
                  "_error_",
@@ -470,7 +470,7 @@ module_correctedplots_server <- function(input,
         contentType = "image/png"
       )
       
-      output$download_plotssse_corrected_c <- downloadHandler(
+      output$download_plot_sse_corrected_c <- downloadHandler(
         filename = function() {
           paste0(rv$sample_locus_name,
                  "_error_",
@@ -886,7 +886,7 @@ module_correctedplots_ui <- function(id) {
             div(class = "row",
                 style = "text-align: center",
                 downloadButton(
-                  "moduleCorrectedPlots-download_plotssse_corrected_h",
+                  "moduleCorrectedPlots-download_plot_sse_corrected_h",
                   "Download Error Plot (hyperbolic correction)", 
                   style = paste0(
                     "white-space: normal; ",
@@ -908,7 +908,7 @@ module_correctedplots_ui <- function(id) {
             div(class = "row",
                 style = "text-align: center",
                 downloadButton(
-                  "moduleCorrectedPlots-download_plotssse_corrected_c",
+                  "moduleCorrectedPlots-download_plot_sse_corrected_c",
                   "Download Error Plot (cubic correction)",
                   style = paste0(
                     "white-space: normal; ",
