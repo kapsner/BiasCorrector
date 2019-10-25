@@ -17,12 +17,7 @@
 
 #' @title module_results_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -31,13 +26,17 @@ module_results_server <- function(input,
                                   output,
                                   session,
                                   rv,
-                                  input_re) {
+                                  input_re,
+                                  ...) {
+
+  arguments <- list(...)
+
   observe({
     req(rv$calculate_results)
-    
+
     if (rv$calculate_results) {
       cat("\nCalculate results\n")
-      
+
       if (rv$type_locus_sample == "1") {
         rv$choices_list <- tryCatch(
           expr = {
@@ -47,7 +46,7 @@ module_results_server <- function(input,
             )
             for (l in seq_len(length(rv$vec_cal))) {
               radioname <- paste0("radio", l)
-              o <- rbind(o, 
+              o <- rbind(o,
                          cbind(
                            "Name" = rv$vec_cal[l],
                            "better_model" = as.numeric(
@@ -74,36 +73,36 @@ module_results_server <- function(input,
           }
         )
         print(rv$choices_list)
-        
+
         # calculating final results
         withProgress(
-          message = "BiasCorrecting experimental data", 
+          message = "BiasCorrecting experimental data",
           value = 0, {
             incProgress(
-              1 / 1, 
+              1 / 1,
               detail = "... working on BiasCorrection ...")
-            
+
             # Experimental data
             solved_eq <- rBiasCorrection::solving_equations(
               rv$fileimport_experimental,
               rv$choices_list,
               type = 1,
               rv = rv,
-              logfilename = logfilename,
+              logfilename = arguments$logfilename,
               minmax = rv$minmax
             )
             rv$final_results <- solved_eq[["results"]]
             rv$substitutions <- solved_eq[["substitutions"]]
           })
       } else if (rv$type_locus_sample == "2") {
-        
+
         # initialize temp results
         rv$temp_results <- list()
-        
+
         rv$substitutions <- rBiasCorrection::substitutions_create()
-        
-        # iterate over unique names in locus_id of experimental file 
-        # (to correctly display decreasing order of CpG-sites in final 
+
+        # iterate over unique names in locus_id of experimental file
+        # (to correctly display decreasing order of CpG-sites in final
         # results)
         # calculating final results
         withProgress(
@@ -112,7 +111,7 @@ module_results_server <- function(input,
             incProgress(
               1 / 1,
               detail = "... working on BiasCorrection ...")
-            
+
             # Experimental data
             # iterate over unique locus ids in experimental file
             for (locus in rv$fileimport_experimental[, unique(
@@ -122,7 +121,7 @@ module_results_server <- function(input,
               rv$result_list <- rv$result_list_type2[[locus]]
               # get copy of experimental data for that specific locus
               expdata <- rv$fileimport_experimental[get("locus_id") == locus, ]
-              # get colnames of that specific locus (different loci can have 
+              # get colnames of that specific locus (different loci can have
               # different numbers of CpG-sites)
               vec <- c("locus_id", colnames(expdata)[2:(expdata[, min(
                 get("CpG_count")
@@ -133,22 +132,22 @@ module_results_server <- function(input,
                 rv$reg_stats[[locus]][, c("Name", "better_model"), with = F],
                 type = 2,
                 rv = rv,
-                logfilename = logfilename,
+                logfilename = arguments$logfilename,
                 minmax = rv$minmax
               )
               rv$temp_results[[locus]] <- solved_eq[["results"]]
-              rv$substitutions <- rbind(rv$substitutions, 
+              rv$substitutions <- rbind(rv$substitutions,
                                         solved_eq[["substitutions"]])
             }
-            
-            # iterate over temp_results (key = locus-name) and iteratively 
+
+            # iterate over temp_results (key = locus-name) and iteratively
             # append final results
             for (i in names(rv$temp_results)) {
               if (is.null(rv$final_results)) {
                 rv$final_results <- rv$temp_results[[i]]
               } else {
-                # set use.names = T and fill = T because, as pointed out 
-                # before, different loci can have different numbers of CpG 
+                # set use.names = T and fill = T because, as pointed out
+                # before, different loci can have different numbers of CpG
                 # sites and!!
                 # the best fitting algorithm can be cubic or hyperbolic for
                 # the same CpG site-number of different loci
@@ -158,7 +157,7 @@ module_results_server <- function(input,
                                           fill = T)
               }
             }
-            vec <- colnames(rv$final_results)[grepl("row_means", 
+            vec <- colnames(rv$final_results)[grepl("row_means",
                                                     colnames(
                                                       rv$final_results
                                                     )
@@ -173,7 +172,7 @@ module_results_server <- function(input,
             )
           })
       }
-      
+
       output$dtfinal <- DT::renderDataTable({
         # https://stackoverflow.com/questions/49636423/how-to-change-the-
         # cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
@@ -185,14 +184,14 @@ module_results_server <- function(input,
           DT::formatRound(columns = c(2:ncol(rv$final_results)),
                           digits = 3)
       })
-      
+
       # show corrected results for experimental data
       output$corrected_data <- renderUI({
         dt <- DT::dataTableOutput("moduleResults-dtfinal")
-        
+
         do.call(tagList, list(dt))
       })
-      
+
       # Download corrected results
       output$download_final <- downloadHandler(
         filename = function() {
@@ -202,13 +201,13 @@ module_results_server <- function(input,
         },
         content = function(file) {
           rBiasCorrection::write_csv(
-            table = rv$final_results, 
+            table = rv$final_results,
             filename = file)
         },
         contentType = "text/csv"
       )
-      
-      
+
+
       output$download_all_data <- downloadHandler(
         filename = paste0(
           rv$sample_locus_name,
@@ -224,103 +223,103 @@ module_results_server <- function(input,
         ),
         content = function(fname) {
           print(getwd())
-          
+
           # temporarily set tempdir as wd
           oldwd <- getwd()
           setwd(tempdir())
           print(getwd())
-          
-          # create files where is no difference in export 
+
+          # create files where is no difference in export
           # between type 1 and 2
           rBiasCorrection::write_csv(
-            rv$fileimport_experimental, 
+            rv$fileimport_experimental,
             paste0(
-              csvdir, 
+              arguments$csvdir,
               "raw_experimental_data.csv")
           )
           rBiasCorrection::write_csv(
-            rv$final_results, 
+            rv$final_results,
             paste0(
-              csvdir, 
-              rv$sample_locus_name, 
+              arguments$csvdir,
+              rv$sample_locus_name,
               "_corrected_values.csv")
           )
           rBiasCorrection::write_csv(
-            rv$substitutions, 
-            paste0(csvdir,
+            rv$substitutions,
+            paste0(arguments$csvdir,
                    rv$sample_locus_name,
                    "_substituted_values.csv")
           )
           rBiasCorrection::write_csv(
             rv$substitutions_corrected_h,
             paste0(
-              csvdir,
+              arguments$csvdir,
               rv$sample_locus_name,
               "_substituted_corrected_h.csv")
           )
           rBiasCorrection::write_csv(
             rv$substitutions_corrected_c,
             paste0(
-              csvdir,
-              rv$sample_locus_name, 
+              arguments$csvdir,
+              rv$sample_locus_name,
               "_substituted_corrected_c.csv")
           )
           write(rv$logfile,
                 paste0(
-                  csvdir,
+                  arguments$csvdir,
                   "BC_logfile.txt")
           )
-          
+
           # create other files
           if (rv$type_locus_sample == "1") {
             rBiasCorrection::write_csv(
               rv$fileimport_calibration,
               paste0(
-                csvdir,
+                arguments$csvdir,
                 "raw_calibration_data.csv")
             )
             rBiasCorrection::write_csv(
               rv$reg_stats,
-              paste0(csvdir,
+              paste0(arguments$csvdir,
                      rv$sample_locus_name,
                      "_regression_stats.csv")
             )
             rBiasCorrection::write_csv(
               rv$reg_stats_corrected_h,
               paste0(
-                csvdir,
+                arguments$csvdir,
                 rv$sample_locus_name,
                 "_corrected_regression_stats_h.csv")
             )
             rBiasCorrection::write_csv(
               rv$reg_stats_corrected_c,
               paste0(
-                csvdir,
+                arguments$csvdir,
                 rv$sample_locus_name,
                 "_corrected_regression_stats_c.csv")
             )
-            
+
           } else if (rv$type_locus_sample == "2") {
             # regression stats
             for (key in names(rv$fileimport_calibration)) {
               rBiasCorrection::write_csv(
                 rv$reg_stats[[key]],
                 paste0(
-                  csvdir,
+                  arguments$csvdir,
                   rv$sample_locus_name,
                   "_regression_stats_",
                   gsub("[[:punct:]]",
                        "",
-                       key), 
+                       key),
                   ".csv")
               )
             }
-            
+
             for (key in names(rv$fileimport_cal_corrected)) {
               rBiasCorrection::write_csv(
                 rv$reg_stats_corrected[[key]],
                 paste0(
-                  csvdir,
+                  arguments$csvdir,
                   "BC_regression_stats_corrected_",
                   gsub("[[:punct:]]",
                        "",
@@ -328,13 +327,13 @@ module_results_server <- function(input,
                   ".csv")
               )
             }
-            
+
             # raw calibrations data
             for (key in names(rv$fileimport_calibration)) {
               rBiasCorrection::write_csv(
                 rv$fileimport_calibration[[key]],
                 paste0(
-                  csvdir,
+                  arguments$csvdir,
                   "raw_calibration_data_",
                   gsub("[[:punct:]]",
                        "",
@@ -343,11 +342,11 @@ module_results_server <- function(input,
               )
             }
           }
-          
-          
+
+
           print(list.files(".csv/"))
           print(list.files(".plots/"))
-          
+
           utils::zip(
             zipfile = fname,
             files = c(
@@ -356,18 +355,18 @@ module_results_server <- function(input,
               paste0("plots/",
                      list.files(".plots/"))
             ))
-          
+
           if (file.exists(paste0(tempdir(), "/", fname, ".zip"))) {
             file.rename(paste0(tempdir(), "/", fname, ".zip"), fname)
           }
-          
+
           # return to old wd
           setwd(oldwd)
           print(getwd())
         },
         contentType = "application/zip"
       )
-      
+
       # present substitutions in extra tab (only if there were some)
       if (nrow(rv$substitutions) > 0) {
         rv$substitutions_calc <- TRUE
@@ -379,7 +378,7 @@ module_results_server <- function(input,
                       "got_substitutions",
                       suspendWhenHidden = FALSE)
       }
-      
+
       output$description <- renderText({
         str1 <- paste0("The results table shows the ",
                        "BiasCorrected experimental data.")
@@ -403,15 +402,15 @@ module_results_server <- function(input,
           )
         )
       })
-      
+
       rv$calculate_results <- FALSE
     }
   })
-  
+
   # Presentation of substituted values
   observe({
     req(rv$substitutions_calc)
-    
+
     output$description_sub <- renderText({
       str1 <- paste0("Substitutions occur, when no result is found in ",
                      "the range of plausible values between 0 and 100 ",
@@ -432,7 +431,7 @@ module_results_server <- function(input,
                      "'BiasCorrected value' and the corresponding ",
                      "substitution 'Substituted value' for the ",
                      "respective CpG site.")
-      
+
       HTML(
         paste(
           str1,
@@ -444,7 +443,7 @@ module_results_server <- function(input,
         )
       )
     })
-    
+
     # this workaround is related to this issue:
     # TODO issue: https://github.com/rstudio/shiny/issues/2116
     output$substituted_out <- renderUI({
@@ -457,8 +456,8 @@ module_results_server <- function(input,
                                     "BiasCorrected value",
                                     "Substituted value",
                                     "Regression")
-    
-    
+
+
     output$download_substituted <- downloadHandler(
       filename = function() {
         paste0(rv$sample_locus_name,
@@ -469,12 +468,12 @@ module_results_server <- function(input,
       },
       content = function(file) {
         rBiasCorrection::write_csv(
-          table = rv$substitutions, 
+          table = rv$substitutions,
           filename = file)
       },
       contentType = "text/csv"
     )
-    
+
     output$substituted_values <- DT::renderDataTable({
       DT::datatable(rv$substitutions,
                     options = list(scrollX = TRUE,
@@ -483,8 +482,8 @@ module_results_server <- function(input,
                     rownames = F) %>%
         DT::formatRound(columns = c(3:4), digits = 3)
     })
-    
-    # msg2 <- "Please refer to the tab 'Substituted values' 
+
+    # msg2 <- "Please refer to the tab 'Substituted values'
     # for further information."
     msg2 <- paste0("Please scroll down to the section ",
                    "'Substituted values' for further information.")
@@ -495,7 +494,7 @@ module_results_server <- function(input,
                      nrow(rv$substitutions),
                      " values.")
     }
-    
+
     # show modal here
     showModal(modalDialog(
       paste(msg1, msg2),
@@ -515,7 +514,7 @@ module_results_server <- function(input,
 # module_results_ui
 module_results_ui <- function(id) {
   ns <- NS(id)
-  
+
   tagList(
     fluidRow(
       column(

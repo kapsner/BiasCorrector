@@ -17,22 +17,20 @@
 
 #' @title module_settings_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
 # module_settings_server
 module_settings_server <- function(input,
-                                 output,
-                                 session,
-                                 rv,
-                                 input_re) {
-  
+                                   output,
+                                   session,
+                                   rv,
+                                   input_re,
+                                   ...) {
+
+  arguments <- list(...)
+
   # observe Radiobuttonevents
   observeEvent(
     eventExpr = input_re()[["moduleSettings-settings_minmax"]],
@@ -40,12 +38,12 @@ module_settings_server <- function(input,
       rBiasCorrection::write_log(
         message = paste0(
           "Settings: minmax = ",
-          input_re()[["moduleSettings-settings_minmax"]]), 
-        logfilename = logfilename
+          input_re()[["moduleSettings-settings_minmax"]]),
+        logfilename = arguments$logfilename
       )
       rv$minmax <- input_re()[["moduleSettings-settings_minmax"]]
     })
-  
+
   # observe Radiobuttonevents
   observeEvent(
     eventExpr = input_re()[["moduleSettings-settings_selection_method"]],
@@ -54,7 +52,7 @@ module_settings_server <- function(input,
         message = paste0(
           "Settings: selection_method = ",
           input_re()[["moduleSettings-settings_selection_method"]]),
-        logfilename = logfilename
+        logfilename = arguments$logfilename
       )
       waround12 <- input_re()[["moduleSettings-settings_selection_method"]]
       rv$selection_method <- waround12
@@ -71,7 +69,7 @@ module_settings_server <- function(input,
 # module_settings_ui
 module_settings_ui <- function(id) {
   ns <- NS(id)
-  
+
   tagList(
     fluidRow(
       # type of data box

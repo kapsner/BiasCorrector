@@ -18,7 +18,6 @@
 requirements_error <- function(data_type) {
   footer_dis <- shiny::actionButton("dismiss_modal", label = "Dismiss")
   title_filereq <- "File requirements error!"
-  
   if (data_type %in% c("experimentalFile", "calibrationFile")) {
     title <- title_filereq
     message <- paste0("The file provided does not meet the file ",

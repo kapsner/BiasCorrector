@@ -17,12 +17,7 @@
 
 #' @title module_correctedstats_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -32,7 +27,6 @@ module_correctedstats_server <- function(input,
                                          session,
                                          rv,
                                          input_re) {
-  
   # when plotting has finished
   observe({
     req(rv$corrected_finished)
@@ -48,7 +42,6 @@ module_correctedstats_server <- function(input,
       d <- DT::dataTableOutput("moduleCorrectedStatistics-dt_reg_corrected_h")
       do.call(tagList, list(d))
     })
-    
     output$regression_stats_corrected_c <- renderUI({
       output$dt_reg_corrected_c <- DT::renderDataTable({
         dt <- rv$reg_stats_corrected_c
@@ -60,7 +53,6 @@ module_correctedstats_server <- function(input,
       d <- DT::dataTableOutput("moduleCorrectedStatistics-dt_reg_corrected_c")
       do.call(tagList, list(d))
     })
-    
     # create download button for regression statistics
     output$download_regstat_corrected_h <- downloadHandler(
       filename = function() {
@@ -104,8 +96,7 @@ module_correctedstats_server <- function(input,
       },
       contentType = "text/csv"
     )
-    
-    
+
     # substitutions
     output$substitutions_corrected_h <- DT::renderDataTable({
       DT::datatable(rv$substitutions_corrected_h,
@@ -115,7 +106,6 @@ module_correctedstats_server <- function(input,
                     rownames = F) %>%
         DT::formatRound(columns = c(3:4), digits = 3)
     })
-    
     output$substitutions_corrected_c <- DT::renderDataTable({
       DT::datatable(rv$substitutions_corrected_c,
                     options = list(scrollX = TRUE,
@@ -124,7 +114,6 @@ module_correctedstats_server <- function(input,
                     rownames = F) %>%
         DT::formatRound(columns = c(3:4), digits = 3)
     })
-    
     output$download_subs_corrected_h <- downloadHandler(
       filename = function() {
         paste0(rv$sample_locus_name,
@@ -138,7 +127,6 @@ module_correctedstats_server <- function(input,
       },
       contentType = "text/csv"
     )
-    
     output$download_subs_corrected_c <- downloadHandler(
       filename = function() {
         paste0(rv$sample_locus_name,
@@ -165,7 +153,6 @@ module_correctedstats_server <- function(input,
 # module_correctedstatistics_ui
 module_correctedstatistics_ui <- function(id) {
   ns <- NS(id)
-  
   tagList(
     fluidRow(
       column(

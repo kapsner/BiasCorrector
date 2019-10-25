@@ -40,7 +40,6 @@ launch_app <- function(port = 3838,
                        csvdir = "csv",
                        logfilename = "biascorrector.log",
                        maxfilesize = 100) {
-  
   #" stopifnot(
   #"   is.numeric(maxfilesize),
   #"   maxfilesize > 0,
@@ -49,30 +48,25 @@ launch_app <- function(port = 3838,
   #"   is.character(csvdir),
   #"   is.numeric(port)
   #" )
-  
   tempdir <- tempdir()
   assign("plotdir",
          paste0(tempdir, "/", plotdir, "/"),
-         envir = .GlobalEnv)
+         envir = parent.frame())
   assign("csvdir",
          paste0(tempdir, "/", csvdir, "/"),
-         envir = .GlobalEnv)
-  
+         envir = parent.frame())
   # logfilename
   assign("logfilename",
          paste0(tempdir, "/", logfilename),
-         envir = .GlobalEnv)
-  
+         envir = parent.frame())
   # maximum filesize in MB
   assign("maxfilesize",
          maxfilesize,
-         envir = .GlobalEnv)
-  
-  
+         envir = parent.frame())
   # set shiny option here
   options(shiny.maxRequestSize = maxfilesize * 1024^2)
   options(shiny.port = port)
-  
+
   shiny::shinyAppDir(
     appDir = system.file("application",
                          package = "BiasCorrector")

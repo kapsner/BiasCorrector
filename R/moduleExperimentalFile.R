@@ -17,10 +17,7 @@
 
 #' @title module_experimentalfile_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -28,7 +25,9 @@
 module_experimentalfile_server <- function(input,
                                            output,
                                            session,
-                                           rv) {
+                                           rv,
+                                           ...) {
+  arguments <- list(...)
   # error handling with fileimport
   observeEvent(
     eventExpr = {
@@ -41,10 +40,9 @@ module_experimentalfile_server <- function(input,
     handlerExpr = {
       rBiasCorrection::write_log(
         message = paste0("(app) Entered observeEvent after fileimport ",
-                         "of experimental file"), 
-        logfilename = logfilename
+                         "of experimental file"),
+        logfilename = arguments$logfilename
       )
-      
       # if type 1 data
       if (rv$type_locus_sample == "1") {
         output$experimental_data <- DT::renderDataTable({
@@ -56,25 +54,22 @@ module_experimentalfile_server <- function(input,
             DT::formatRound(columns = c(2:ncol(rv$fileimport_experimental)),
                             digits = 3)
         })
-        
         output$exp_samples <- reactive({
           len <- unique(rv$fileimport_experimental[, get("sample_id")])
           message <- paste0("Number of unique samples: ",
                             length(len))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
-        
         output$exp_samples_raw <- reactive({
           len <- sort(unique(rv$fileimport_experimental[, get("sample_id")]))
-          message <- paste0("Unique sample IDs:\n", 
+          message <- paste0("Unique sample IDs:\n",
                             paste(len, collapse = "\n"))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
-        
         # if type 2 data
       } else if (rv$type_locus_sample == "2") {
         output$experimental_data <- DT::renderDataTable({
@@ -86,26 +81,23 @@ module_experimentalfile_server <- function(input,
             DT::formatRound(columns = c(2:ncol(rv$fileimport_experimental)),
                             digits = 3)
         })
-        
         output$exp_samples <- reactive({
           len <- unique(rv$fileimport_experimental[, get("locus_id")])
           message <- paste0("Number of unique loci: ",
                             length(len))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
-        
         output$exp_samples_raw <- reactive({
           len <- sort(unique(rv$fileimport_experimental[, get("locus_id")]))
           message <- paste0("Unique locus IDs:\n",
                             paste(len, collapse = "\n"))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
       }
-      
       # Download experimental data
       output$download_experimental <- downloadHandler(
         filename = function() {
@@ -131,7 +123,6 @@ module_experimentalfile_server <- function(input,
 # module_experimentalfile_ui
 module_experimentalfile_ui <- function(id) {
   ns <- NS(id)
-  
   tagList(
     fluidRow(
       column(

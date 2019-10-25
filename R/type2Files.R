@@ -16,23 +16,26 @@
 
 type2_fileconfirm <- function(filelist,
                               choiceslist,
-                              rv) {
-  
+                              rv,
+                              ...) {
+
+  arguments <- list(...)
+
   rBiasCorrection::write_log(
     message = "Entered 'type2FileConfirm'-Function",
-    logfilename = logfilename
+    logfilename = arguments$logfilename
   )
-  
+
   rv$calibr_steps <- choiceslist[, ("step") := as.numeric(
     get("step")
   )][order(get("step"), decreasing = F)]
-  
+
   if (rv$calibr_steps[, min(get("step"))] < 0 |
       rv$calibr_steps[, max(get("step"))] > 100) {
     rBiasCorrection::write_log(
       message = paste0("### ERROR ###\nCalibration steps must be ",
                        "in range '0 <= calibration step <= 100'."),
-      logfilename = logfilename
+      logfilename = arguments$logfilename
     )
     return("calibrange2")
   } else if (rv$calibr_steps[, sum(duplicated(get("step")))] > 0) {
@@ -42,12 +45,12 @@ type2_fileconfirm <- function(filelist,
                        "\nCalibration steps must be in range '0 <= ",
                        "calibration step <= 100'.\nEach calibration ",
                        "step may only be assigned once."),
-      logfilename = logfilename
+      logfilename = arguments$logfilename
     )
     return("calibrange3")
   } else {
-    
-    # get unique gene names of first table (all tables must be equal, 
+
+    # get unique gene names of first table (all tables must be equal,
     # has been checked anywhere else??!)
     gene_names <- unique(
       filelist[[rv$calibr_steps[1, get("name")]]][
@@ -59,7 +62,7 @@ type2_fileconfirm <- function(filelist,
     # initialize final calibration_list
     final_calibs <- list()
     for (g in gene_names[, get("locus_id")]) {
-      # create empty matrix/data.table of dimension CpG_count + 2 
+      # create empty matrix/data.table of dimension CpG_count + 2
       #% (true_methylation +  rownames)
       m <- data.table::data.table(
         matrix(
@@ -76,8 +79,8 @@ type2_fileconfirm <- function(filelist,
       # store empty data.table with right dimensions in list
       final_calibs[[g]] <- m
     }
-    
-    # loop through provided calibration files, extract 
+
+    # loop through provided calibration files, extract
     # calibration data for each locus and
     # rbind it to final_calibs for specific locus id
     for (n in seq_len(nrow(rv$calibr_steps))) {
@@ -85,7 +88,7 @@ type2_fileconfirm <- function(filelist,
       basefile <- filelist[[rv$calibr_steps[n, get("name")]]]
       calstep <- rv$calibr_steps[n, get("step")]
       vec <- colnames(basefile)
-      
+
       # loop through loci in basefile and append results to
       # final_calibs
       for (locus in gene_names[, get("locus_id")]) {

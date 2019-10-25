@@ -17,24 +17,19 @@
 
 #' @title module_statistics_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
 # module_statistics_server
 module_statistics_server <- function(input,
-                                   output,
-                                   session,
-                                   rv,
-                                   input_re) {
+                                     output,
+                                     session,
+                                     rv,
+                                     input_re) {
   observe({
     req(rv$reg_stats_corrected_c)
-    
+
     output$description <- renderText({
       str1 <- paste0("The table shows the regression parameters ",
                      "of the hyperbolic regression and the cubic ",
@@ -66,8 +61,8 @@ module_statistics_server <- function(input,
                      "in comparison of the SSE this regression equation ",
                      "better fits the data points for the respecitve CpG ",
                      "site.")
-      
-      
+
+
       HTML(
         paste(
           str1,
@@ -81,7 +76,7 @@ module_statistics_server <- function(input,
         )
       )
     })
-    
+
     # type 1 data:
     if (rv$type_locus_sample == "1") {
       rv$better_model_stats <- rBiasCorrection::better_model(
@@ -90,8 +85,8 @@ module_statistics_server <- function(input,
         statstable_post_cubic = rv$reg_stats_corrected_c,
         selection_method = rv$selection_method
       )
-      
-      
+
+
       output$regression_statistics <- renderUI({
         output$dt_reg <- DT::renderDataTable({
           # use formatstyle to highlight lower SSE values
@@ -106,7 +101,7 @@ module_statistics_server <- function(input,
         d <- DT::dataTableOutput("moduleStatistics-dt_reg")
         do.call(tagList, list(d))
       })
-      
+
       # create download button for regression statistics
       output$download_regstat <- downloadHandler(
         filename = function() {
@@ -127,43 +122,43 @@ module_statistics_server <- function(input,
           rBiasCorrection::write_csv(
             table = rv$reg_stats[
               , -which(colnames(rv$reg_stats) == "better_model"), with = F
-              ], 
+              ],
             filename = file)
         },
         contentType = "text/csv"
       )
-      
+
       # type 2 data:
     } else if (rv$type_locus_sample == "2") {
-      
+
       # create reactive selectinput:
       sel_in_locus <- reactive({
         selectInput(
           inputId = "selectRegStatsLocus",
           label = "Select locus:",
           multiple = F,
-          selectize = F, 
+          selectize = F,
           choices = names(rv$fileimport_calibration))
       })
-      
+
       # create reactive df-selection:
       df_regs <- reactive({
         dt <- rv$reg_stats[[input_re()$selectRegStatsLocus]]
       })
-      
+
       output$dt_regs <- DT::renderDataTable({
         dt <- df_regs()
         render_regressionstatistics(dt = dt,
                                     minmax = rv$minmax)
       })
-      
+
       # render head of page with selectInput and downloadbutton
-      
+
       output$statistics_select <- renderUI({
         s1 <- sel_in_locus()
         do.call(tagList, list(s1, tags$hr()))
       })
-      
+
       output$biascorrection <- renderUI({
         do.call(tagList,
                 list(
@@ -182,12 +177,12 @@ module_statistics_server <- function(input,
                 )
         )
       })
-      
+
       output$regression_statistics <- renderUI({
         dt <- DT::dataTableOutput("moduleStatistics-dt_regs")
         do.call(tagList, list(dt))
       })
-      
+
       # create download button for regression statistics
       output$download_regstat <- downloadHandler(
         filename = function() {
@@ -199,7 +194,7 @@ module_statistics_server <- function(input,
                  input_re()$selectRegStatsLocus),
             "_",
             gsub("\\-",
-                 "", 
+                 "",
                  substr(Sys.time(), 1, 10)),
             "_",
             gsub("\\:",
@@ -235,7 +230,7 @@ module_statistics_server <- function(input,
 # module_statistics_ui
 module_statistics_ui <- function(id) {
   ns <- NS(id)
-  
+
   tagList(
     fluidRow(
       column(

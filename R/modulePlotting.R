@@ -17,28 +17,27 @@
 
 #' @title module_plotting_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
 # module_plotting_server
 module_plotting_server <- function(input,
-                                 output,
-                                 session,
-                                 rv,
-                                 input_re) {
+                                   output,
+                                   session,
+                                   rv,
+                                   input_re,
+                                   ...) {
+
+  arguments <- list(...)
+
   observe({
-    # this is needed, to open new tab (Regression plots) 
+    # this is needed, to open new tab (Regression plots)
     # before rendering the plots!
     # if (input_re()$tabs == "panel_3") {
-    
+
     req(rv$run)
-    
+
     # type 1 data:
     if (rv$type_locus_sample == "1") {
       if (isFALSE(rv$plotting_finished)) {
@@ -46,7 +45,7 @@ module_plotting_server <- function(input,
           data = rv$fileimport_calibration,
           samplelocusname = rv$sample_locus_name,
           rv = rv,
-          logfilename = logfilename,
+          logfilename = arguments$logfilename,
           minmax = rv$minmax)
         plotlist_reg <- regression_results[["plot_list"]]
         rv$result_list <- regression_results[["result_list"]]
@@ -56,37 +55,37 @@ module_plotting_server <- function(input,
           type = 1,
           samplelocusname = rv$sample_locus_name,
           rv = rv,
-          plotdir = plotdir,
-          logfilename = logfilename,
+          plotdir = arguments$plotdir,
+          logfilename = arguments$logfilename,
           minmax = rv$minmax)
-        
+
         # save regression statistics to reactive value
         rv$reg_stats <- rBiasCorrection::statistics_list(
           resultlist = rv$result_list,
           minmax = rv$minmax)
-        
+
         # on finished
         rv$plotting_finished <- TRUE
         rBiasCorrection::write_log(message = "Finished plotting",
-                                   logfilename = logfilename)
+                                   logfilename = arguments$logfilename)
       }
-      
+
       # else if type 2 data
     } else if (rv$type_locus_sample == "2") {
       if (isFALSE(rv$plotting_finished)) {
         a <- 1
         rv$result_list_type2 <- list()
-        
+
         for (b in names(rv$fileimport_calibration)) {
           rv$vec_cal <- names(rv$fileimport_calibration[[a]])[-1]
           #% print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
-          
+
           regression_results <- rBiasCorrection::regression_utility(
             data = rv$fileimport_calibration[[a]],
             samplelocusname = rv$sample_locus_name,
             locus_id = gsub("[[:punct:]]", "", b),
             rv = rv,
-            logfilename = logfilename,
+            logfilename = arguments$logfilename,
             minmax = rv$minmax)
           plotlist_reg <- regression_results[["plot_list"]]
           rv$result_list <- regression_results[["result_list"]]
@@ -97,10 +96,10 @@ module_plotting_server <- function(input,
             samplelocusname = rv$sample_locus_name,
             locus_id = gsub("[[:punct:]]", "", b),
             rv = rv,
-            plotdir = plotdir,
-            logfilename = logfilename,
+            plotdir = arguments$plotdir,
+            logfilename = arguments$logfilename,
             minmax = rv$minmax)
-          
+
           # save regression statistics to reactive value
           rv$reg_stats[[b]] <- rBiasCorrection::statistics_list(
             resultlist = rv$result_list,
@@ -112,18 +111,18 @@ module_plotting_server <- function(input,
         rv$plotting_finished <- TRUE
         rBiasCorrection::write_log(
           message = "Finished plotting",
-          logfilename = logfilename)
+          logfilename = arguments$logfilename)
       }
     }
   })
-  
+
   # when plotting has finished
   observe({
     req(rv$plotting_finished)
-    
+
     # type 1 data:
     if (rv$type_locus_sample == "1") {
-      
+
       ### Plot tab ###
       # create a list of plotnames to populate selectInput
       plot_output_list <- lapply(
@@ -132,7 +131,7 @@ module_plotting_server <- function(input,
           paste0(gsub("[[:punct:]]", "", rv$vec_cal[g]))
         })
       names(plot_output_list) <- rv$vec_cal
-      
+
       # create reactive selectinput:
       sel_in2 <- reactive({
         selectInput(inputId = "selectPlot",
@@ -141,7 +140,7 @@ module_plotting_server <- function(input,
                     selectize = F,
                     choices = plot_output_list)
       })
-      
+
       # create download button for each plot
       output$download_plots <- downloadHandler(
         filename = function() {
@@ -153,7 +152,7 @@ module_plotting_server <- function(input,
                  ".png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            rv$sample_locus_name,
                            "_",
                            gsub("[[:punct:]]",
@@ -164,7 +163,7 @@ module_plotting_server <- function(input,
         },
         contentType = "image/png"
       )
-      
+
       # render head of page with selectInput and downloadbutton
       # TODO align selectinput and button aside of each other
       output$select_plotinput <- renderUI({
@@ -184,18 +183,18 @@ module_plotting_server <- function(input,
                               b,
                               tags$hr()))
       })
-      
+
       # for debugging
       observeEvent(
         eventExpr = input_re()$selectPlot,
         handlerExpr = {
           print(input_re()$selectPlot)
         })
-      
+
       # render plots from local temporary file
       output$plots <- renderImage(
         expr = {
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              rv$sample_locus_name,
                              "_",
                              gsub("[[:punct:]]",
@@ -207,17 +206,17 @@ module_plotting_server <- function(input,
         },
         deleteFile = FALSE
       )
-      
+
       # type 2 data:
     } else if (rv$type_locus_sample == "2") {
-      
-      # create list of loci to populate selectInput 
+
+      # create list of loci to populate selectInput
       # "select_plotlocus"
       list_plot_locus <- list()
       for (i in seq_len(length(rv$fileimport_calibration))) {
         list_plot_locus[[i]] <- names(rv$fileimport_calibration)[i]
       }
-      
+
       select_plotlocus <- reactive({
         selectInput(inputId = "select_plotlocus",
                     label = "Select locus:",
@@ -225,9 +224,9 @@ module_plotting_server <- function(input,
                     selectize = F,
                     choices = list_plot_locus)
       })
-      
-      
-      # create list of cpg-sites for each locus to populate selectInput 
+
+
+      # create list of cpg-sites for each locus to populate selectInput
       # "select_plot_cpg"
       list_plot_cpg <- list()
       for (i in seq_len(length(rv$fileimport_calibration))) {
@@ -235,15 +234,15 @@ module_plotting_server <- function(input,
           rv$fileimport_calibration[[i]]
         )[-1]
       }
-      
-      # only return list of CpG-sites for each locus, if there is 
+
+      # only return list of CpG-sites for each locus, if there is
       # already a selection of the locus in select_plotlocus
       cpg_output <- reactive({
         if (!is.null(input_re()$select_plotlocus)) {
           return(list_plot_cpg[input_re()$select_plotlocus])
         }
       })
-      
+
       # always wrap selectInput into reactive-function
       select_plot_cpg <- reactive({
         selectInput(inputId = "selectPlotType2",
@@ -252,12 +251,12 @@ module_plotting_server <- function(input,
                     selectize = F,
                     choices = cpg_output())
       })
-      
+
       # render second selectInput
       output$s2_plotoutput <- renderUI({
         select_plot_cpg()
       })
-      
+
       # create download button for each plot
       output$download_plots <- downloadHandler(
         filename = function() {
@@ -273,7 +272,7 @@ module_plotting_server <- function(input,
                  ".png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            gsub("[[:punct:]]",
                                 "",
                                 input_re()$select_plotlocus),
@@ -288,7 +287,7 @@ module_plotting_server <- function(input,
         },
         contentType = "image/png"
       )
-      
+
       # render Plot UI
       output$select_plotinput <- renderUI({
         s1 <- select_plotlocus()
@@ -309,11 +308,11 @@ module_plotting_server <- function(input,
                               b,
                               tags$hr()))
       })
-      
+
       # render plot from local temporary file
       output$plots <- renderImage(
         expr = {
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              gsub("[[:punct:]]",
                                   "",
                                   input_re()$select_plotlocus),
@@ -344,7 +343,7 @@ module_plotting_server <- function(input,
 # module_plotting_ui
 module_plotting_ui <- function(id) {
   ns <- NS(id)
-  
+
   tagList(
     fluidRow(
       column(

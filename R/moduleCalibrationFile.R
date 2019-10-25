@@ -22,6 +22,7 @@
 #' @param rv The global 'reactiveValues()' object, defined in server.R
 #' @param input_re The Shiny server input object, wrapped into a reactive
 #'   expression: input_re = reactive({input})
+#' @param ... Further arguments, such as `logfilename`, `csvdir` and `plotdir`
 #'
 #' @export
 #'
@@ -30,7 +31,9 @@ module_calibrationfile_server <- function(input,
                                           output,
                                           session,
                                           rv,
-                                          input_re) {
+                                          input_re,
+                                          ...) {
+  arguments <- list(...)
   # error handling with fileimport
   observeEvent(
     eventExpr = {
@@ -39,17 +42,15 @@ module_calibrationfile_server <- function(input,
       } else {
         return()
       }
-    }, 
+    },
     handlerExpr = {
       rBiasCorrection::write_log(
         message = paste0("(app) Entered observeEvent after fileimport of ",
                          "calibration file"),
-        logfilename = logfilename
+        logfilename = arguments$logfilename
       )
-      
       # if type 1 data
       if (rv$type_locus_sample == "1") {
-        
         # check here, if there have been deleted rows containing missin values
         tryCatch(#
           expr = {
@@ -60,13 +61,11 @@ module_calibrationfile_server <- function(input,
             print(e)
           }
         )
-        
         output$calibration_data <- renderUI({
           # the prefix "moduleCalibrationFile" is necessary, otherwise,
           # one is not able to load the datatable here
           DT::dataTableOutput("moduleCalibrationFile-dt1")
         })
-        
         output$dt1 <- DT::renderDataTable({
           DT::datatable(rv$fileimport_calibration,
                         options = list(scrollX = TRUE,
@@ -76,25 +75,22 @@ module_calibrationfile_server <- function(input,
             DT::formatRound(columns = c(2:ncol(rv$fileimport_calibration)),
                             digits = 3)
         })
-        
         output$cal_samples <- reactive({
           len <- unique(rv$fileimport_calibration[, get("true_methylation")])
           message <- paste0("Number of unique calibration samples: ",
                             length(len))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
-        
         output$cal_samples_raw <- reactive({
           len <- unique(rv$fileimport_calibration[, get("true_methylation")])
           message <- paste0("Unique calibration steps (% methylation):\n",
                             paste(len, collapse = "\n"))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
-        
         # Download experimental data
         output$download_calibration <- downloadHandler(
           filename = function() {
@@ -105,10 +101,8 @@ module_calibrationfile_server <- function(input,
           },
           contentType = "text/csv"
         )
-        
         # if type 2 data
       } else if (rv$type_locus_sample == "2") {
-        
         # render assignment of calibration steps
         output$calibration_data <- renderUI({
           select_output_list <- lapply(seq_len(
@@ -146,29 +140,27 @@ module_calibrationfile_server <- function(input,
           )
           do.call(tagList, select_output_list)
         })
-        
         output$cal_samples <- reactive({
           message <- paste0("Unique calibration samples: ",
                             nrow(rv$calibr_steps))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
-        
         output$cal_samples_raw <- reactive({
           message <- paste0("Unique calibration steps:\n",
                             paste(levels(
                               factor(rv$calibr_steps[, get("step")])
-                            ), 
+                            ),
                             collapse = "\n"))
           rBiasCorrection::write_log(message = message,
-                                     logfilename = logfilename)
+                                     logfilename = arguments$logfilename)
           message
         })
       }
     }
   )
-  
+
   # confirm-Button for Type2-Data
   observeEvent(input_re()$confirm_steps, {
     rv$choices_list <- data.table::data.table(
@@ -186,7 +178,6 @@ module_calibrationfile_server <- function(input,
       )
     })
     print(rv$choices_list)
-    
     # assign rv$fileimport_calibration
     filecheck <- type2_fileconfirm(rv$fileimport_list,
                                    rv$choices_list,
@@ -194,12 +185,10 @@ module_calibrationfile_server <- function(input,
     if (is.character(filecheck)) {
       open_modal(filecheck, rv)
     } else {
-      
       # store correct formatted calibration data in reactive list
       rv$fileimport_calibration <- filecheck
       removeUI(selector = "#moduleCalibrationFile-calibration_data",
                immediate = T)
-      
       # create reactive selectinput:
       sel_in <- reactive({
         selectInput(inputId = "selectType2",
@@ -208,17 +197,14 @@ module_calibrationfile_server <- function(input,
                     selectize = F,
                     choices = names(rv$fileimport_calibration))
       })
-      
       # create reactive df-selection:
       df <- reactive({
         temp <- rv$fileimport_calibration[[input_re()$selectType2]]
       })
-      
       output$calibration_select <- renderUI({
         s <- sel_in()
         do.call(tagList, list(tags$hr(), s))
       })
-      
       # render the UI output
       output$calibration_data2 <- renderUI({
         output$dt2 <- DT::renderDataTable({
@@ -230,14 +216,11 @@ module_calibrationfile_server <- function(input,
                         rownames = F) %>%
             DT::formatRound(columns = c(2:ncol(temp)), digits = 3)
         })
-        
         # merge selectInput and dataframe to list
         output_list <- list(DT::dataTableOutput("moduleCalibrationFile-dt2"))
-        
         # print out list!
         do.call(tagList, output_list)
       })
-      
       # Download experimental data
       output$download_calibration <- downloadHandler(
         filename = function() {
@@ -265,7 +248,6 @@ module_calibrationfile_server <- function(input,
 # module_calibrationfile_ui
 module_calibrationfile_ui <- function(id) {
   ns <- NS(id)
-  
   tagList(
     fluidRow(
       column(

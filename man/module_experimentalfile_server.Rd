@@ -4,7 +4,7 @@
 \alias{module_experimentalfile_server}
 \title{module_experimentalfile_server}
 \usage{
-module_experimentalfile_server(input, output, session, rv)
+module_experimentalfile_server(input, output, session, rv, ...)
 }
 \arguments{
 \item{input}{Shiny server input object}
@@ -14,6 +14,8 @@ module_experimentalfile_server(input, output, session, rv)
 \item{session}{Shiny session object}
 
 \item{rv}{The global 'reactiveValues()' object, defined in server.R}
+
+\item{...}{Further arguments, such as `logfilename`, `csvdir` and `plotdir`}
 }
 \description{
 module_experimentalfile_server

@@ -4,10 +4,12 @@
 \alias{module_fileupload_ui}
 \title{module_fileupload_ui}
 \usage{
-module_fileupload_ui(id)
+module_fileupload_ui(id, ...)
 }
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
+
+\item{...}{Further arguments, such as `maximumfilesize`}
 }
 \description{
 module_fileupload_ui

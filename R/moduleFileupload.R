@@ -17,12 +17,7 @@
 
 #' @title module_fileupload_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -31,8 +26,9 @@ module_fileupload_server <- function(input,
                                    output,
                                    session,
                                    rv,
-                                   input_re) {
-
+                                   input_re,
+                                   ...) {
+  arguments <- list(...)
   # TODO original selection of data type
   # observe Radiobuttonevents
   #% observeEvent(
@@ -42,7 +38,6 @@ module_fileupload_server <- function(input,
   #%     rv$type_locus_sample <- waround
   #%   }
   #% )
-  
   observe({
     req(rv$type_locus_sample)
     output$type_locus_sample <- reactive({
@@ -62,7 +57,7 @@ module_fileupload_server <- function(input,
     rBiasCorrection::write_log(
       message = paste0("Locus name: Example_Locus\n(--> stored as: ",
                        rv$sample_locus_name, ")"),
-      logfilename = logfilename)
+      logfilename = arguments$logfilename)
     waround_ex <- rBiasCorrection::example.data_experimental[["dat"]]
     rv$fileimport_experimental <- waround_ex
 
@@ -83,7 +78,7 @@ module_fileupload_server <- function(input,
     if (isFALSE(rv$exp_filereq)) {
       rBiasCorrection::write_log(
         message = "(app) Entered observation for experimental file.",
-        logfilename = logfilename)
+        logfilename = arguments$logfilename)
       # check file ending
       rv$ending <- strsplit(
         input_re()[["moduleFileupload-experimentalFile"]]$name,
@@ -114,7 +109,7 @@ module_fileupload_server <- function(input,
                              input_re()[["moduleFileupload-locusname"]],
                              "\n(--> stored as: ",
                              rv$sample_locus_name, ")"),
-            logfilename = logfilename)
+            logfilename = arguments$logfilename)
           #% shinyjs::disable("moduleFileupload-locusname")
           #% removeUI(selector = "#locusname", immediate = T)
         }
@@ -146,7 +141,7 @@ module_fileupload_server <- function(input,
                              input_re()[["moduleFileupload-samplename"]],
                              "\n(--> stored as: ",
                              rv$sample_locus_name, ")"),
-            logfilename = logfilename)
+            logfilename = arguments$logfilename)
           #% shinyjs::disable("moduleFileupload-samplename")
           #% removeUI(selector = "#samplename", immediate = T)
         }
@@ -169,7 +164,7 @@ module_fileupload_server <- function(input,
               datatable = file(),
               description = "experimental",
               type = rv$type_locus_sample,
-              logfilename = logfilename
+              logfilename = arguments$logfilename
               )[["dat"]]
 
             #% updateTabItems(session, "tabs", "panel_1")
@@ -196,7 +191,7 @@ module_fileupload_server <- function(input,
             error = function(e) {
               rBiasCorrection::write_log(
                 message = paste0("Errormessage: ", e),
-                logfilename = logfilename)
+                logfilename = arguments$logfilename)
             }
           )
 
@@ -222,7 +217,7 @@ module_fileupload_server <- function(input,
 
     rv$ending <- NULL
 
-    if (is.null(rv$fileimport_calibration) | 
+    if (is.null(rv$fileimport_calibration) |
         is.null(rv$fileimport_list)) {
       # if calibration file is of data type 1
       if (rv$type_locus_sample == "1") {
@@ -249,7 +244,7 @@ module_fileupload_server <- function(input,
                   datatable = file(),
                   description = "calibration",
                   type = "1",
-                  logfilename = logfilename)
+                  logfilename = arguments$logfilename)
                 rv$fileimport_calibration <- cal_type_1[["dat"]]
                 rv$vec_cal <- cal_type_1[["vec_cal"]]
               }
@@ -264,11 +259,11 @@ module_fileupload_server <- function(input,
           # go on, if we imported valid file
           if (!is.null(rv$fileimport_calibration)) {
 
-            # try to check, if colnames of experimental data are 
+            # try to check, if colnames of experimental data are
             # same as those of calibration data
             tryCatch(
               expr = {
-                # check, if colnames of experimental and calibration 
+                # check, if colnames of experimental and calibration
                 # data are equal:
                 if (!all.equal(colnames(rv$fileimport_calibration)[-1],
                                colnames(rv$fileimport_experimental)[-1])) {
@@ -283,12 +278,12 @@ module_fileupload_server <- function(input,
               }
             )
 
-            # check here, if there are calibration steps 
+            # check here, if there are calibration steps
             # outside the range 0 <= CS <= 100
             if (rv$fileimport_calibration[, min(
               as.numeric(
                 as.character(get("true_methylation")))
-              )] < 0 || 
+              )] < 0 ||
               rv$fileimport_calibration[, max(
                 as.numeric(
                   as.character(get("true_methylation")))
@@ -296,7 +291,7 @@ module_fileupload_server <- function(input,
               open_modal("calibrange", rv)
             } else {
 
-              # check here, if there have been deleted rows 
+              # check here, if there have been deleted rows
               # containing missin values
               #% tryCatch(expr = {
               #%   omitnasModal(rv$omitnas, "calibration")
@@ -308,7 +303,7 @@ module_fileupload_server <- function(input,
               rv$type1cal_uploaded <- TRUE
             }
 
-            # if we have the value "NULL" in our file-variable; 
+            # if we have the value "NULL" in our file-variable;
             # this happens, when cleanDT returns error
           } else {
             # error handling fileimport
@@ -346,7 +341,7 @@ module_fileupload_server <- function(input,
                 datatable = file(),
                 description = "calibration",
                 type = "2",
-                logfilename = logfilename
+                logfilename = arguments$logfilename
                 )[["dat"]]
               ind <- input_re()[["calibrationFile"]]$name[i]
               rv$fileimport_list[[ind]] <- waround_fup
@@ -360,7 +355,7 @@ module_fileupload_server <- function(input,
           filecheck <- rBiasCorrection::type2_filereq(
             filelist = rv$fileimport_list,
             rv = rv,
-            logfilename = logfilename)
+            logfilename = arguments$logfilename)
 
           if (is.character(filecheck)) {
             open_modal(filecheck, rv)
@@ -377,13 +372,15 @@ module_fileupload_server <- function(input,
 #' @title module_fileupload_ui
 #'
 #' @param id A character. The identifier of the shiny object
+#' @param ... Further arguments, such as `maximumfilesize`
 #'
 #' @export
 #'
 # module_fileupload_ui
-module_fileupload_ui <- function(id) {
+module_fileupload_ui <- function(id,
+                                 ...) {
+  arguments <- list(...)
   ns <- NS(id)
-
   tagList(
     fluidRow(
       # type of data box
@@ -402,16 +399,16 @@ module_fileupload_ui <- function(id) {
         #%            "(e.g. next-generation sequencing ",
         #%            "data or microarray data)") = 2),
         #%   selected = character(0)),
-        #% 
+        #%
         #% tags$hr(),
-        #% 
+        #%
         #% conditionalPanel(
         #%   condition = "input['moduleFileupload-type_locus_sample'] == 1",
         #%   textInput(ns("locusname"),
         #%             label = NULL,
         #%             placeholder = "Locus name")
         #% ),
-        #% 
+        #%
         #% conditionalPanel(
         #%   condition = "input['moduleFileupload-type_locus_sample'] == 2",
         #%   textInput(ns("samplename"),
@@ -480,7 +477,7 @@ module_fileupload_ui <- function(id) {
             accept = c(".csv", "text/csv")
           ),
           h6(paste("Max. file size: ",
-                   maxfilesize,
+                   arguments$maxfilesize,
                    " MB")),
 
           h6(paste0("*For the specific CSV file requirements ",
@@ -510,7 +507,7 @@ module_fileupload_ui <- function(id) {
           #%           accept = c(".csv")),
 
           h6(paste("Max. file size: ",
-                   maxfilesize,
+                   arguments$maxfilesize,
                    " MB")),
           h6(paste0("*For the specific CSV file requirements ",
                     "please refere to our"),

@@ -22,7 +22,6 @@ render_regressionstatistics <- function(dt,
   #% rgb (124, 252, 0, max=255, alpha=90) --> "#7CFC005A"
   # https://stackoverflow.com/questions/49636423/how-to-change-the-
   # cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
-  
   if (isFALSE(minmax)) {
     cols <- c(
       "Name", "Relative error", # 2
@@ -47,7 +46,6 @@ render_regressionstatistics <- function(dt,
     hyperlength <- 5
     lastcolor <- 10
   }
-  
   if (is.null(mode)) {
     dt[, ("better_sse") := ifelse(
       get("SSE_cubic") <= get("SSE_hyperbolic"),
@@ -82,7 +80,6 @@ render_regressionstatistics <- function(dt,
         valueColumns = "better_model",
         backgroundColor = DT::styleEqual(0, "#7CFC005A")
       ) %>%
-      
       # cubic parameters
       DT::formatStyle(
         columns = hyperlength + 2,

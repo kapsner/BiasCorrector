@@ -17,12 +17,7 @@
 
 #' @title module_log_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -31,16 +26,17 @@ module_log_server <- function(input,
                               output,
                               session,
                               rv,
-                              input_re) {
+                              input_re,
+                              ...) {
+  arguments <- list(...)
+
   # logfileviewer
   observe({
-    file <- reactiveFileReader(
-      500, session,
-      logfilename,
-      readLines
-    )
+    file <- reactiveFileReader(500, session,
+                               arguments$logfilename,
+                               readLines)
     rv$logfile <- file()
-    
+
     output$download_logfile <- downloadHandler(
       filename = function() {
         paste0("BC_logfile.txt")
@@ -51,7 +47,7 @@ module_log_server <- function(input,
       contentType = "text/csv"
     )
   })
-  
+
   output$log_out <- reactive({
     paste(paste0(rv$logfile, collapse = "\n"))
   })
@@ -67,36 +63,37 @@ module_log_server <- function(input,
 # module_log_ui
 module_log_ui <- function(id) {
   ns <- NS(id)
-  
-  tagList(
-    fluidRow(
-      box(
-        title = "Log",
-        verbatimTextOutput(ns("log_out")),
-        tags$head(
-          tags$style(
-            paste0("#moduleLog-log_out{overflow-y:scroll; ",
-                   "max-height: 70vh; background: ghostwhite;}"))
-        ),
-        width = 9
+
+  tagList(fluidRow(
+    box(
+      title = "Log",
+      verbatimTextOutput(ns("log_out")),
+      tags$head(tags$style(
+        paste0(
+          "#moduleLog-log_out{overflow-y:scroll; ",
+          "max-height: 70vh; background: ghostwhite;}"
+        )
+      )),
+      width = 9
+    ),
+    box(
+      title = "Download Log File",
+      div(
+        class = "row",
+        style = "text-align: center;",
+        shinyjs::disabled(downloadButton(
+          ns("download_logfile"),
+          "Download Log File",
+          paste0(
+            "white-space: normal; ",
+            "text-align:center; ",
+            "padding: 9.5px 9.5px 9.5px 9.5px; ",
+            "margin: 6px 10px 6px 10px;"
+          )
+        ))
       ),
-      box(
-        title = "Download Log File",
-        div(class = "row",
-            style = "text-align: center;",
-            shinyjs::disabled(
-              downloadButton(
-                ns("download_logfile"),
-                "Download Log File",
-                paste0(
-                  "white-space: normal; ",
-                  "text-align:center; ",
-                  "padding: 9.5px 9.5px 9.5px 9.5px; ",
-                  "margin: 6px 10px 6px 10px;")
-              ))),
-        tags$hr(),
-        width = 3
-      )
+      tags$hr(),
+      width = 3
     )
-  )
+  ))
 }

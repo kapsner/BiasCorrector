@@ -4,7 +4,7 @@
 \alias{module_results_server}
 \title{module_results_server}
 \usage{
-module_results_server(input, output, session, rv, input_re)
+module_results_server(input, output, session, rv, input_re, ...)
 }
 \arguments{
 \item{input}{Shiny server input object}
@@ -17,6 +17,8 @@ module_results_server(input, output, session, rv, input_re)
 
 \item{input_re}{The Shiny server input object, wrapped into a reactive
 expression: input_re = reactive({input})}
+
+\item{...}{Further arguments, such as `logfilename`, `csvdir` and `plotdir`}
 }
 \description{
 module_results_server

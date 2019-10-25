@@ -17,12 +17,7 @@
 
 #' @title module_correctedplots_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -31,8 +26,9 @@ module_correctedplots_server <- function(input,
                                          output,
                                          session,
                                          rv,
-                                         input_re) {
-  
+                                         input_re,
+                                         ...) {
+  arguments <- list(...)
   # correct all hyperbolic
   observe({
     req(rv$plotting_finished)
@@ -40,14 +36,13 @@ module_correctedplots_server <- function(input,
       if (rv$type_locus_sample == "1") {
         withProgress(message = "BiasCorrecting calibration data", value = 0, {
           incProgress(
-            1 / 1, 
+            1 / 1,
             detail = "... using hyperbolic regression parameters ...")
           # hyperbolic correction
           rv$choices_list <- rv$reg_stats[, c("Name"), with = F
                                           ][
                                             , ("better_model") := 0
                                             ]
-          
           # correct calibration data (to show corrected calibration curves)
           solved_eq_h <- rBiasCorrection::solving_equations(
             datatable = rv$fileimport_calibration,
@@ -55,14 +50,13 @@ module_correctedplots_server <- function(input,
             type = 1,
             rv = rv,
             mode = "corrected",
-            logfilename = logfilename,
+            logfilename = arguments$logfilename,
             minmax = rv$minmax
           )
           rv$fileimport_cal_corrected_h <- solved_eq_h[["results"]]
           colnames(rv$fileimport_cal_corrected_h) <- colnames(
             rv$fileimport_calibration
           )
-          
           rv$substitutions_corrected_h <- solved_eq_h[["substitutions"]]
           colnames(rv$substitutions_corrected_h) <- c(
             "Sample ID",
@@ -74,24 +68,23 @@ module_correctedplots_server <- function(input,
         })
       } else if (rv$type_locus_sample == "2") {
         cat("fileimport_cal_corrected_h: Not implemented yet.\n")
-        
         # TODO
         # Calibration Data (to show corrected calibration curves)
         # initialize calibration results list
         #% rv$fileimport_cal_corrected <- list()
-        #% # iterate over fileimport_cal (in type 2 data, this is a list 
+        #% # iterate over fileimport_cal (in type 2 data, this is a list
         #% # with one calibrationdata data.table for each locus)
         #% for (a in names(rv$fileimport_cal)) {
         #%   # get unique elements of true_methylation for one specific locus
         #%   # (we are treating them here as if they were sample ids)
         #%   for (b in rv$fileimport_cal[[a]][,unique(true_methylation)]) {
-        #%     # get the regression parameters of that locus (locusname is 
+        #%     # get the regression parameters of that locus (locusname is
         #%     # saved in "a")
         #%     rv$result_list <- rv$result_list_type2[[a]]
         #%     # get subset of the calibration data of that methylation step
         #%     caldata <- rv$fileimport_cal[[a]][true_methylation==b,]
         #%     nc <- ncol(caldata)
-        #%     vec <- c("true_methylation", 
+        #%     vec <- c("true_methylation",
         #%              colnames(caldata)[2:(nc-1)], "row_means")
         #%     # solve equation for that calibrationstep
         #%     # save result of each calibrationstep in tmp object
@@ -101,14 +94,14 @@ module_correctedplots_server <- function(input,
         #%       type = 2,
         #%       rv = rv,
         #%       mode = "corrected",
-        #%       logfilename = logfilename)[["results"]]
+        #%       logfilename = arguments$logfilename)[["results"]]
         #%     # imediatelly rename columnames
         #%     colnames(tmp) <- vec
         #%     # if new calibration step is saved for the first time
         #%     if (is.null(rv$fileimport_cal_corrected[[a]])) {
         #%       rv$fileimport_cal_corrected[[a]] <- tmp
         #%     } else {
-        #%       # we should not need fill, since there should be no 
+        #%       # we should not need fill, since there should be no
         #%       # differences in colnames for one file
         #%       rv$fileimport_cal_corrected[[a]] <- rbind(
         #%         rv$fileimport_cal_corrected[[a]],
@@ -120,7 +113,7 @@ module_correctedplots_server <- function(input,
       }
     }
   })
-  
+
   # correct all cubic
   observe({
     req(rv$plotting_finished)
@@ -128,14 +121,13 @@ module_correctedplots_server <- function(input,
       if (rv$type_locus_sample == "1") {
         withProgress(message = "BiasCorrecting calibration data", value = 0, {
           incProgress(
-            1 / 1, 
+            1 / 1,
             detail = "... using cubic regression parameters ...")
           # cubic correction
           rv$choices_list <- rv$reg_stats[, c("Name"), with = F
                                           ][
                                             , ("better_model") := 1
                                             ]
-          
           # correct calibration data (to show corrected calibration curves)
           solved_eq_c <- rBiasCorrection::solving_equations(
             datatable = rv$fileimport_calibration,
@@ -143,14 +135,13 @@ module_correctedplots_server <- function(input,
             type = 1,
             rv = rv,
             mode = "corrected",
-            logfilename = logfilename,
+            logfilename = arguments$logfilename,
             minmax = rv$minmax
           )
           rv$fileimport_cal_corrected_c <- solved_eq_c[["results"]]
           colnames(rv$fileimport_cal_corrected_c) <- colnames(
             rv$fileimport_calibration
           )
-          
           rv$substitutions_corrected_c <- solved_eq_c[["substitutions"]]
           colnames(rv$substitutions_corrected_c) <- c(
             "Sample ID",
@@ -165,12 +156,12 @@ module_correctedplots_server <- function(input,
       }
     }
   })
-  
+
   observeEvent(
     eventExpr = {
-      # this is needed, to start plotting, when we have the bias 
+      # this is needed, to start plotting, when we have the bias
       # corrected calibration values!
-      if (!is.null(rv$fileimport_cal_corrected_h) & 
+      if (!is.null(rv$fileimport_cal_corrected_h) &
           !is.null(rv$fileimport_cal_corrected_c)) {
         TRUE
       } else {
@@ -178,30 +169,26 @@ module_correctedplots_server <- function(input,
       }
     },
     handlerExpr = {
-      
       # type 1 data:
       if (rv$type_locus_sample == "1") {
         if (isFALSE(rv$corrected_finished)) {
-          
           # plot hyperbolic
           withProgress(
             message = "Plotting BiasCorrected calibration plot", value = 0, {
               incProgress(
-                1 / 1, 
+                1 / 1,
                 detail = "... working hard on hyperbolic correction ...")
-              
               # calculate new calibration curves from corrected calibration data
               regression_results <- rBiasCorrection::regression_utility(
                 data = rv$fileimport_cal_corrected_h,
                 samplelocusname = rv$sample_locus_name,
                 rv = rv,
                 mode = "corrected",
-                logfilename = logfilename,
+                logfilename = arguments$logfilename,
                 minmax = rv$minmax
               )
               plotlist_reg <- regression_results[["plot_list"]]
               rv$result_list_hyperbolic <- regression_results[["result_list"]]
-              
               rBiasCorrection::plotting_utility(
                 data = rv$fileimport_cal_corrected_h,
                 plotlist_reg = plotlist_reg,
@@ -210,17 +197,15 @@ module_correctedplots_server <- function(input,
                 locus_id = NULL,
                 rv = rv,
                 mode = "corrected_h",
-                plotdir = plotdir,
-                logfilename = logfilename,
+                plotdir = arguments$plotdir,
+                logfilename = arguments$logfilename,
                 minmax = rv$minmax
               )
-              
               # save regression statistics to reactive value
               rv$reg_stats_corrected_h <- rBiasCorrection::statistics_list(
                 resultlist = rv$result_list_hyperbolic,
                 minmax = rv$minmax
               )
-              
               for (i in rv$choices_list[, get("Name")]) {
                 rv$reg_stats_corrected_h[
                   get("Name") == i, ("better_model") := rv$choices_list[
@@ -234,32 +219,29 @@ module_correctedplots_server <- function(input,
                 statstable_post = rv$reg_stats_corrected_h,
                 rv = rv,
                 type = 1,
-                plotdir = plotdir,
-                logfilename = logfilename,
+                plotdir = arguments$plotdir,
+                logfilename = arguments$logfilename,
                 mode = "corrected_h"
               )
             })
-          
           # plot cubic
           withProgress(
-            message = "Plotting BiasCorrected calibration plot", 
+            message = "Plotting BiasCorrected calibration plot",
             value = 0, {
               incProgress(
-                1 / 1, 
+                1 / 1,
                 detail = "... working hard on cubic correction ...")
-              
               # calculate new calibration curves from corrected calibration data
               regression_results <- rBiasCorrection::regression_utility(
                 data = rv$fileimport_cal_corrected_c,
                 samplelocusname = rv$sample_locus_name,
                 rv = rv,
                 mode = "corrected",
-                logfilename = logfilename,
+                logfilename = arguments$logfilename,
                 minmax = rv$minmax
               )
               plotlist_reg <- regression_results[["plot_list"]]
               rv$result_list_cubic <- regression_results[["result_list"]]
-              
               rBiasCorrection::plotting_utility(
                 data = rv$fileimport_cal_corrected_c,
                 plotlist_reg = plotlist_reg,
@@ -268,17 +250,15 @@ module_correctedplots_server <- function(input,
                 locus_id = NULL,
                 rv = rv,
                 mode = "corrected_c",
-                plotdir = plotdir,
-                logfilename = logfilename,
+                plotdir = arguments$plotdir,
+                logfilename = arguments$logfilename,
                 minmax = rv$minmax
               )
-              
               # save regression statistics to reactive value
               rv$reg_stats_corrected_c <- rBiasCorrection::statistics_list(
                 resultlist = rv$result_list_cubic,
                 minmax = rv$minmax
               )
-              
               for (i in rv$choices_list[, get("Name")]) {
                 rv$reg_stats_corrected_c[
                   get("Name") == i, ("better_model") := rv$choices_list[
@@ -292,48 +272,42 @@ module_correctedplots_server <- function(input,
                 statstable_post = rv$reg_stats_corrected_c,
                 rv = rv,
                 type = 1,
-                plotdir = plotdir,
-                logfilename = logfilename,
+                plotdir = arguments$plotdir,
+                logfilename = arguments$logfilename,
                 mode = "corrected_c"
               )
             })
-          
           # when finished
           rv$corrected_finished <- TRUE
           rBiasCorrection::write_log(
             message = "Finished plotting corrected",
-            logfilename = logfilename)
+            logfilename = arguments$logfilename)
         }
-        
         # else if type 2 data
       } else if (rv$type_locus_sample == "2") {
         if (isFALSE(rv$corrected_finished)) {
           a <- 1
           rv$result_list_type2_corrected <- list()
-          
           withProgress(
             message = "Plotting BiasCorrected results",
             value = 0, {
               incProgress(
                 1 / 1,
                 detail = "... working hard ...")
-              
               for (locus in names(rv$fileimport_cal_corrected)) {
                 rv$vec_cal <- names(rv$fileimport_cal_corrected[[a]])[-1]
                 #% print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
-                
                 regression_results <- rBiasCorrection::regression_utility(
                   data = rv$fileimport_cal_corrected[[a]],
                   samplelocusname = rv$sample_locus_name,
                   locus_id = gsub("[[:punct:]]", "", locus),
                   rv = rv,
                   mode = "corrected",
-                  logfilename = logfilename,
+                  logfilename = arguments$logfilename,
                   minmax = rv$minmax
                 )
                 plotlist_reg <- regression_results[["plot_list"]]
                 rv$result_list <- regression_results[["result_list"]]
-                
                 rBiasCorrection::plotting_utility(
                   data = rv$fileimport_cal_corrected[[a]],
                   plotlist_reg = plotlist_reg,
@@ -342,18 +316,16 @@ module_correctedplots_server <- function(input,
                   locus_id = gsub("[[:punct:]]", "", locus),
                   rv = rv,
                   mode = "corrected",
-                  plotdir = plotdir,
-                  logfilename = logfilename,
+                  plotdir = arguments$plotdir,
+                  logfilename = arguments$logfilename,
                   minmax = rv$minmax
                 )
-                
                 # save regression statistics to reactive value
                 waround <- rBiasCorrection::statistics_list(
                   resultlist = rv$result_list,
                   minmax = rv$minmax)
                 rv$reg_stats_corrected[[locus]] <- waround
                 rv$result_list_type2_corrected[[locus]] <- rv$result_list
-                
                 # create barplots
                 rBiasCorrection::createbarerrorplots(
                   statstable_pre = rv$reg_stats[[locus]],
@@ -361,10 +333,9 @@ module_correctedplots_server <- function(input,
                   rv = rv,
                   type = 2,
                   locus_id = locus,
-                  plotdir = plotdir,
-                  logfilename = logfilename
+                  plotdir = arguments$plotdir,
+                  logfilename = arguments$logfilename
                 )
-                
                 a <- a + 1
               }
             })
@@ -372,19 +343,17 @@ module_correctedplots_server <- function(input,
           rv$corrected_finished <- TRUE
           rBiasCorrection::write_log(
             message = "Finished plotting corrected",
-            logfilename = logfilename)
+            logfilename = arguments$logfilename)
         }
       }
     }
   )
-  
+
   # when plotting has finished
   observe({
     req(rv$corrected_finished)
-    
     # type 1 data:
     if (rv$type_locus_sample == "1") {
-      
       ### Plot tab ###
       # create a list of plotnames to populate selectInput
       plot_output_list <- lapply(
@@ -393,7 +362,6 @@ module_correctedplots_server <- function(input,
           paste0(gsub("[[:punct:]]", "", rv$vec_cal[g]))
         })
       names(plot_output_list) <- rv$vec_cal
-      
       # create reactive selectinput:
       sel_in2 <- reactive({
         selectInput(inputId = "selectPlot_corrected",
@@ -402,7 +370,6 @@ module_correctedplots_server <- function(input,
                     selectize = F,
                     choices = plot_output_list)
       })
-      
       # create download button for each plot
       output$download_plots_corrected_h <- downloadHandler(
         filename = function() {
@@ -414,7 +381,7 @@ module_correctedplots_server <- function(input,
                  "_corrected_h.png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            rv$sample_locus_name,
                            "_",
                            gsub("[[:punct:]]",
@@ -425,7 +392,6 @@ module_correctedplots_server <- function(input,
         },
         contentType = "image/png"
       )
-      
       output$download_plot_sse_corrected_h <- downloadHandler(
         filename = function() {
           paste0(rv$sample_locus_name,
@@ -436,7 +402,7 @@ module_correctedplots_server <- function(input,
                  "_corrected_h.png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            rv$sample_locus_name,
                            "_error_",
                            gsub("[[:punct:]]",
@@ -447,7 +413,6 @@ module_correctedplots_server <- function(input,
         },
         contentType = "image/png"
       )
-      
       output$download_plots_corrected_c <- downloadHandler(
         filename = function() {
           paste0(rv$sample_locus_name,
@@ -458,7 +423,7 @@ module_correctedplots_server <- function(input,
                  "_corrected_c.png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            rv$sample_locus_name,
                            "_",
                            gsub("[[:punct:]]",
@@ -469,7 +434,6 @@ module_correctedplots_server <- function(input,
         },
         contentType = "image/png"
       )
-      
       output$download_plot_sse_corrected_c <- downloadHandler(
         filename = function() {
           paste0(rv$sample_locus_name,
@@ -480,7 +444,7 @@ module_correctedplots_server <- function(input,
                  "_corrected_c.png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            rv$sample_locus_name,
                            "_error_",
                            gsub("[[:punct:]]",
@@ -491,25 +455,21 @@ module_correctedplots_server <- function(input,
         },
         contentType = "image/png"
       )
-      
       # render head of page with selectInput and downloadbutton
       output$select_plotinput_corrected <- renderUI({
         s <- sel_in2()
         do.call(tagList, list(s, tags$hr()))
       })
-      
       # for debugging
       observeEvent(input_re()$selectPlot_corrected, {
         print(input_re()$selectPlot_corrected)
       })
-      
       # render plots from local temporary file
       output$plots_corrected_h <- renderImage(
         expr = {
           #% width  <- session$clientData
           ##% [["output_moduleCorrectedPlots-plots_corrected_width"]]
-          
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              rv$sample_locus_name,
                              "_", gsub("[[:punct:]]",
                                        "",
@@ -522,13 +482,11 @@ module_correctedplots_server <- function(input,
         },
         deleteFile = FALSE
       )
-      
       output$plots_corrected_c <- renderImage(
         expr = {
           #% width  <- session$clientData
           ##% [["output_moduleCorrectedPlots-plots_corrected_width"]]
-          
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              rv$sample_locus_name,
                              "_", gsub("[[:punct:]]",
                                        "",
@@ -541,14 +499,12 @@ module_correctedplots_server <- function(input,
         },
         deleteFile = FALSE
       )
-      
       # render plots from local temporary file
       output$plots_sse_corrected_h <- renderImage(
         expr = {
           #% width  <- session$clientData
           ##% [["output_moduleCorrectedPlots-plots_sse_corrected_width"]]
-          
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              rv$sample_locus_name,
                              "_error_",
                              gsub("[[:punct:]]",
@@ -562,13 +518,11 @@ module_correctedplots_server <- function(input,
         },
         deleteFile = FALSE
       )
-      
       output$plots_sse_corrected_c <- renderImage(
         expr = {
           #% width  <- session$clientData
           ##% [["output_moduleCorrectedPlots-plots_sse_corrected_width"]]
-          
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              rv$sample_locus_name,
                              "_error_",
                              gsub("[[:punct:]]",
@@ -582,17 +536,13 @@ module_correctedplots_server <- function(input,
         },
         deleteFile = FALSE
       )
-      
-      
       # type 2 data:
     } else if (rv$type_locus_sample == "2") {
-      
       # create list of loci to populate selectInput "select_plotlocus"
       list_plot_locus <- list()
       for (i in seq_len(length(rv$fileimport_cal_corrected))) {
         list_plot_locus[[i]] <- names(rv$fileimport_cal_corrected)[i]
       }
-      
       select_plotlocus <- reactive({
         selectInput(inputId = "select_plotlocus_corrected",
                     label = "Select locus:",
@@ -601,8 +551,6 @@ module_correctedplots_server <- function(input,
                     choices = list_plot_locus
         )
       })
-      
-      
       # create list of cpg-sites for each locus to populate selectInput
       # "select_plot_cpg"
       list_plot_cpg <- list()
@@ -610,15 +558,13 @@ module_correctedplots_server <- function(input,
         list_plot_cpg[[names(rv$fileimport_cal_corrected)[i]]] <- names(
           rv$fileimport_cal_corrected[[i]])[-1]
       }
-      
-      # only return list of CpG-sites for each locus, if there is already 
+      # only return list of CpG-sites for each locus, if there is already
       # a selection of the locus in select_plotlocus
       cpg_output <- reactive({
         if (!is.null(input_re()$select_plotlocus_corrected)) {
           return(list_plot_cpg[input_re()$select_plotlocus_corrected])
         }
       })
-      
       # always wrap selectInput into reactive-function
       select_plot_cpg <- reactive({
         selectInput(inputId = "select_plot_type2_corrected",
@@ -627,13 +573,11 @@ module_correctedplots_server <- function(input,
                     selectize = F,
                     choices = cpg_output())
       })
-      
       # render second selectInput
       output$s2_plotoutput_corrected <- renderUI({
         s3 <- select_plot_cpg()
         s3
       })
-      
       # create download button for each plot
       output$download_plots_corrected <- downloadHandler(
         filename = function() {
@@ -649,7 +593,7 @@ module_correctedplots_server <- function(input,
                  "_corrected.png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            gsub("[[:punct:]]",
                                 "",
                                 input_re()$select_plotlocus_corrected),
@@ -664,7 +608,6 @@ module_correctedplots_server <- function(input,
         },
         contentType = "image/png"
       )
-      
       output$download_plotssse_corrected_h <- downloadHandler(
         filename = function() {
           paste0("Errorplot_",
@@ -680,7 +623,7 @@ module_correctedplots_server <- function(input,
                  "_corrected_h.png")
         },
         content = function(file) {
-          file.copy(paste0(plotdir,
+          file.copy(paste0(arguments$plotdir,
                            "Errorplot_",
                            rv$sample_locus_name,
                            "_",
@@ -688,7 +631,7 @@ module_correctedplots_server <- function(input,
                                 "",
                                 input_re()$select_plotlocus_corrected),
                            "-",
-                           gsub("[[:punct:]]", 
+                           gsub("[[:punct:]]",
                                 "",
                                 input_re()$select_plot_type2_corrected),
                            "_corrected_h.png"),
@@ -696,7 +639,6 @@ module_correctedplots_server <- function(input,
         },
         contentType = "image/png"
       )
-      
       # render Plot UI
       output$select_plotinput_corrected <- renderUI({
         s1 <- select_plotlocus()
@@ -753,14 +695,12 @@ module_correctedplots_server <- function(input,
                               tags$hr())
         )
       })
-      
       # render plot from local temporary file
       output$plots_corrected <- renderImage(
         expr = {
           #% width  <- session$clientData
           ##% [["output_moduleCorrectedPlots-plots_corrected_width"]]
-          
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              gsub("[[:punct:]]",
                                   "",
                                   input_re()$select_plotlocus_corrected),
@@ -779,14 +719,12 @@ module_correctedplots_server <- function(input,
         },
         deleteFile = FALSE
       )
-      
       # render plots from local temporary file
       output$plots_sse_corrected <- renderImage(
         expr = {
           #% width  <- session$clientData
           ##% [["output_moduleCorrectedPlots-plots_sse_corrected_width"]]
-          
-          filename <- paste0(plotdir,
+          filename <- paste0(arguments$plotdir,
                              gsub("[[:punct:]]",
                                   "",
                                   input_re()$select_plotlocus_corrected),
@@ -817,7 +755,6 @@ module_correctedplots_server <- function(input,
 # module_correctedplots_ui
 module_correctedplots_ui <- function(id) {
   ns <- NS(id)
-  
   tagList(
     fluidRow(
       column(
@@ -887,7 +824,7 @@ module_correctedplots_ui <- function(id) {
                 style = "text-align: center",
                 downloadButton(
                   "moduleCorrectedPlots-download_plot_sse_corrected_h",
-                  "Download Error Plot (hyperbolic correction)", 
+                  "Download Error Plot (hyperbolic correction)",
                   style = paste0(
                     "white-space: normal; ",
                     "text-align:center; ",

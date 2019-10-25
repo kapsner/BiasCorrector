@@ -17,12 +17,7 @@
 
 #' @title module_modelselection_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_calibrationfile_server
 #'
 #' @export
 #'
@@ -36,7 +31,7 @@ module_modelselection_server <- function(input,
     req(rv$better_model_stats)
     # model selection only implemented for type 1 data
     if (rv$type_locus_sample == "1") {
-      
+
       # select all at once
       observeEvent(
         eventExpr = input_re()[["moduleModelSelection-reg_all"]],
@@ -57,7 +52,7 @@ module_modelselection_server <- function(input,
           rv$better_model_stats[, get("better_model")]
         )
       }
-      
+
       # render radio buttons for tab 5
       output$reg_radios <- renderUI({
         radio_output_list <- lapply(
@@ -109,15 +104,15 @@ module_modelselection_server <- function(input,
       #% shinyjs::click("results")
     }
   })
-  
-  
+
+
   observe({
     req(rv$better_model_stats)
-    
+
     if (rv$type_locus_sample == "1") {
       lapply(seq_len(length(rv$vec_cal)), function(k) {
         radioname <- paste0("radio", k)
-        
+
         if (!is.null(input_re()[[paste0("moduleModelSelection-",
                                         radioname)]])) {
           if (rv$selection_method == "SSE") {
@@ -178,7 +173,7 @@ module_modelselection_server <- function(input,
 # module_modelselection_ui
 module_modelselection_ui <- function(id) {
   ns <- NS(id)
-  
+
   tagList(
     fluidRow(
       box(
