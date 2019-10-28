@@ -46,9 +46,13 @@ module_plotting_server <- function(input,
           samplelocusname = rv$sample_locus_name,
           rv = rv,
           logfilename = arguments$logfilename,
-          minmax = rv$minmax)
+          minmax = rv$minmax,
+          seed = rv$seed
+        )
+
         plotlist_reg <- regression_results[["plot_list"]]
         rv$result_list <- regression_results[["result_list"]]
+
         rBiasCorrection::plotting_utility(
           data = rv$fileimport_calibration,
           plotlist_reg = plotlist_reg,
@@ -57,7 +61,11 @@ module_plotting_server <- function(input,
           rv = rv,
           plotdir = arguments$plotdir,
           logfilename = arguments$logfilename,
-          minmax = rv$minmax)
+          minmax = rv$minmax,
+          plot_height = rv$plot_height,
+          plot_width = rv$plot_width,
+          plot_textsize = rv$plot_textsize
+        )
 
         # save regression statistics to reactive value
         rv$reg_stats <- rBiasCorrection::statistics_list(
@@ -86,9 +94,13 @@ module_plotting_server <- function(input,
             locus_id = gsub("[[:punct:]]", "", b),
             rv = rv,
             logfilename = arguments$logfilename,
-            minmax = rv$minmax)
+            minmax = rv$minmax,
+            seed = rv$seed
+          )
+
           plotlist_reg <- regression_results[["plot_list"]]
           rv$result_list <- regression_results[["result_list"]]
+
           rBiasCorrection::plotting_utility(
             data = rv$fileimport_calibration[[a]],
             plotlist_reg = plotlist_reg,
@@ -98,7 +110,11 @@ module_plotting_server <- function(input,
             rv = rv,
             plotdir = arguments$plotdir,
             logfilename = arguments$logfilename,
-            minmax = rv$minmax)
+            minmax = rv$minmax,
+            plot_height = rv$plot_height,
+            plot_width = rv$plot_width,
+            plot_textsize = rv$plot_textsize
+          )
 
           # save regression statistics to reactive value
           rv$reg_stats[[b]] <- rBiasCorrection::statistics_list(

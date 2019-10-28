@@ -185,10 +185,13 @@ module_correctedplots_server <- function(input,
                 rv = rv,
                 mode = "corrected",
                 logfilename = arguments$logfilename,
-                minmax = rv$minmax
+                minmax = rv$minmax,
+                seed = rv$seed
               )
+
               plotlist_reg <- regression_results[["plot_list"]]
               rv$result_list_hyperbolic <- regression_results[["result_list"]]
+
               rBiasCorrection::plotting_utility(
                 data = rv$fileimport_cal_corrected_h,
                 plotlist_reg = plotlist_reg,
@@ -199,13 +202,18 @@ module_correctedplots_server <- function(input,
                 mode = "corrected_h",
                 plotdir = arguments$plotdir,
                 logfilename = arguments$logfilename,
-                minmax = rv$minmax
+                minmax = rv$minmax,
+                plot_height = rv$plot_height,
+                plot_width = rv$plot_width,
+                plot_textsize = rv$plot_textsize
               )
+
               # save regression statistics to reactive value
               rv$reg_stats_corrected_h <- rBiasCorrection::statistics_list(
                 resultlist = rv$result_list_hyperbolic,
                 minmax = rv$minmax
               )
+
               for (i in rv$choices_list[, get("Name")]) {
                 rv$reg_stats_corrected_h[
                   get("Name") == i, ("better_model") := rv$choices_list[
@@ -214,6 +222,7 @@ module_correctedplots_server <- function(input,
                     )]
                   ]
               }
+
               rBiasCorrection::createbarerrorplots(
                 statstable_pre = rv$reg_stats,
                 statstable_post = rv$reg_stats_corrected_h,
@@ -221,9 +230,13 @@ module_correctedplots_server <- function(input,
                 type = 1,
                 plotdir = arguments$plotdir,
                 logfilename = arguments$logfilename,
-                mode = "corrected_h"
+                mode = "corrected_h",
+                plot_height = rv$plot_height,
+                plot_width = rv$plot_width,
+                plot_textsize = rv$plot_textsize
               )
             })
+
           # plot cubic
           withProgress(
             message = "Plotting BiasCorrected calibration plot",
@@ -238,10 +251,13 @@ module_correctedplots_server <- function(input,
                 rv = rv,
                 mode = "corrected",
                 logfilename = arguments$logfilename,
-                minmax = rv$minmax
+                minmax = rv$minmax,
+                seed = rv$seed
               )
+
               plotlist_reg <- regression_results[["plot_list"]]
               rv$result_list_cubic <- regression_results[["result_list"]]
+
               rBiasCorrection::plotting_utility(
                 data = rv$fileimport_cal_corrected_c,
                 plotlist_reg = plotlist_reg,
@@ -252,13 +268,18 @@ module_correctedplots_server <- function(input,
                 mode = "corrected_c",
                 plotdir = arguments$plotdir,
                 logfilename = arguments$logfilename,
-                minmax = rv$minmax
+                minmax = rv$minmax,
+                plot_height = rv$plot_height,
+                plot_width = rv$plot_width,
+                plot_textsize = rv$plot_textsize
               )
+
               # save regression statistics to reactive value
               rv$reg_stats_corrected_c <- rBiasCorrection::statistics_list(
                 resultlist = rv$result_list_cubic,
                 minmax = rv$minmax
               )
+
               for (i in rv$choices_list[, get("Name")]) {
                 rv$reg_stats_corrected_c[
                   get("Name") == i, ("better_model") := rv$choices_list[
@@ -267,6 +288,7 @@ module_correctedplots_server <- function(input,
                     )]
                   ]
               }
+
               rBiasCorrection::createbarerrorplots(
                 statstable_pre = rv$reg_stats,
                 statstable_post = rv$reg_stats_corrected_c,
@@ -274,9 +296,13 @@ module_correctedplots_server <- function(input,
                 type = 1,
                 plotdir = arguments$plotdir,
                 logfilename = arguments$logfilename,
-                mode = "corrected_c"
+                mode = "corrected_c",
+                plot_height = rv$plot_height,
+                plot_width = rv$plot_width,
+                plot_textsize = rv$plot_textsize
               )
             })
+
           # when finished
           rv$corrected_finished <- TRUE
           rBiasCorrection::write_log(
@@ -304,10 +330,13 @@ module_correctedplots_server <- function(input,
                   rv = rv,
                   mode = "corrected",
                   logfilename = arguments$logfilename,
-                  minmax = rv$minmax
+                  minmax = rv$minmax,
+                  seed = rv$seed
                 )
+
                 plotlist_reg <- regression_results[["plot_list"]]
                 rv$result_list <- regression_results[["result_list"]]
+
                 rBiasCorrection::plotting_utility(
                   data = rv$fileimport_cal_corrected[[a]],
                   plotlist_reg = plotlist_reg,
@@ -318,14 +347,21 @@ module_correctedplots_server <- function(input,
                   mode = "corrected",
                   plotdir = arguments$plotdir,
                   logfilename = arguments$logfilename,
-                  minmax = rv$minmax
+                  minmax = rv$minmax,
+                  plot_height = rv$plot_height,
+                  plot_width = rv$plot_width,
+                  plot_textsize = rv$plot_textsize
                 )
+
                 # save regression statistics to reactive value
                 waround <- rBiasCorrection::statistics_list(
                   resultlist = rv$result_list,
-                  minmax = rv$minmax)
+                  minmax = rv$minmax
+                )
+
                 rv$reg_stats_corrected[[locus]] <- waround
                 rv$result_list_type2_corrected[[locus]] <- rv$result_list
+
                 # create barplots
                 rBiasCorrection::createbarerrorplots(
                   statstable_pre = rv$reg_stats[[locus]],
@@ -334,8 +370,12 @@ module_correctedplots_server <- function(input,
                   type = 2,
                   locus_id = locus,
                   plotdir = arguments$plotdir,
-                  logfilename = arguments$logfilename
+                  logfilename = arguments$logfilename,
+                  plot_height = rv$plot_height,
+                  plot_width = rv$plot_width,
+                  plot_textsize = rv$plot_textsize
                 )
+
                 a <- a + 1
               }
             })
