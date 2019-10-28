@@ -540,7 +540,8 @@ shiny::shinyServer(function(input, output, session) {
     "moduleSettings",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename
+    logfilename = logfilename,
+    tempdir = tempdir
   )
 
   ###### Info

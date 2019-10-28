@@ -113,6 +113,55 @@ module_settings_server <- function(input,
       rv$plot_textsize <- input_re()[["moduleSettings-settings_plot_textsize"]]
     }
   )
+
+  observe({
+
+    req(rv$plot_textsize)
+
+    # load exampledata 1
+    gdat <- rBiasCorrection::example._plot.df_agg
+
+    coef_h <- rBiasCorrection::example._plot_coef_h
+    coef_c <- rBiasCorrection::example._plot_coef_c
+
+    rBiasCorrection::create_exampleplot(
+      data = gdat,
+      coef_hyper = coef_h,
+      coef_cubic = coef_c,
+      plot_height = rv$plot_height,
+      plot_width = rv$plot_width,
+      plot_textsize = rv$plot_textsize,
+      filename = paste0(
+        arguments$tempdir,
+        "/exampleplot.png"
+      )
+    )
+
+    # render plots from local temporary file
+    output$settings_exampleplot <- renderImage(
+      expr = {
+        list(src = paste0(
+          arguments$tempdir,
+          "/exampleplot.png"
+        ))
+      },
+      deleteFile = FALSE
+    )
+
+    output$settings_download_exampleplot <- downloadHandler(
+      filename = function() {
+        "Exampleplot.png"
+      },
+      content = function(file) {
+        file.copy(paste0(
+          arguments$tempdir,
+          "/exampleplot.png"
+        ),
+        file)
+      },
+      contentType = "image/png"
+    )
+  })
 }
 
 
@@ -158,11 +207,12 @@ module_settings_ui <- function(id) {
              ),
              box(
                title = "Expert Settings",
-               helpText(
-                 paste0("It is recommended to not change these ",
+               h5(
+                 tags$b("It is recommended to not change these ",
                         "settings unless you know exactly, what ",
-                        "you are doing.")
+                        "you are doing!")
                ),
+               tags$hr(),
                numericInput(
                  ns("settings_seed"),
                  label = "Seed",
@@ -171,56 +221,79 @@ module_settings_ui <- function(id) {
                  max = Inf,
                  step = 1,
                  width = "30%"
-                 ),
+               ),
                helpText(
                  paste0("The seed makes the calculation of the ",
                         "unknowns of both, the hyperbolic and the ",
                         "cubic regression equation reproducible.")
                ),
                tags$hr(),
-               numericInput(
-                 ns("settings_plot_height"),
-                 label = "Plot height (unit: inch)",
-                 value = 5,
-                 min = 1,
-                 max = 50,
-                 step = 0.01,
-                 width = "30%"
+               column(
+                 4,
+                 numericInput(
+                   ns("settings_plot_height"),
+                   label = "Plot height (unit: inch)",
+                   value = 5,
+                   min = 1,
+                   max = 50,
+                   step = 0.01
+                 ),
+                 helpText(
+                   paste0("If you need a different resolution of ",
+                          "the resulting plots, you can set the ",
+                          "plot height (in inches) manually here.")
+                 ),
+                 tags$hr(),
+                 numericInput(
+                   ns("settings_plot_width"),
+                   label = "Plot width (unit: inch)",
+                   value = 7.5,
+                   min = 1,
+                   max = 50,
+                   step = 0.01
+                 ),
+                 helpText(
+                   paste0("If you need a different resolution of ",
+                          "the resulting plots, you can set the ",
+                          "plot width (in inches) manually here.")
+                 ),
+                 tags$hr(),
+                 numericInput(
+                   ns("settings_plot_textsize"),
+                   label = "Plot text size",
+                   value = 10,
+                   min = 1,
+                   max = 50,
+                   step = 0.01
+                 ),
+                 helpText(
+                   paste0(
+                     "The text size of the plots. ",
+                     "It is passed further to the 'size'-argument ",
+                     "of ggplot2's 'element_text' function."
+                   )
+                 )
                ),
-               helpText(
-                 paste0("If you need a different resolution of ",
-                        "the resulting plots, you can set the ",
-                        "plot height (in inches) manually here.")
-               ),
-               tags$hr(),
-               numericInput(
-                 ns("settings_plot_width"),
-                 label = "Plot width (unit: inch)",
-                 value = 7.5,
-                 min = 1,
-                 max = 50,
-                 step = 0.01,
-                 width = "30%"
-               ),
-               helpText(
-                 paste0("If you need a different resolution of ",
-                        "the resulting plots, you can set the ",
-                        "plot width (in inches) manually here.")
-               ),
-               tags$hr(),
-               numericInput(
-                 ns("settings_plot_textsize"),
-                 label = "Plot text size",
-                 value = 10,
-                 min = 1,
-                 max = 50,
-                 step = 0.01,
-                 width = "30%"
-               ),
-               helpText(
-                 paste0("The text size of the plots. ",
-                        "It is passed further to the 'size'-argument ",
-                        "of ggplot2's 'element_text' function.")
+               column(
+                 8,
+                 imageOutput(ns("settings_exampleplot")),
+                 tags$head(
+                   tags$style(
+                     type = "text/css",
+                     paste0(
+                       "#moduleSettings-settings_exampleplot img ",
+                       "{max-height: 100%; max-width: 100%; width: auto}"))
+                 ),
+                 div(class = "row",
+                     style = "text-align: center",
+                     downloadButton(
+                       "moduleSettings-settings_download_exampleplot",
+                       "Download Example Plot",
+                       style = paste0(
+                         "white-space: normal; ",
+                         "text-align:center; ",
+                         "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                         "margin: 6px 10px 6px 10px;")))
                ),
                width = 12
              )

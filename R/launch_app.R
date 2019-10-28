@@ -49,6 +49,9 @@ launch_app <- function(port = 3838,
   #"   is.numeric(port)
   #" )
   tempdir <- tempdir()
+  assign("tempdir",
+         tempdir,
+         envir = parent.frame())
   assign("plotdir",
          paste0(tempdir, "/", plotdir, "/"),
          envir = parent.frame())
