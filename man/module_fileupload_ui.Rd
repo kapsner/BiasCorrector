@@ -9,7 +9,7 @@ module_fileupload_ui(id, ...)
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
 
-\item{...}{Further arguments, such as `maximumfilesize`}
+\item{...}{Further arguments, such as `maxfilesize`}
 }
 \description{
 module_fileupload_ui

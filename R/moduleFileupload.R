@@ -372,7 +372,7 @@ module_fileupload_server <- function(input,
 #' @title module_fileupload_ui
 #'
 #' @param id A character. The identifier of the shiny object
-#' @param ... Further arguments, such as `maximumfilesize`
+#' @param ... Further arguments, such as `maxfilesize`
 #'
 #' @export
 #'
@@ -380,7 +380,9 @@ module_fileupload_server <- function(input,
 module_fileupload_ui <- function(id,
                                  ...) {
   arguments <- list(...)
+
   ns <- NS(id)
+
   tagList(
     fluidRow(
       # type of data box
