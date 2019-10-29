@@ -49,23 +49,35 @@ launch_app <- function(port = 3838,
   #"   is.numeric(port)
   #" )
   tempdir <- tempdir()
-  assign("tempdir",
-         tempdir,
-         envir = parent.frame())
-  assign("plotdir",
-         paste0(tempdir, "/", plotdir, "/"),
-         envir = parent.frame())
-  assign("csvdir",
-         paste0(tempdir, "/", csvdir, "/"),
-         envir = parent.frame())
+
+  global_env_hack <- function(key,
+                              val,
+                              pos) {
+    assign(
+      key,
+      val,
+      envir = as.environment(pos)
+    )
+  }
+
+  global_env_hack("tempdir",
+                  tempdir,
+                  1L)
+  global_env_hack("plotdir",
+                  paste0(tempdir, "/", plotdir, "/"),
+                  1L)
+  global_env_hack("csvdir",
+                  paste0(tempdir, "/", csvdir, "/"),
+                  1L)
   # logfilename
-  assign("logfilename",
-         paste0(tempdir, "/", logfilename),
-         envir = parent.frame())
+  global_env_hack("logfilename",
+                  paste0(tempdir, "/", logfilename),
+                  1L)
   # maximum filesize in MB
-  assign("maxfilesize",
-         maxfilesize,
-         envir = parent.frame())
+  global_env_hack("maxfilesize",
+                  maxfilesize,
+                  1L)
+
   # set shiny option here
   options(shiny.maxRequestSize = maxfilesize * 1024^2)
   options(shiny.port = port)
