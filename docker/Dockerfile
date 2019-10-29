@@ -23,7 +23,7 @@ RUN for package in $p_base; do \
 COPY ./addfolder /home/shiny/
 
 # repository name
-ARG REPO_NAME=PCRBiasCorrection
+ARG REPO_NAME=rBiasCorrection
 
 # install our R-Package
 RUN cd /home/shiny/${REPO_NAME}/ && \
