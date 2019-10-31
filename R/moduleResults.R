@@ -176,10 +176,10 @@ module_results_server <- function(input,
       output$dtfinal <- DT::renderDataTable({
         # https://stackoverflow.com/questions/58526047/customizing-how-
         # datatables-displays-missing-values-in-shiny
-        rowCallback <- c(
-          "function(row, data){",
-          "  for(var i=0; i<data.length; i++){",
-          "    if(data[i] === null){",
+        row_callback <- c(
+          "function(row, data) {",
+          "  for(var i=0; i<data.length; i++) {",
+          "    if(data[i] === null) {",
           "      $('td:eq('+i+')', row).html('NA')",
           "        .css({",
           "'color': 'rgb(151,151,151)',",
@@ -195,7 +195,7 @@ module_results_server <- function(input,
                       options = list(scrollX = TRUE,
                                      pageLength = 20,
                                      dom = "ltip",
-                                     rowCallback = DT::JS(rowCallback)),
+                                     rowCallback = DT::JS(row_callback)),
                       rownames = F) %>%
           DT::formatRound(columns = c(2:ncol(rv$final_results)),
                           digits = 3)
