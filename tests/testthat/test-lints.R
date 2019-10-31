@@ -31,6 +31,10 @@ test_that(
       "tests/testthat" = list(
         "test-startup.R" = NULL,
         "test-lints.R" = NULL
+      ),
+      "inst/application" = list(
+        "server.R" = NULL,
+        "ui.R" = NULL
       )
     )
     for (directory in names(lintlist)) {

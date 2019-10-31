@@ -67,10 +67,26 @@ module_calibrationfile_server <- function(input,
           DT::dataTableOutput("moduleCalibrationFile-dt1")
         })
         output$dt1 <- DT::renderDataTable({
+          # https://stackoverflow.com/questions/58526047/customizing-how-
+          # datatables-displays-missing-values-in-shiny
+          row_callback <- c(
+            "function(row, data) {",
+            "  for(var i=0; i<data.length; i++) {",
+            "    if(data[i] === null) {",
+            "      $('td:eq('+i+')', row).html('NA')",
+            "        .css({",
+            "'color': 'rgb(151,151,151)',",
+            "'font-style': 'italic'});",
+            "    }",
+            "  }",
+            "}"
+          )
+
           DT::datatable(rv$fileimport_calibration,
                         options = list(scrollX = TRUE,
                                        pageLength = 20,
-                                       dom = "ltip"),
+                                       dom = "ltip",
+                                       rowCallback = DT::JS(row_callback)),
                         rownames = F) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_calibration)),
                             digits = 3)
