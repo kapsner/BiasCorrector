@@ -86,16 +86,3 @@ install:
   stage: deploy
   script:
     - R -e "devtools::install(pkg = '.', upgrade = 'always')"
-
-pages:
-  stage: deploy
-  dependencies:
-    - testing
-  script:
-    - ls
-  artifacts:
-    paths:
-      - public
-    expire_in: 1 week
-  only:
-    - master
