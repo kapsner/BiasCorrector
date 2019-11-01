@@ -414,7 +414,7 @@ module_results_server <- function(input,
             str2,
             str3,
             str4,
-            sep = " < br/><br/>"
+            sep = "<br/><br/>"
           )
         )
       })
@@ -455,7 +455,7 @@ module_results_server <- function(input,
           str3,
           str4,
           str5,
-          sep = " < br/><br/>"
+          sep = "<br/><br/>"
         )
       )
     })
