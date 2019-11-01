@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gpg-agent \
     git
 
+# set cran repo
+RUN echo "options('repos' = 'https://ftp.fau.de/cran/')" >> /usr/local/lib/R/etc/Rprofile.site
+
 ARG p_base="devtools"
 
 RUN for package in $p_base; do \
