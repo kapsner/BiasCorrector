@@ -3,4 +3,3 @@
 # TODO in the end, generate markdown pdf with plots in temporary directory
 # TODO check weired error, when correcting calibration data (corrected results),
 ## especially with true_methylation==0
-# TODO in type one data add checkbox, to select either all hyperbolic or all cubic at once in model selection
