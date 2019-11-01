@@ -24,10 +24,12 @@ Imports:
     shinyjs,
     shinydashboard,
     magrittr,
-    DT
+    DT,
+    rBiasCorrection (>= 0.1.2.9001)
 Suggests: 
     testthat,
     processx,
     lintr
-Remotes:  
+Remotes: 
     kapsner/rBiasCorrection@latest
+RoxygenNote: 6.1.1

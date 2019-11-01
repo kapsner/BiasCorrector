@@ -54,7 +54,7 @@ usethis::use_package("lintr", type = "Suggests")
 
 # dev packages
 devtools::install_github(repo = "kapsner/rBiasCorrection", ref = "latest")
-#usethis::use_dev_package("rBiasCorrection", type = "Imports")
+usethis::use_dev_package("rBiasCorrection", type = "Imports")
 desc::desc_set_remotes("kapsner/rBiasCorrection@latest", file = usethis::proj_get())
 
 
