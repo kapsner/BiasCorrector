@@ -1,10 +1,10 @@
 context("lints")
 
-if (any(grepl("00_pkg_src", list.files("../../")))) {
+if (dir.exists("../../00_pkg_src")) {
   prefix <- "../../00_pkg_src/BiasCorrector/"
-} else if (any(grepl("DESCRIPTION", list.files("../../")))) {
+} else if (dir.exists("../../R")) {
   prefix <- "../../"
-} else {
+} else if (dir.exists("./R")) {
   prefix <- "./"
 }
 

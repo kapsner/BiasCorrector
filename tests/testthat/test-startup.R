@@ -22,7 +22,7 @@ test_that("correct startup", {
       # As we are in the tests/testthat dir, we're moving
       # two steps back before launching the whole package
       # and we try to launch the app
-      "library(BiasCorrector);launchApp()"
+      "library(BiasCorrector);launch_app()"
     )
   )
   # We leave some time for the app to launch
