@@ -360,16 +360,16 @@ module_results_server <- function(input,
           }
 
 
-          print(list.files(".csv/"))
-          print(list.files(".plots/"))
+          print(list.files("./csv/"))
+          print(list.files("./plots/"))
 
           utils::zip(
             zipfile = fname,
             files = c(
               paste0("csv/",
-                     list.files(".csv/")),
+                     list.files("./csv/")),
               paste0("plots/",
-                     list.files(".plots/"))
+                     list.files("./plots/"))
             ))
 
           if (file.exists(paste0(tempdir(), "/", fname, ".zip"))) {
