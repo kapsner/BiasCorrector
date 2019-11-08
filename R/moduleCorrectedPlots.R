@@ -827,7 +827,7 @@ module_correctedplots_ui <- function(id) {
           column(
             6,
             h5(tags$b(
-              "Calibration data corrected with cubic regression:")),
+              "Calibration data corrected with cubic polynomial regression:")),
             imageOutput(ns("plots_corrected_c")),
             tags$head(
               tags$style(
@@ -875,7 +875,7 @@ module_correctedplots_ui <- function(id) {
             6,
             h5(tags$b(
               paste0("Theoretical efficiency of BiasCorrection ",
-                     "with cubic regression:"))),
+                     "with cubic polynomial regression:"))),
             imageOutput(ns("plots_sse_corrected_c")),
             tags$head(
               tags$style(

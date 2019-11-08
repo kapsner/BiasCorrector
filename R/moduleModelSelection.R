@@ -184,7 +184,7 @@ module_modelselection_ui <- function(id) {
           choices = list(
             "best" = "2",
             "hyperbolic" = "0",
-            "cubic" = "1"
+            "cubic polynomial" = "1"
           ),
           selected = character(0), inline = TRUE
         ),
