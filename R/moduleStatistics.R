@@ -33,7 +33,7 @@ module_statistics_server <- function(input,
     output$description <- renderText({
       str1 <- paste0("The table shows the regression parameters ",
                      "of the hyperbolic regression and the cubic ",
-                     "regression.<br/>")
+                     "polynomial regression.<br/>")
       str2 <- paste0("Column 1 presents the CpG site's name.")
       str3 <- paste0("Column 2 presents the mean of the relative errors ",
                      "for every CpG site. It is calculated for every ",
@@ -49,10 +49,10 @@ module_statistics_server <- function(input,
                      "parameters used to calculate the hyperbolic ",
                      "regression curves for the respective CpG site.")
       str5 <- paste0("Columns 8-13 present the sum of squared error of the ",
-                     "cubic regression ('SSE [c]'), the coefficient of ",
-                     "determination ('R\u00B2 [c]') and the regression ",
-                     "parameters used to calculate the cubic regression ",
-                     "curves.")
+                     "cubic polynomial regression ('SSE [c]'), the",
+                     "coefficient of determination ('R\u00B2 [c]') and the ",
+                     "regression parameters used to calculate the cubic ",
+                     "regression curves.")
       str6 <- paste0("The rows highlighted with a green background colour ",
                      "indicate the regression equation that is automatically ",
                      "selected for the correction of measurement biases ",

@@ -1,8 +1,7 @@
 version: '3'
 
 services:
-  shiny:
-    container_name: biascorrector_container
+  biascorrector_container:
     image: biascorrector
     restart: unless-stopped
     ports:

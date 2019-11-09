@@ -407,7 +407,7 @@ module_results_server <- function(input,
                        "indicate the regression algorithm used for ",
                        "BiasCorrection of the respective CpG site ",
                        "('_h': hyperbolic regression; '_c': cubic ",
-                       "regression).")
+                       "polynomial regression).")
         HTML(
           paste(
             str1,
