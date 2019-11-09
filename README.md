@@ -18,7 +18,6 @@ BiasCorrector is the user friendly implementation of the algorithms described by
     pages = {e77-e77},
     year = {2011},
     month = {04},
-    abstract = "{DNA methylation profiling has become an important aspect of biomedical molecular analysis. Polymerase chain reaction (PCR) amplification of bisulphite-treated DNA is a processing step that is common to many currently used methods of quantitative methylation analysis. Preferential amplification of unmethylated alleles—known as PCR-bias—may significantly affect the accuracy of quantification. To date, no universal experimental approach has been reported to overcome the problem. This study presents an effective method of correcting biased methylation data. The procedure includes a calibration performed in parallel to the analysis of the samples under investigation. DNA samples with defined degrees of methylation are analysed. The observed deviation of the experimental results from the expected values is used for calculating a regression curve. The equation of the best-fitting curve is then used for correction of the data obtained from the samples of interest. The process can be applied irrespective of the locus interrogated and the number of sites analysed, avoiding an optimization of the amplification conditions for each individual locus.}",
     issn = {0305-1048},
     doi = {10.1093/nar/gkr213},
     url = {https://dx.doi.org/10.1093/nar/gkr213},
@@ -26,16 +25,19 @@ BiasCorrector is the user friendly implementation of the algorithms described by
 }
 ```
 
-## Installation  
+## rBiasCorrection
 
-### Using RStudio  
+`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurment biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.
 
-- Make sure, you have R and RStudio installed on your system:  
+# Installation  
+
+## Using R 
+
+- Make sure, you have R installed on your system:  
     
     + https://cran.r-project.org/  
-    + https://www.rstudio.com/products/rstudio/download/#download  
 
-- Then open R and install this R package:
+- Then open your environment and install this R package:
 
 ```
 library(devtools)
@@ -48,6 +50,27 @@ devtools::install_github("kapsner/BiasCorrector")
 library(BiasCorrector)
 launch_app()
 ```
+
+## Using Docker
+
+To simplify installation an deployment of `BiasCorrector` you can clone this repository and build your own docker image. Make sure, you have Docker and docker-compose installed on your system.
+
+```
+# clone the repository
+git clone https://github.com/kapsner/BiasCorrector
+
+# go to the docker subfolder
+cd BiasCorrector/docker/
+
+# run the build script
+./build_image.sh
+
+# when the building is finished, just start the container by running
+docker-compose -f docker-compose.local.yml up -d
+```
+
+Type the URL "localhost:3838/" in your browser and start working with `BiasCorrector`.
+
 
 # More Infos:
 
