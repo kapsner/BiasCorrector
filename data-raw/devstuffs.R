@@ -8,7 +8,7 @@ my_desc <- desc::description$new("!new")
 my_desc$set("Package", packagename)
 # Set your name
 my_desc$set_authors(c(
-  person("Lorenz A.", "Kapsner", email = "lorenz.kapsner@web.de", role = c("cre", "aut")),
+  person("Lorenz A.", "Kapsner", email = "lorenz.kapsner@gmail.com", role = c("cre", "aut")),
   person("Evgeny A.", "Moskalev", role = "aut")
 ))
 # Remove some author fields
