@@ -9,7 +9,6 @@ default:
   image: ${CI_IMAGE_NAME}:${CI_IMAGE_TAG}
   before_script:
     - echo "options('repos' = 'https://ftp.fau.de/cran/')" >> /usr/local/lib/R/etc/Rprofile.site
-    - R -e "devtools::install_deps(pkg = '.', upgrade = 'always')"
     - R -e "devtools::install_dev_deps(pkg = '.', upgrade = 'always')"
     - mkdir -p ci
 
@@ -20,6 +19,7 @@ stages:
 
 check:
   stage: build
+  allow_failure: true # necessary when having development-packages (in remotes-section of DESCRIPTION)
   script:
     - R -e "devtools::check(pkg = '.', args = c('--no-tests'), build_args = c('--no-build-vignettes'), check_dir = '${CI_PROJECT_DIR}/ci')"
   artifacts:
