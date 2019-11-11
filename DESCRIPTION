@@ -30,4 +30,4 @@ Suggests:
     processx,
     lintr
 Remotes:  
-    kapsner/rBiasCorrection@latest
+    github::kapsner/rBiasCorrection@latest
