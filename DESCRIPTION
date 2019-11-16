@@ -29,5 +29,6 @@ Suggests:
     testthat,
     processx,
     lintr
-Remotes:  
+Remotes: 
     github::kapsner/rBiasCorrection@latest
+RoxygenNote: 7.0.0

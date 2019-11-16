@@ -272,14 +272,6 @@ module_settings_ui <- function(id) {
                      "It is passed further to the 'size'-argument ",
                      "of ggplot2's 'element_text' function."
                    )
-                 ),
-                 tags$hr(),
-                 helpText(
-                   paste0("Please note, that the decimal separator ",
-                          "of the numeric input fields depends ",
-                          "on your operating system's and/or browser's ",
-                          "language settings. It can be a comma (',') ",
-                          "or a period ('.').")
                  )
                ),
                column(
@@ -302,6 +294,16 @@ module_settings_ui <- function(id) {
                          "text-align:center; ",
                          "padding: 9.5px 9.5px 9.5px 9.5px; ",
                          "margin: 6px 10px 6px 10px;")))
+               ),
+               column(12,
+                      tags$hr(),
+                      helpText(
+                        paste0("Please note, that the decimal separator ",
+                               "of the numeric input fields depends ",
+                               "on your operating system's and/or browser's ",
+                               "language settings. It can be a comma (',') ",
+                               "or a period ('.').")
+                      )
                ),
                width = 12
              )
