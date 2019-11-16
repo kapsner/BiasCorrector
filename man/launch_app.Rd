@@ -4,8 +4,13 @@
 \alias{launch_app}
 \title{Launch BiasCorrector}
 \usage{
-launch_app(port = 3838, plotdir = "plots", csvdir = "csv",
-  logfilename = "biascorrector.log", maxfilesize = 100)
+launch_app(
+  port = 3838,
+  plotdir = "plots",
+  csvdir = "csv",
+  logfilename = "biascorrector.log",
+  maxfilesize = 100
+)
 }
 \arguments{
 \item{port}{The port, BiasCorrector is running on (default: 3838)}
