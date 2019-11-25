@@ -40,7 +40,7 @@ BiasCorrector is the user friendly implementation of the algorithms described by
 - Then open your environment and install this R package:
 
 ```
-library(devtools)
+install.packages("devtools")
 devtools::install_github("kapsner/BiasCorrector")
 ```
 
