@@ -8,13 +8,14 @@ my_desc <- desc::description$new("!new")
 my_desc$set("Package", packagename)
 # Set your name
 my_desc$set_authors(c(
-  person("Lorenz A.", "Kapsner", email = "lorenz.kapsner@gmail.com", role = c("cre", "aut")),
+  person("Lorenz A.", "Kapsner", email = "lorenz.kapsner@gmail.com", role = c("cre", "aut"),
+         comment = c(ORCID = "0000-0003-1866-860X")),
   person("Evgeny A.", "Moskalev", role = "aut")
 ))
 # Remove some author fields
 my_desc$del("Maintainer")
 # Set the version
-my_desc$set_version("0.0.3.9000")
+my_desc$set_version("0.0.4")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
@@ -53,10 +54,10 @@ usethis::use_package("processx", type = "Suggests")
 usethis::use_package("lintr", type = "Suggests")
 
 # dev packages
-devtools::install_github(repo = "kapsner/rBiasCorrection", ref = "latest", upgrade = "always")
+devtools::install_github(repo = "kapsner/rBiasCorrection", ref = "v0.1.4", upgrade = "always")
 #usethis::use_dev_package("rBiasCorrection", type = "Imports")
 # https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
-desc::desc_set_remotes("github::kapsner/rBiasCorrection@latest", file = usethis::proj_get())
+desc::desc_set_remotes("github::kapsner/rBiasCorrection@v0.1.4", file = usethis::proj_get())
 
 
 # gitignore
