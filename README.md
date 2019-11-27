@@ -55,6 +55,8 @@ launch_app()
 
 To simplify installation an deployment of `BiasCorrector` you can clone this repository and build your own docker image. Make sure, you have Docker and docker-compose installed on your system.
 
+### Build Docker Image Manually
+
 ```
 # clone the repository
 git clone https://github.com/kapsner/BiasCorrector
@@ -67,6 +69,19 @@ cd BiasCorrector/docker/
 
 # when the building is finished, just start the container by running
 docker-compose -f docker-compose.local.yml up -d
+```
+
+### Using a Remote Docker Image
+
+```
+# clone the repository
+git clone https://github.com/kapsner/BiasCorrector
+
+# go to the docker subfolder
+cd BiasCorrector/docker/
+
+# start the Docker container
+docker-compose -f docker-compose.remote.yml up -d
 ```
 
 Type the URL "localhost:3838/" in your browser and start working with `BiasCorrector`.
