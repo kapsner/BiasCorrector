@@ -95,6 +95,10 @@ A video tutorial describing the workflow of how to use `BiasCorrector` in order 
 
 A demo version of `BiasCorrector` is available at [https://biascorrector.diz.uk-erlangen.de/](https://biascorrector.diz.uk-erlangen.de/)
 
+# Frequently Asked Questions 
+
+FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
+
 # More Infos:
 
 - Original work by Moskalev et al.: https://doi.org/10.1093/nar/gkr213
