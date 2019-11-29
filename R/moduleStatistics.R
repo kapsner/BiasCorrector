@@ -34,29 +34,34 @@ module_statistics_server <- function(input,
       str1 <- paste0("The table shows the regression parameters ",
                      "of the hyperbolic regression and the cubic ",
                      "polynomial regression.<br/>")
-      str2 <- paste0("Column 1 presents the CpG site's name.")
+      str2 <- paste0("Column 1 presents the CpG site's ID.")
       str3 <- paste0("Column 2 presents the mean of the relative errors ",
-                     "for every CpG site. It is calculated for every ",
-                     "CpG site as a mean of relative errors between the ",
-                     "true and the observed methylation degrees of each ",
+                     "for every CpG interrogated CpG site. It is ",
+                     "calculated for every ",
+                     "CpG site as a mean of the relative errors between the ",
+                     "actual and the observed methylation degrees of each ",
                      "methylation step across all available calibrator ",
                      "DNAs for the respective CpG site. ",
                      "<br/>Formula:<br/> <i>abs(methylation_true - ",
                      "methylation_observed) / methylation_true </i>")
-      str4 <- paste0("Columns 3-7 present the sum of squared error of the ",
+      str4 <- paste0("Columns 3-9 comprise the sum of squared errors of the ",
                      "hyperbolic regression ('SSE [h]'), the coefficient ",
-                     "of determination ('R\u00B2 [h]') and the regression ",
-                     "parameters used to calculate the hyperbolic ",
-                     "regression curves for the respective CpG site.")
-      str5 <- paste0("Columns 8-13 present the sum of squared error of the ",
-                     "cubic polynomial regression ('SSE [c]'), the",
+                     "of determination ('R\u00B2 [h]') and the coefficients ",
+                     "of the hyperbolic equation that describes the ",
+                     "hyperbolic regression curves for the respective ",
+                     "CpG sites.")
+      str5 <- paste0("Columns 10-15 summarise the sum of squared errors of ",
+                     "the cubic polynomial regression ('SSE [c]'), the ",
                      "coefficient of determination ('R\u00B2 [c]') and the ",
-                     "regression parameters used to calculate the cubic ",
-                     "regression curves.")
+                     "coefficients of the cubic polynomial equations.")
       str6 <- paste0("The rows highlighted with a green background colour ",
-                     "indicate the regression equation that is automatically ",
-                     "selected for the correction of measurement biases ",
-                     "based on the method, selected in the 'Settings'-tab.")
+                     "indicate the regression method (hyperbolic or cubic ",
+                     "polynomial) that is suggested by BiasCorrector for ",
+                     "correcting data. This automatic choice of the ",
+                     "regression method relies on either minimising the ",
+                     "value of SSE (the default setting) or minimising ",
+                     "the average relative error as selected by the user ",
+                     "in the Settings tab.")
       str7 <- paste0("The bold marked sum of squared errors indicate, that ",
                      "in comparison of the SSE this regression equation ",
                      "better fits the data points for the respecitve CpG ",

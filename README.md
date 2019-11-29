@@ -27,7 +27,8 @@ BiasCorrector is the user friendly implementation of the algorithms described by
 
 ## rBiasCorrection
 
-`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurment biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.
+`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurement biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.  
+`rBiasCorrection` is available at [https://github.com/kapsner/rBiasCorrection](https://github.com/kapsner/rBiasCorrection)
 
 # Installation  
 
@@ -86,6 +87,13 @@ docker-compose -f docker-compose.remote.yml up -d
 
 Type the URL "localhost:3838/" in your browser and start working with `BiasCorrector`.
 
+# Video Tutorial 
+
+A video tutorial describing the workflow of how to use `BiasCorrector` in order to correct measurement bias in DNA methylation data is available on youtube: [https://youtu.be/xOf8uDbUrms](https://youtu.be/xOf8uDbUrms)
+
+# Demo Version
+
+A demo version of `BiasCorrector` is available at [https://biascorrector.diz.uk-erlangen.de/](https://biascorrector.diz.uk-erlangen.de/)
 
 # More Infos:
 
