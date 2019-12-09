@@ -184,7 +184,7 @@ module_settings_ui <- function(id) {
                radioButtons(
                  ns("settings_selection_method"),
                  label = paste0(
-                   "Method to automatically (pre-) select ",
+                   "Criterion to automatically (pre-) select ",
                    "the regression method for correction"),
                  choices = list(
                    "Sum of squared errors (SSE)" = "SSE",
@@ -233,7 +233,7 @@ module_settings_ui <- function(id) {
                  numericInput(
                    ns("settings_plot_height"),
                    label = "Plot height (unit: inch)",
-                   value = 5,
+                   value = 5.3,
                    min = 1,
                    max = 50,
                    step = 0.01
@@ -247,7 +247,7 @@ module_settings_ui <- function(id) {
                  numericInput(
                    ns("settings_plot_width"),
                    label = "Plot width (unit: inch)",
-                   value = 7.5,
+                   value = 6.2,
                    min = 1,
                    max = 50,
                    step = 0.01
@@ -260,15 +260,15 @@ module_settings_ui <- function(id) {
                  tags$hr(),
                  numericInput(
                    ns("settings_plot_textsize"),
-                   label = "Plot text size",
-                   value = 10,
+                   label = "Plot font size",
+                   value = 15.15,
                    min = 1,
                    max = 50,
                    step = 0.01
                  ),
                  helpText(
                    paste0(
-                     "The text size of the plots. ",
+                     "The font size of the plots. ",
                      "It is passed further to the 'size'-argument ",
                      "of ggplot2's 'element_text' function."
                    )
