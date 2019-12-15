@@ -54,19 +54,35 @@ usethis::use_package("processx", type = "Suggests")
 usethis::use_package("lintr", type = "Suggests")
 
 # dev packages
-devtools::install_github(repo = "kapsner/rBiasCorrection", ref = "v0.1.4", upgrade = "always")
+tag <- "master"
+devtools::install_github(repo = "kapsner/rBiasCorrection", ref = tag, upgrade = "always")
 usethis::use_dev_package("rBiasCorrection", type = "Imports")
 #usethis::use_dev_package("rBiasCorrection", type = "Imports")
 # https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
-desc::desc_set_remotes("github::kapsner/rBiasCorrection@v0.1.4", file = usethis::proj_get())
+desc::desc_set_remotes(paste0("github::kapsner/rBiasCorrection@", tag), file = usethis::proj_get())
 
 
 # gitignore
-usethis::use_git_ignore("*.Rproj")
-usethis::use_git_ignore(".Rproj.user")
-usethis::use_git_ignore(".Rhistory")
-# usethis::use_git_ignore("LICENSE.md")
-# usethis::use_git_ignore("DESCRIPTION")
+usethis::use_git_ignore("/*")
+usethis::use_git_ignore("/*/")
+usethis::use_git_ignore("*.log")
+usethis::use_git_ignore("!/.gitignore")
+usethis::use_git_ignore("!/.Rbuildignore")
+usethis::use_git_ignore("!/.gitlab-ci.yml")
+usethis::use_git_ignore("!/data-raw/")
+usethis::use_git_ignore("!/DESCRIPTION")
+usethis::use_git_ignore("!/inst/")
+usethis::use_git_ignore("!/LICENSE.md")
+usethis::use_git_ignore("!/man/")
+usethis::use_git_ignore("!NAMESPACE")
+usethis::use_git_ignore("!/R/")
+usethis::use_git_ignore("!/docker/")
+usethis::use_git_ignore("!/README.md")
+usethis::use_git_ignore("!/tests/")
+usethis::use_git_ignore("/.Rhistory")
+usethis::use_git_ignore("/*.Rproj")
+usethis::use_git_ignore("/.Rproj*")
+usethis::use_git_ignore("/.RData")
 
 # BiasCorrection(experimental = "../19_PCR-bias/data/example_data/type1/example_data_type1_experimentaldata.csv", calibration = "../19_PCR-bias/data/example_data/type1/example_data_type1_calibrationdata.csv", samplelocusname = "Test")
 # covr::package_coverage()
