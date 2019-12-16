@@ -12,6 +12,10 @@ if (dir.exists("../../00_pkg_src")) {
 test_that(
   desc = "test lints",
   code = {
+
+    # skip on covr
+    skip_on_covr()
+
     lintlist <- list(
       "R" = list(
         "app_omitnas_modal.R" = NULL,
@@ -47,9 +51,6 @@ test_that(
       for (fname in names(lintlist[[directory]])) {
         print(fname)
         #% print(list.files(prefix))
-
-        # skip on covr
-        skip_on_covr()
 
         lintr::expect_lint(
           file = paste0(

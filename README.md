@@ -40,14 +40,14 @@ BiasCorrector is the user friendly implementation of the algorithms described by
 
 - Then open your environment and install this R package:
 
-```
+```r
 install.packages("devtools")
 devtools::install_github("kapsner/BiasCorrector")
 ```
 
 - To start BiasCorrector, just run the following command in R. A browser tab should open displaying BiasCorrector. Alternatively you can type the URL "localhost:3838/" in your browser.
 
-```
+```r
 library(BiasCorrector)
 launch_app()
 ```

@@ -801,97 +801,118 @@ module_correctedplots_ui <- function(id) {
         9,
         box(
           title = "BiasCorrected Regression Plots",
-          column(
-            6,
-            h5(tags$b(
-              "Calibration data corrected with hyperbolic regression:")
+          fluidRow(
+            column(
+              6,
+              h5(tags$b(
+                "Calibration data corrected with hyperbolic regression:")
+              ),
+              imageOutput(ns("plots_corrected_h")),
+              tags$head(
+                tags$style(
+                  type = "text/css",
+                  paste0("#moduleCorrectedPlots-plots_corrected_h img ",
+                         "{max-height: 100%; max-width: 100%; width: auto}"))
+              )
             ),
-            imageOutput(ns("plots_corrected_h")),
-            tags$head(
-              tags$style(
-                type = "text/css",
-                paste0("#moduleCorrectedPlots-plots_corrected_h img ",
-                       "{max-height: 100%; max-width: 100%; width: auto}"))
-            ),
-            div(class = "row",
-                style = "text-align: center",
-                downloadButton(
-                  "moduleCorrectedPlots-download_plots_corrected_h",
-                  "Download Corrected Plot (hyperbolic correction)",
-                  style = paste0(
-                    "white-space: normal; ",
-                    "text-align:center; ",
-                    "padding: 9.5px 9.5px 9.5px 9.5px; ",
-                    "margin: 6px 10px 6px 10px;")))
+            column(
+              6,
+              h5(tags$b(
+                paste0("Calibration data corrected with cubic ",
+                       "polynomial regression:"))),
+              imageOutput(ns("plots_corrected_c")),
+              tags$head(
+                tags$style(
+                  type = "text/css",
+                  paste0("#moduleCorrectedPlots-plots_corrected_c img ",
+                         "{max-height: 100%; max-width: 100%; width: auto}")))
+            )
           ),
-          column(
-            6,
-            h5(tags$b(
-              "Calibration data corrected with cubic polynomial regression:")),
-            imageOutput(ns("plots_corrected_c")),
-            tags$head(
-              tags$style(
-                type = "text/css",
-                paste0("#moduleCorrectedPlots-plots_corrected_c img ",
-                       "{max-height: 100%; max-width: 100%; width: auto}"))),
-            div(class = "row",
-                style = "text-align: center",
-                downloadButton(
-                  "moduleCorrectedPlots-download_plots_corrected_c",
-                  "Download Corrected Plot (cubic correction)",
-                  style = paste0(
-                    "white-space: normal; ",
-                    "text-align:center; ",
-                    "padding: 9.5px 9.5px 9.5px 9.5px; ",
-                    "margin: 6px 10px 6px 10px;")))
+          fluidRow(
+            column(
+              6,
+              div(class = "row",
+                  style = "text-align: center",
+                  downloadButton(
+                    "moduleCorrectedPlots-download_plots_corrected_h",
+                    "Download Corrected Plot (hyperbolic correction)",
+                    style = paste0(
+                      "white-space: normal; ",
+                      "text-align:center; ",
+                      "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                      "margin: 6px 10px 6px 10px;")))
+            ),
+            column(
+              6,
+              div(class = "row",
+                  style = "text-align: center",
+                  downloadButton(
+                    "moduleCorrectedPlots-download_plots_corrected_c",
+                    "Download Corrected Plot (cubic correction)",
+                    style = paste0(
+                      "white-space: normal; ",
+                      "text-align:center; ",
+                      "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                      "margin: 6px 10px 6px 10px;")))
+            )
           ),
           width = 12
         ),
         box(
           title = "Efficiency of BiasCorrection",
-          column(
-            6,
-            h5(tags$b(
-              paste0("Theoretical efficiency of BiasCorrection ",
-                     "with hyperbolic regression:"))),
-            imageOutput(ns("plots_sse_corrected_h")),
-            tags$head(
-              tags$style(
-                type = "text/css",
-                paste0("#moduleCorrectedPlots-plots_sse_corrected_h img ",
-                       "{max-height: 100%; max-width: 100%; width: auto}"))),
-            div(class = "row",
-                style = "text-align: center",
-                downloadButton(
-                  "moduleCorrectedPlots-download_plot_sse_corrected_h",
-                  "Download Error Plot (hyperbolic correction)",
-                  style = paste0(
-                    "white-space: normal; ",
-                    "text-align:center; ",
-                    "padding: 9.5px 9.5px 9.5px 9.5px; ",
-                    "margin: 6px 10px 6px 10px;")))
+          fluidRow(
+            column(
+              6,
+              h5(tags$b(
+                paste0("Theoretical efficiency of BiasCorrection ",
+                       "with hyperbolic regression:"))),
+              imageOutput(ns("plots_sse_corrected_h")),
+              tags$head(
+                tags$style(
+                  type = "text/css",
+                  paste0("#moduleCorrectedPlots-plots_sse_corrected_h img ",
+                         "{max-height: 100%; max-width: 100%; width: auto}")))
+            ),
+            column(
+              6,
+              h5(tags$b(
+                paste0("Theoretical efficiency of BiasCorrection ",
+                       "with cubic polynomial regression:"))),
+              imageOutput(ns("plots_sse_corrected_c")),
+              tags$head(
+                tags$style(
+                  type = "text/css",
+                  paste0("#moduleCorrectedPlots-plots_sse_corrected_c img ",
+                         "{max-height: 100%; max-width: 100%; width: auto}")))
+            )
           ),
-          column(
-            6,
-            h5(tags$b(
-              paste0("Theoretical efficiency of BiasCorrection ",
-                     "with cubic polynomial regression:"))),
-            imageOutput(ns("plots_sse_corrected_c")),
-            tags$head(
-              tags$style(
-                type = "text/css",
-                paste0("#moduleCorrectedPlots-plots_sse_corrected_c img ",
-                       "{max-height: 100%; max-width: 100%; width: auto}"))),
-            div(class = "row",
-                style = "text-align: center",
-                downloadButton(
-                  "moduleCorrectedPlots-download_plot_sse_corrected_c",
-                  "Download Error Plot (cubic correction)",
-                  style = paste0(
-                    "white-space: normal; ",
-                    "text-align:center; ",
-                    "padding: 9.5px 9.5px 9.5px 9.5px; ",
-                    "margin: 6px 10px 6px 10px;")))
+          fluidRow(
+            column(
+              6,
+              div(class = "row",
+                  style = "text-align: center",
+                  downloadButton(
+                    "moduleCorrectedPlots-download_plot_sse_corrected_h",
+                    "Download Error Plot (hyperbolic correction)",
+                    style = paste0(
+                      "white-space: normal; ",
+                      "text-align:center; ",
+                      "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                      "margin: 6px 10px 6px 10px;")))
+            ),
+            column(
+              6,
+              div(class = "row",
+                  style = "text-align: center",
+                  downloadButton(
+                    "moduleCorrectedPlots-download_plot_sse_corrected_c",
+                    "Download Error Plot (cubic correction)",
+                    style = paste0(
+                      "white-space: normal; ",
+                      "text-align:center; ",
+                      "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                      "margin: 6px 10px 6px 10px;")))
+            )
           ),
           width = 12
         )

@@ -178,141 +178,133 @@ module_settings_ui <- function(id) {
   tagList(
     fluidRow(
       # type of data box
-      column(9,
-             box(
-               title = "Settings",
-               radioButtons(
-                 ns("settings_selection_method"),
-                 label = paste0(
-                   "Criterion to automatically (pre-) select ",
-                   "the regression method for correction"),
-                 choices = list(
-                   "Sum of squared errors (SSE)" = "SSE",
-                   "Relative Error" = "RelError"
-                 ),
-                 selected = "SSE"
-               ),
-               tags$hr(),
-               checkboxInput(
-                 ns("settings_minmax"),
-                 label = "Use 'min-max'-correction (default: off)",
-                 value = FALSE
-               ),
-               helpText(
-                 paste0(
-                   "[CAUTION: This is an experimental feature ",
-                   "and has neither been tested nor validated!]")
-               ),
-               width = 12
-             ),
-             box(
-               title = "Expert Settings",
-               h5(
-                 tags$b("It is recommended to not change these ",
-                        "settings unless you know exactly, what ",
-                        "you are doing!")
-               ),
-               tags$hr(),
-               numericInput(
-                 ns("settings_seed"),
-                 label = "Seed",
-                 value = 1234,
-                 min = 0,
-                 max = Inf,
-                 step = 1,
-                 width = "30%"
-               ),
-               helpText(
-                 paste0("The seed makes the calculation of the ",
-                        "unknowns of both, the hyperbolic and the ",
-                        "cubic regression equation reproducible.")
-               ),
-               tags$hr(),
-               column(
-                 4,
-                 numericInput(
-                   ns("settings_plot_height"),
-                   label = "Plot height (unit: inch)",
-                   value = 5.3,
-                   min = 1,
-                   max = 50,
-                   step = 0.01
-                 ),
-                 helpText(
-                   paste0("If you need a different resolution of ",
-                          "the resulting plots, you can set the ",
-                          "plot height (in inches) manually here.")
-                 ),
-                 tags$hr(),
-                 numericInput(
-                   ns("settings_plot_width"),
-                   label = "Plot width (unit: inch)",
-                   value = 6.2,
-                   min = 1,
-                   max = 50,
-                   step = 0.01
-                 ),
-                 helpText(
-                   paste0("If you need a different resolution of ",
-                          "the resulting plots, you can set the ",
-                          "plot width (in inches) manually here.")
-                 ),
-                 tags$hr(),
-                 numericInput(
-                   ns("settings_plot_textsize"),
-                   label = "Plot font size",
-                   value = 15.15,
-                   min = 1,
-                   max = 50,
-                   step = 0.01
-                 ),
-                 helpText(
-                   paste0(
-                     "The font size of the plots. ",
-                     "It is passed further to the 'size'-argument ",
-                     "of ggplot2's 'element_text' function."
-                   )
-                 )
-               ),
-               column(
-                 8,
-                 imageOutput(ns("settings_exampleplot")),
-                 tags$head(
-                   tags$style(
-                     type = "text/css",
-                     paste0(
-                       "#moduleSettings-settings_exampleplot img ",
-                       "{max-height: 100%; max-width: 100%; width: auto}"))
-                 ),
-                 div(class = "row",
-                     style = "text-align: center",
-                     downloadButton(
-                       "moduleSettings-settings_download_exampleplot",
-                       "Download Example Plot",
-                       style = paste0(
-                         "white-space: normal; ",
-                         "text-align:center; ",
-                         "padding: 9.5px 9.5px 9.5px 9.5px; ",
-                         "margin: 6px 10px 6px 10px;")))
-               ),
-               column(12,
-                      tags$hr(),
-                      helpText(
-                        paste0("Please note, that the decimal separator ",
-                               "of the numeric input fields depends ",
-                               "on your operating system's and/or browser's ",
-                               "language settings. It can be a comma (',') ",
-                               "or a period ('.').")
-                      )
-               ),
-               width = 12
-             )
+      box(
+        title = "Settings",
+        radioButtons(
+          ns("settings_selection_method"),
+          label = paste0(
+            "Criterion to automatically (pre-) select ",
+            "the regression method for correction"),
+          choices = list(
+            "Sum of squared errors (SSE)" = "SSE",
+            "Relative Error" = "RelError"
+          ),
+          selected = "SSE"
+        ),
+        tags$hr(),
+        checkboxInput(
+          ns("settings_minmax"),
+          label = "Use 'min-max'-correction (default: off)",
+          value = FALSE
+        ),
+        helpText(
+          paste0(
+            "[CAUTION: This is an experimental feature ",
+            "and has neither been tested nor validated!]")
+        ),
+        width = 12
       ),
-      column(3,
-             box(
-               title = "Description",
-               width = 12
-             )
+      box(
+        title = "Expert Settings",
+        h5(
+          tags$b("It is recommended to not change these ",
+                 "settings unless you know exactly, what ",
+                 "you are doing!")
+        ),
+        tags$hr(),
+        numericInput(
+          ns("settings_seed"),
+          label = "Seed",
+          value = 1234,
+          min = 0,
+          max = Inf,
+          step = 1,
+          width = "30%"
+        ),
+        helpText(
+          paste0("The seed makes the calculation of the ",
+                 "unknowns of both, the hyperbolic and the ",
+                 "cubic regression equation reproducible.")
+        ),
+        tags$hr(),
+        column(
+          4,
+          numericInput(
+            ns("settings_plot_height"),
+            label = "Plot height (unit: inch)",
+            value = 5.3,
+            min = 1,
+            max = 50,
+            step = 0.01
+          ),
+          helpText(
+            paste0("If you need a different resolution of ",
+                   "the resulting plots, you can set the ",
+                   "plot height (in inches) manually here.")
+          ),
+          tags$hr(),
+          numericInput(
+            ns("settings_plot_width"),
+            label = "Plot width (unit: inch)",
+            value = 6.2,
+            min = 1,
+            max = 50,
+            step = 0.01
+          ),
+          helpText(
+            paste0("If you need a different resolution of ",
+                   "the resulting plots, you can set the ",
+                   "plot width (in inches) manually here.")
+          ),
+          tags$hr(),
+          numericInput(
+            ns("settings_plot_textsize"),
+            label = "Plot font size",
+            value = 15.15,
+            min = 1,
+            max = 50,
+            step = 0.01
+          ),
+          helpText(
+            paste0(
+              "The font size of the plots. ",
+              "It is passed further to the 'size'-argument ",
+              "of ggplot2's 'element_text' function."
+            )
+          )
+        ),
+        column(
+          8,
+          imageOutput(ns("settings_exampleplot")),
+          tags$head(
+            tags$style(
+              type = "text/css",
+              paste0(
+                "#moduleSettings-settings_exampleplot img ",
+                "{max-height: 100%; max-width: 100%; width: auto}"))
+          ),
+          div(class = "row",
+              style = "text-align: center",
+              downloadButton(
+                "moduleSettings-settings_download_exampleplot",
+                "Download Example Plot",
+                style = paste0(
+                  "white-space: normal; ",
+                  "text-align:center; ",
+                  "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                  "margin: 6px 10px 6px 10px;")))
+        ),
+        column(12,
+               tags$hr(),
+               helpText(
+                 paste0("Please note, that the decimal separator ",
+                        "of the numeric input fields is depending ",
+                        "on your operating system's and/or your browser's ",
+                        "language settings. It can be a comma (',') ",
+                        "or a period ('.').")
+               )
+        ),
+        width = 12
       )
     )
   )
