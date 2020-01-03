@@ -16,7 +16,7 @@ LazyData: true
 URL: https://github.com/kapsner/BiasCorrector
 BugReports: https://github.com/kapsner/BiasCorrector/issues
 Encoding: UTF-8
-Date: 2019-12-16
+Date: 2020-01-03
 Depends: 
     R (>= 2.10)
 Imports: 
@@ -33,4 +33,4 @@ Suggests:
     lintr
 Remotes: 
     github::kapsner/rBiasCorrection@v0.1.5
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
