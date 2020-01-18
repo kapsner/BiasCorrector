@@ -7,29 +7,6 @@
 
 BiasCorrector is the user friendly implementation of the algorithms described by Moskalev et. al in their research article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press* (DOI: [https://doi.org/10.1093/nar/gkr213](https://doi.org/10.1093/nar/gkr213)).  
 
-## Citation:  
-```
-@article{10.1093/nar/gkr213,
-    author = {Moskalev, Evgeny A. and Zavgorodnij, Mikhail G. and Majorova, Svetlana P. and Vorobjev, Ivan A. and Jandaghi, Pouria and Bure, Irina V. and Hoheisel, Jörg D.},
-    title = "{Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression}",
-    journal = {Nucleic Acids Research},
-    volume = {39},
-    number = {11},
-    pages = {e77-e77},
-    year = {2011},
-    month = {04},
-    issn = {0305-1048},
-    doi = {10.1093/nar/gkr213},
-    url = {https://dx.doi.org/10.1093/nar/gkr213},
-    eprint = {http://oup.prod.sis.lan/nar/article-pdf/39/11/e77/16775711/gkr213.pdf},
-}
-```
-
-## rBiasCorrection
-
-`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurement biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.  
-`rBiasCorrection` is available at [https://github.com/kapsner/rBiasCorrection](https://github.com/kapsner/rBiasCorrection)
-
 # Installation  
 
 ## Using R 
@@ -85,21 +62,44 @@ cd BiasCorrector/docker/
 docker-compose -f docker-compose.remote.yml up -d
 ```
 
-Type the URL "localhost:3838/" in your browser and start working with `BiasCorrector`.
+Type the URL "localhost:3838/" in your browser and start working with `BiasCorrector`. 
+
+## rBiasCorrection
+
+`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurement biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.  
+`rBiasCorrection` is available at [https://github.com/kapsner/rBiasCorrection](https://github.com/kapsner/rBiasCorrection). 
 
 # Video Tutorial 
 
-A video tutorial describing the workflow of how to use `BiasCorrector` in order to correct measurement bias in DNA methylation data is available on youtube: [https://youtu.be/xOf8uDbUrms](https://youtu.be/xOf8uDbUrms)
+A video tutorial describing the workflow of how to use `BiasCorrector` in order to correct measurement bias in DNA methylation data is available [on youtube](https://youtu.be/xOf8uDbUrms). 
 
 # Demo Version
 
-A demo version of `BiasCorrector` is available at [https://biascorrector.diz.uk-erlangen.de/](https://biascorrector.diz.uk-erlangen.de/)
+A demo version of `BiasCorrector` is available [here](https://biascorrector.diz.uk-erlangen.de/).
 
 # Frequently Asked Questions 
 
 FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
 
-# More Infos:
+# Citation  
+```
+@article{10.1093/nar/gkr213,
+    author = {Moskalev, Evgeny A. and Zavgorodnij, Mikhail G. and Majorova, Svetlana P. and Vorobjev, Ivan A. and Jandaghi, Pouria and Bure, Irina V. and Hoheisel, Jörg D.},
+    title = "{Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression}",
+    journal = {Nucleic Acids Research},
+    volume = {39},
+    number = {11},
+    pages = {e77-e77},
+    year = {2011},
+    month = {04},
+    issn = {0305-1048},
+    doi = {10.1093/nar/gkr213},
+    url = {https://dx.doi.org/10.1093/nar/gkr213},
+    eprint = {http://oup.prod.sis.lan/nar/article-pdf/39/11/e77/16775711/gkr213.pdf},
+}
+```
+
+# More Infos
 
 - Original work by Moskalev et al.: https://doi.org/10.1093/nar/gkr213
 - about RStudio: https://www.rstudio.com/products/rstudio/
