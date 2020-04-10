@@ -10,6 +10,7 @@ default:
   before_script:
     - echo "options('repos' = 'https://ftp.fau.de/cran/')" >> /etc/R/Rprofile.site
     - mkdir -p ci
+    - apt-get update && apt-get install -y --no-install-recommends libssl-dev libcurl4-gnutls-dev libxml2-dev
     - R -q -e "install.packages('devtools')"
 
 stages:
