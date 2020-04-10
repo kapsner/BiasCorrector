@@ -18,6 +18,8 @@
 !/README.md
 !/tests/
 /.Rhistory
-/*.Rproj
+!/*.Rproj
 /.Rproj*
 /.RData
+/.vscode
+!/.lintr

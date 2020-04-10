@@ -4,3 +4,5 @@
 ^LICENSE\.md$
 ^docker$
 ^\.gitlab-ci\.yml$
+^\.lintr$
+^\.vscode$
