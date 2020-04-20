@@ -62,6 +62,15 @@ module_info_ui <- function(id) {
             verbatimTextOutput(ns("citation_correction")),
             h5(tags$b("BiasCorrector:")),
             verbatimTextOutput(ns("citation_corrector"))
+          ),
+          tabPanel(
+            title = "Version",
+            h5(paste0("rBiasCorrection: ",
+                      utils::packageVersion("rBiasCorrection")
+            )),
+            h5(paste0("BiasCorrector: ",
+                      utils::packageVersion("BiasCorrector")
+            ))
           )
         ),
         width = 12

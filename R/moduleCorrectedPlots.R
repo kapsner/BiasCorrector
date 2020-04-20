@@ -40,9 +40,9 @@ module_correctedplots_server <- function(input,
             detail = "... using hyperbolic regression parameters ...")
           # hyperbolic correction
           rv$choices_list <- rv$reg_stats[, c("Name"), with = F
-                                          ][
-                                            , ("better_model") := 0
-                                            ]
+          ][
+            , ("better_model") := 0
+          ]
           # correct calibration data (to show corrected calibration curves)
           solved_eq_h <- rBiasCorrection::solving_equations(
             datatable = rv$fileimport_calibration,
@@ -125,9 +125,9 @@ module_correctedplots_server <- function(input,
             detail = "... using cubic regression parameters ...")
           # cubic correction
           rv$choices_list <- rv$reg_stats[, c("Name"), with = F
-                                          ][
-                                            , ("better_model") := 1
-                                            ]
+          ][
+            , ("better_model") := 1
+          ]
           # correct calibration data (to show corrected calibration curves)
           solved_eq_c <- rBiasCorrection::solving_equations(
             datatable = rv$fileimport_calibration,
@@ -220,7 +220,7 @@ module_correctedplots_server <- function(input,
                     get("Name") == i, as.integer(
                       as.character(get("better_model"))
                     )]
-                  ]
+                ]
               }
 
               rBiasCorrection::createbarerrorplots(
@@ -286,7 +286,7 @@ module_correctedplots_server <- function(input,
                     get("Name") == i, as.integer(
                       as.character(get("better_model"))
                     )]
-                  ]
+                ]
               }
 
               rBiasCorrection::createbarerrorplots(
@@ -804,28 +804,40 @@ module_correctedplots_ui <- function(id) {
           fluidRow(
             column(
               6,
-              h5(tags$b(
-                "Calibration data corrected with hyperbolic regression:")
-              ),
+              div(class = "row",
+                  style = "text-align: center",
+                  h5(tags$b(
+                    "Calibration data corrected with hyperbolic regression:")
+                  )),
               imageOutput(ns("plots_corrected_h")),
               tags$head(
                 tags$style(
                   type = "text/css",
-                  paste0("#moduleCorrectedPlots-plots_corrected_h img ",
-                         "{max-height: 100%; max-width: 100%; width: auto}"))
+                  paste0(
+                    "#moduleCorrectedPlots-plots_corrected_h img ",
+                    "{max-height: 100%; max-width: 100%; width: auto; ",
+                    "display: block; margin-left: auto; margin-right: auto;}")
+                )
               )
             ),
             column(
               6,
-              h5(tags$b(
-                paste0("Calibration data corrected with cubic ",
-                       "polynomial regression:"))),
+              div(class = "row",
+                  style = "text-align: center",
+                  h5(tags$b(
+                    paste0("Calibration data corrected with cubic ",
+                           "polynomial regression:")))
+              ),
               imageOutput(ns("plots_corrected_c")),
               tags$head(
                 tags$style(
                   type = "text/css",
-                  paste0("#moduleCorrectedPlots-plots_corrected_c img ",
-                         "{max-height: 100%; max-width: 100%; width: auto}")))
+                  paste0(
+                    "#moduleCorrectedPlots-plots_corrected_c img ",
+                    "{max-height: 100%; max-width: 100%; width: auto; ",
+                    "display: block; margin-left: auto; margin-right: auto;}")
+                )
+              )
             )
           ),
           fluidRow(
@@ -863,27 +875,41 @@ module_correctedplots_ui <- function(id) {
           fluidRow(
             column(
               6,
-              h5(tags$b(
-                paste0("Theoretical efficiency of BiasCorrection ",
-                       "with hyperbolic regression:"))),
+              div(class = "row",
+                  style = "text-align: center",
+                  h5(tags$b(
+                    paste0("Theoretical efficiency of BiasCorrection ",
+                           "with hyperbolic regression:")))
+              ),
               imageOutput(ns("plots_sse_corrected_h")),
               tags$head(
                 tags$style(
                   type = "text/css",
-                  paste0("#moduleCorrectedPlots-plots_sse_corrected_h img ",
-                         "{max-height: 100%; max-width: 100%; width: auto}")))
+                  paste0(
+                    "#moduleCorrectedPlots-plots_sse_corrected_h img ",
+                    "{max-height: 100%; max-width: 100%; width: auto; ",
+                    "display: block; margin-left: auto; margin-right: auto;}")
+                )
+              )
             ),
             column(
               6,
-              h5(tags$b(
-                paste0("Theoretical efficiency of BiasCorrection ",
-                       "with cubic polynomial regression:"))),
+              div(class = "row",
+                  style = "text-align: center",
+                  h5(tags$b(
+                    paste0("Theoretical efficiency of BiasCorrection ",
+                           "with cubic polynomial regression:")))
+              ),
               imageOutput(ns("plots_sse_corrected_c")),
               tags$head(
                 tags$style(
                   type = "text/css",
-                  paste0("#moduleCorrectedPlots-plots_sse_corrected_c img ",
-                         "{max-height: 100%; max-width: 100%; width: auto}")))
+                  paste0(
+                    "#moduleCorrectedPlots-plots_sse_corrected_c img ",
+                    "{max-height: 100%; max-width: 100%; width: auto; ",
+                    "display: block; margin-left: auto; margin-right: auto;}")
+                )
+              )
             )
           ),
           fluidRow(

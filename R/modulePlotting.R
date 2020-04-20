@@ -370,8 +370,12 @@ module_plotting_ui <- function(id) {
           tags$head(
             tags$style(
               type = "text/css",
-              paste0("#modulePlotting-plots img ",
-                     "{max-height: 100%; max-width: 100%; width: auto}"))),
+              paste0(
+                "#modulePlotting-plots img ",
+                     "{max-height: 100%; max-width: 100%; width: auto; ",
+                     "display: block; margin-left: auto; margin-right: auto;}")
+              )
+          ),
           width = 12
         )
       ),
