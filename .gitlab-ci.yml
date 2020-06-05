@@ -1,8 +1,8 @@
 variables:
   _R_CHECK_CRAN_INCOMING_: "false"
   _R_CHECK_FORCE_SUGGESTS_: "true"
-  CI_IMAGE_NAME: "rocker/r-ubuntu"
-  CI_IMAGE_TAG: "20.04"
+  CI_IMAGE_NAME: "rocker/verse"
+  CI_IMAGE_TAG: "4.0.0"
   R_PKG_NAME: "rBiasCorrection"
 
 default:
@@ -10,8 +10,6 @@ default:
   before_script:
     - echo "options('repos' = 'https://cloud.r-project.org/')" >> /etc/R/Rprofile.site
     - mkdir -p ci
-    - apt-get update && apt-get install -y --no-install-recommends libssl-dev libcurl4-gnutls-dev libxml2-dev
-    - R -q -e "install.packages('devtools')"
 
 stages:
   - build
