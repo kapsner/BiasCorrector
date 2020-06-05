@@ -23,3 +23,5 @@
 /.RData
 /.vscode
 !/.lintr
+!/.github/
+!/tic.R

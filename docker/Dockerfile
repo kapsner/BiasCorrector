@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/rocker/shiny/
-FROM rocker/shiny-verse
+FROM rocker/shiny-verse:4.0.0
 
 # install necessary system dependencies for r packages (e.g. devtools, RPostgres)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git
 
 # set cran repo
-RUN echo "options('repos' = 'https://ftp.fau.de/cran/')" >> /usr/local/lib/R/etc/Rprofile.site
+RUN echo "options('repos' = 'https://cloud.r-project.org/')" >> /usr/local/lib/R/etc/Rprofile.site
 
 ARG p_base="devtools"
 

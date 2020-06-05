@@ -15,7 +15,7 @@ my_desc$set_authors(c(
 # Remove some author fields
 my_desc$del("Maintainer")
 # Set the version
-my_desc$set_version("0.0.6.9002")
+my_desc$set_version("0.0.6.9003")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
@@ -62,6 +62,8 @@ desc::desc_set_remotes(paste0("github::kapsner/rBiasCorrection@", tag), file = u
 # buildignore
 usethis::use_build_ignore(".lintr")
 usethis::use_build_ignore(".vscode")
+usethis::use_build_ignore("tic.R")
+usethis::use_build_ignore(".github")
 
 # gitignore
 usethis::use_git_ignore("/*")
@@ -86,6 +88,8 @@ usethis::use_git_ignore("/.Rproj*")
 usethis::use_git_ignore("/.RData")
 usethis::use_git_ignore("/.vscode")
 usethis::use_git_ignore("!/.lintr")
+usethis::use_git_ignore("!/.github/")
+usethis::use_git_ignore("!/tic.R")
 
 # BiasCorrection(experimental = "../19_PCR-bias/data/example_data/type1/example_data_type1_experimentaldata.csv", calibration = "../19_PCR-bias/data/example_data/type1/example_data_type1_calibrationdata.csv", samplelocusname = "Test")
 # covr::package_coverage()
