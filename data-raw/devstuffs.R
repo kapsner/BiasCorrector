@@ -15,7 +15,7 @@ my_desc$set_authors(c(
 # Remove some author fields
 my_desc$del("Maintainer")
 # Set the version
-my_desc$set_version("0.0.7")
+my_desc$set_version("0.0.7.9001")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
@@ -47,6 +47,7 @@ usethis::use_package("shinyjs", type = "Imports")
 usethis::use_package("shinydashboard", type = "Imports")
 usethis::use_package("magrittr", type = "Imports")
 usethis::use_package("DT", type = "Imports")
+usethis::use_package("rBiasCorrection", type = "Imports")
 
 # Suggests
 usethis::use_package("testthat", type = "Suggests")
