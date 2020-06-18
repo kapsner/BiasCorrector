@@ -69,6 +69,9 @@ shiny::shinyUI(shiny::tagList(
           "width: 230px;"
         ),
         shiny::HTML(paste0(
+          "Version:",
+          "<br/>rBiasCorrection: ", utils::packageVersion("rBiasCorrection"),
+          "<br/>BiasCorrector: ", utils::packageVersion("BiasCorrector"),
           "<br/><br/>\u00A9 Lorenz A. Kapsner<br/>"
         ))
       )
