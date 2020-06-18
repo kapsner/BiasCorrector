@@ -15,11 +15,11 @@ my_desc$set_authors(c(
 # Remove some author fields
 my_desc$del("Maintainer")
 # Set the version
-my_desc$set_version("0.0.6.9003")
+my_desc$set_version("0.0.7")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
-my_desc$set(Description = "BiasCorrector provides a GUI to correct measurement bias in DNA methylation analyses.")
+my_desc$set(Description = "A GUI to correct measurement bias in DNA methylation analyses.")
 # The description of your package
 my_desc$set("Date" = as.character(Sys.Date()))
 # The urls
@@ -54,7 +54,7 @@ usethis::use_package("processx", type = "Suggests")
 usethis::use_package("lintr", type = "Suggests")
 
 # dev packages
-tag <- "development"
+tag <- "v0.1.7"
 devtools::install_github(repo = "kapsner/rBiasCorrection", ref = tag, upgrade = "always")
 # https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
 desc::desc_set_remotes(paste0("github::kapsner/rBiasCorrection@", tag), file = usethis::proj_get())
