@@ -55,7 +55,7 @@ usethis::use_package("processx", type = "Suggests")
 usethis::use_package("lintr", type = "Suggests")
 
 # dev packages
-tag <- "development"
+tag <- "v0.2.0"
 devtools::install_github(repo = "kapsner/rBiasCorrection", ref = tag, upgrade = "always")
 # https://cran.r-project.org/web/packages/devtools/vignettes/dependencies.html
 desc::desc_set_remotes(paste0("github::kapsner/rBiasCorrection@", tag), file = usethis::proj_get())
@@ -95,3 +95,5 @@ usethis::use_git_ignore("!/tic.R")
 # BiasCorrection(experimental = "../19_PCR-bias/data/example_data/type1/example_data_type1_experimentaldata.csv", calibration = "../19_PCR-bias/data/example_data/type1/example_data_type1_calibrationdata.csv", samplelocusname = "Test")
 # covr::package_coverage()
 # lintr::lint_package()
+
+usethis::use_tidy_description()

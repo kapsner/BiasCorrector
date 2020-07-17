@@ -55,7 +55,7 @@ module_plotting_server <- function(input,
             plotlist_reg <- regression_results[["plot_list"]]
             rv$result_list <- regression_results[["result_list"]]
           },
-          value = 1/2,
+          value = 1 / 2,
           message = "Calculating calibration curves"
         )
 
@@ -85,7 +85,7 @@ module_plotting_server <- function(input,
             rBiasCorrection::write_log(message = "Finished plotting",
                                        logfilename = arguments$logfilename)
           },
-          value = 1/2,
+          value = 1 / 2,
           message = "Plotting calibration curves"
         )
 
@@ -117,7 +117,7 @@ module_plotting_server <- function(input,
               plotlist_reg <- regression_results[["plot_list"]]
               rv$result_list <- regression_results[["result_list"]]
             },
-            value = 1/2,
+            value = 1 / 2,
             message = "Calculating calibration curves",
             detail = b
           )
@@ -146,7 +146,7 @@ module_plotting_server <- function(input,
               rv$result_list_type2[[b]] <- rv$result_list
               a <- a + 1
             },
-            value = 1/2,
+            value = 1 / 2,
             message = "Plotting calibration curves",
             detail = b
           )
