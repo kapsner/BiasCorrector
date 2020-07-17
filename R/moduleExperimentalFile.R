@@ -38,6 +38,7 @@ module_experimentalfile_server <- function(input,
       }
     },
     handlerExpr = {
+
       rBiasCorrection::write_log(
         message = paste0("(app) Entered observeEvent after fileimport ",
                          "of experimental file"),
@@ -49,7 +50,8 @@ module_experimentalfile_server <- function(input,
           DT::datatable(rv$fileimport_experimental,
                         options = list(scrollX = TRUE,
                                        pageLength = 20,
-                                       dom = "ltip"),
+                                       dom = "ltip",
+                                       rowCallback = DT::JS(rv$row_callback)),
                         rownames = F) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_experimental)),
                             digits = 3)
@@ -70,29 +72,30 @@ module_experimentalfile_server <- function(input,
                                      logfilename = arguments$logfilename)
           message
         })
+
+        # aggregated data
+        output$experimental_data_aggregated <- DT::renderDataTable({
+          DT::datatable(rv$aggregated_experimental,
+                        options = list(scrollX = TRUE,
+                                       pageLength = 20,
+                                       dom = "ltip",
+                                       rowCallback = DT::JS(rv$row_callback)),
+                        rownames = F) %>%
+            DT::formatRound(columns = c(3:ncol(rv$aggregated_experimental)),
+                            digits = 3)
+        })
+
         # if type 2 data
       } else if (rv$type_locus_sample == "2") {
         output$experimental_data <- DT::renderDataTable({
           # https://stackoverflow.com/questions/58526047/customizing-how-
           # datatables-displays-missing-values-in-shiny
-          row_callback <- c(
-            "function(row, data) {",
-            "  for(var i=0; i<data.length; i++) {",
-            "    if(data[i] === null) {",
-            "      $('td:eq('+i+')', row).html('NA')",
-            "        .css({",
-            "'color': 'rgb(151,151,151)',",
-            "'font-style': 'italic'});",
-            "    }",
-            "  }",
-            "}"
-          )
 
           DT::datatable(rv$fileimport_experimental,
                         options = list(scrollX = TRUE,
                                        pageLength = 20,
                                        dom = "ltip",
-                                       rowCallback = DT::JS(row_callback)),
+                                       rowCallback = DT::JS(rv$row_callback)),
                         rownames = F) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_experimental)),
                             digits = 3)
@@ -125,6 +128,18 @@ module_experimentalfile_server <- function(input,
         },
         contentType = "text/csv"
       )
+
+      # Download aggregated experimental data
+      output$download_experimental_aggr <- downloadHandler(
+        filename = function() {
+          paste0("aggregated_experimental_data.csv")
+        },
+        content = function(file) {
+          rBiasCorrection::write_csv(table = rv$aggregated_experimental,
+                                     filename = file)
+        },
+        contentType = "text/csv"
+      )
     }
   )
 }
@@ -144,8 +159,16 @@ module_experimentalfile_ui <- function(id) {
       column(
         9,
         box(
-          title = "Experimental Data",
-          DT::dataTableOutput(ns("experimental_data")),
+          tabsetPanel(
+            tabPanel(
+              "Experimental Data",
+              DT::dataTableOutput(ns("experimental_data"))
+            ),
+            tabPanel(
+              "Aggregated Experimental Data",
+              DT::dataTableOutput(ns("experimental_data_aggregated"))
+            )
+          ),
           width = 12
         )
       ),
@@ -163,6 +186,18 @@ module_experimentalfile_ui <- function(id) {
                 downloadButton(
                   ns("download_experimental"),
                   "Download experimental file",
+                  style = paste0(
+                    "white-space: normal; ",
+                    "text-align:center; ",
+                    "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                    "margin: 6px 10px 6px 10px;")
+                )),
+            tags$hr(),
+            div(class = "row",
+                style = "text-align: center",
+                downloadButton(
+                  ns("download_experimental_aggr"),
+                  "Download aggregated experimental file",
                   style = paste0(
                     "white-space: normal; ",
                     "text-align:center; ",

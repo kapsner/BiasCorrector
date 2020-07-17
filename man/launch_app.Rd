@@ -9,7 +9,8 @@ launch_app(
   plotdir = "plots",
   csvdir = "csv",
   logfilename = "biascorrector.log",
-  maxfilesize = 100
+  maxfilesize = 100,
+  parallel = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ being created inside tempdir.}
 
 \item{maxfilesize}{A positive integer. The maximum file size allowed
 for upload.}
+
+\item{parallel}{A boolean. If TRUE (default), initializing
+`future::plan("multiprocess")` before running the code.}
 }
 \value{
 BiasCorrector shiny application

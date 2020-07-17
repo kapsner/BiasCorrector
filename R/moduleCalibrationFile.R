@@ -67,26 +67,12 @@ module_calibrationfile_server <- function(input,
           DT::dataTableOutput("moduleCalibrationFile-dt1")
         })
         output$dt1 <- DT::renderDataTable({
-          # https://stackoverflow.com/questions/58526047/customizing-how-
-          # datatables-displays-missing-values-in-shiny
-          row_callback <- c(
-            "function(row, data) {",
-            "  for(var i=0; i<data.length; i++) {",
-            "    if(data[i] === null) {",
-            "      $('td:eq('+i+')', row).html('NA')",
-            "        .css({",
-            "'color': 'rgb(151,151,151)',",
-            "'font-style': 'italic'});",
-            "    }",
-            "  }",
-            "}"
-          )
 
           DT::datatable(rv$fileimport_calibration,
                         options = list(scrollX = TRUE,
                                        pageLength = 20,
                                        dom = "ltip",
-                                       rowCallback = DT::JS(row_callback)),
+                                       rowCallback = DT::JS(rv$row_callback)),
                         rownames = F) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_calibration)),
                             digits = 3)
@@ -107,13 +93,37 @@ module_calibrationfile_server <- function(input,
                                      logfilename = arguments$logfilename)
           message
         })
-        # Download experimental data
+
+        # aggregated data
+        output$calibration_data_aggregated <- DT::renderDataTable({
+          DT::datatable(rv$aggregated_calibration,
+                        options = list(scrollX = TRUE,
+                                       pageLength = 20,
+                                       dom = "ltip",
+                                       rowCallback = DT::JS(rv$row_callback)),
+                        rownames = F) %>%
+            DT::formatRound(columns = c(3:ncol(rv$aggregated_calibration)),
+                            digits = 3)
+        })
+
+        # Download calibration data
         output$download_calibration <- downloadHandler(
           filename = function() {
             paste0("raw_calibration_data.csv")
           },
           content = function(file) {
             rBiasCorrection::write_csv(rv$fileimport_calibration, file)
+          },
+          contentType = "text/csv"
+        )
+
+        # Download aggregated calibration data
+        output$download_calibration_aggr <- downloadHandler(
+          filename = function() {
+            paste0("aggregated_calibration_data.csv")
+          },
+          content = function(file) {
+            rBiasCorrection::write_csv(rv$aggregated_calibration, file)
           },
           contentType = "text/csv"
         )
@@ -228,7 +238,8 @@ module_calibrationfile_server <- function(input,
           DT::datatable(temp,
                         options = list(scrollX = TRUE,
                                        pageLength = 20,
-                                       dom = "ltip"),
+                                       dom = "ltip",
+                                       rowCallback = DT::JS(rv$row_callback)),
                         rownames = F) %>%
             DT::formatRound(columns = c(2:ncol(temp)), digits = 3)
         })
@@ -269,9 +280,17 @@ module_calibrationfile_ui <- function(id) {
       column(
         9,
         box(
-          title = "Calibration Data",
-          uiOutput(ns("calibration_data")),
-          uiOutput(ns("calibration_data2")),
+          tabsetPanel(
+            tabPanel(
+              "Calibration Data",
+              uiOutput(ns("calibration_data")),
+              uiOutput(ns("calibration_data2"))
+            ),
+            tabPanel(
+              "Aggregated Calibration Data",
+              DT::dataTableOutput(ns("calibration_data_aggregated"))
+            )
+          ),
           width = 12
         )
       ),
@@ -295,6 +314,17 @@ module_calibrationfile_ui <- function(id) {
                                    "padding: 9.5px 9.5px 9.5px 9.5px; ",
                                    "margin: 6px 10px 6px 10px;")
                   ))),
+            tags$hr(),
+            div(class = "row",
+                style = "text-align: center;",
+                downloadButton(ns("download_calibration_aggr"),
+                               "Download aggregated calibration file",
+                               style = paste0(
+                                 "white-space: normal; ",
+                                 "text-align:center; ",
+                                 "padding: 9.5px 9.5px 9.5px 9.5px; ",
+                                 "margin: 6px 10px 6px 10px;")
+                )),
             tags$hr(),
             width = 12
         )

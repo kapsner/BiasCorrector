@@ -66,6 +66,20 @@ module_fileupload_server <- function(input,
     rv$fileimport_calibration <- waround_ca
     rv$vec_cal <- rBiasCorrection::example.data_calibration[["vec_cal"]]
 
+    # calculate aggregated inputs
+    rv$aggregated_experimental <- rBiasCorrection::aggregated_input(
+      datatable = rv$fileimport_experimental,
+      description = "experimental",
+      vec_cal = rv$vec_cal,
+      type = 1
+    )
+
+    rv$aggregated_calibration <- rBiasCorrection::aggregated_input(
+      datatable = rv$fileimport_calibration,
+      description = "calibration",
+      vec_cal = rv$vec_cal
+    )
+
     # set upload flag
     rv$type1cal_uploaded <- TRUE
   })
@@ -299,6 +313,20 @@ module_fileupload_server <- function(input,
               #% }, error = function(e) {
               #%   print(e)
               #% })
+
+              # calculate aggregated inputs
+              rv$aggregated_experimental <- rBiasCorrection::aggregated_input(
+                datatable = rv$fileimport_experimental,
+                description = "experimental",
+                vec_cal = rv$vec_cal,
+                type = 1
+              )
+
+              rv$aggregated_calibration <- rBiasCorrection::aggregated_input(
+                datatable = rv$fileimport_calibration,
+                description = "calibration",
+                vec_cal = rv$vec_cal
+              )
 
               rv$type1cal_uploaded <- TRUE
             }

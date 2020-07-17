@@ -41,41 +41,54 @@ module_plotting_server <- function(input,
     # type 1 data:
     if (rv$type_locus_sample == "1") {
       if (isFALSE(rv$plotting_finished)) {
-        regression_results <- rBiasCorrection::regression_utility(
-          data = rv$fileimport_calibration,
-          samplelocusname = rv$sample_locus_name,
-          rv = rv,
-          logfilename = arguments$logfilename,
-          minmax = rv$minmax,
-          seed = rv$seed
+        withProgress(
+          expr  = {
+            regression_results <- rBiasCorrection::regression_utility(
+              data = rv$fileimport_calibration,
+              samplelocusname = rv$sample_locus_name,
+              rv = rv,
+              logfilename = arguments$logfilename,
+              minmax = rv$minmax,
+              seed = rv$seed
+            )
+
+            plotlist_reg <- regression_results[["plot_list"]]
+            rv$result_list <- regression_results[["result_list"]]
+          },
+          value = 1/2,
+          message = "Calculating calibration curves"
         )
 
-        plotlist_reg <- regression_results[["plot_list"]]
-        rv$result_list <- regression_results[["result_list"]]
+        withProgress(
+          expr  = {
+            rBiasCorrection::plotting_utility(
+              data = rv$fileimport_calibration,
+              plotlist_reg = plotlist_reg,
+              type = 1,
+              samplelocusname = rv$sample_locus_name,
+              rv = rv,
+              plotdir = arguments$plotdir,
+              logfilename = arguments$logfilename,
+              minmax = rv$minmax,
+              plot_height = rv$plot_height,
+              plot_width = rv$plot_width,
+              plot_textsize = rv$plot_textsize
+            )
 
-        rBiasCorrection::plotting_utility(
-          data = rv$fileimport_calibration,
-          plotlist_reg = plotlist_reg,
-          type = 1,
-          samplelocusname = rv$sample_locus_name,
-          rv = rv,
-          plotdir = arguments$plotdir,
-          logfilename = arguments$logfilename,
-          minmax = rv$minmax,
-          plot_height = rv$plot_height,
-          plot_width = rv$plot_width,
-          plot_textsize = rv$plot_textsize
+            # save regression statistics to reactive value
+            rv$reg_stats <- rBiasCorrection::statistics_list(
+              resultlist = rv$result_list,
+              minmax = rv$minmax)
+
+            # on finished
+            rv$plotting_finished <- TRUE
+            rBiasCorrection::write_log(message = "Finished plotting",
+                                       logfilename = arguments$logfilename)
+          },
+          value = 1/2,
+          message = "Plotting calibration curves"
         )
 
-        # save regression statistics to reactive value
-        rv$reg_stats <- rBiasCorrection::statistics_list(
-          resultlist = rv$result_list,
-          minmax = rv$minmax)
-
-        # on finished
-        rv$plotting_finished <- TRUE
-        rBiasCorrection::write_log(message = "Finished plotting",
-                                   logfilename = arguments$logfilename)
       }
 
       # else if type 2 data
@@ -85,43 +98,58 @@ module_plotting_server <- function(input,
         rv$result_list_type2 <- list()
 
         for (b in names(rv$fileimport_calibration)) {
-          rv$vec_cal <- names(rv$fileimport_calibration[[a]])[-1]
-          #% print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
 
-          regression_results <- rBiasCorrection::regression_utility(
-            data = rv$fileimport_calibration[[a]],
-            samplelocusname = rv$sample_locus_name,
-            locus_id = gsub("[[:punct:]]", "", b),
-            rv = rv,
-            logfilename = arguments$logfilename,
-            minmax = rv$minmax,
-            seed = rv$seed
+          withProgress(
+            expr  = {
+              rv$vec_cal <- names(rv$fileimport_calibration[[a]])[-1]
+              #% print(paste("Length rv$vec_cal:", length(rv$vec_cal)))
+
+              regression_results <- rBiasCorrection::regression_utility(
+                data = rv$fileimport_calibration[[a]],
+                samplelocusname = rv$sample_locus_name,
+                locus_id = gsub("[[:punct:]]", "", b),
+                rv = rv,
+                logfilename = arguments$logfilename,
+                minmax = rv$minmax,
+                seed = rv$seed
+              )
+
+              plotlist_reg <- regression_results[["plot_list"]]
+              rv$result_list <- regression_results[["result_list"]]
+            },
+            value = 1/2,
+            message = "Calculating calibration curves",
+            detail = b
           )
 
-          plotlist_reg <- regression_results[["plot_list"]]
-          rv$result_list <- regression_results[["result_list"]]
+          withProgress(
+            expr  = {
+              rBiasCorrection::plotting_utility(
+                data = rv$fileimport_calibration[[a]],
+                plotlist_reg = plotlist_reg,
+                type = 2,
+                samplelocusname = rv$sample_locus_name,
+                locus_id = gsub("[[:punct:]]", "", b),
+                rv = rv,
+                plotdir = arguments$plotdir,
+                logfilename = arguments$logfilename,
+                minmax = rv$minmax,
+                plot_height = rv$plot_height,
+                plot_width = rv$plot_width,
+                plot_textsize = rv$plot_textsize
+              )
 
-          rBiasCorrection::plotting_utility(
-            data = rv$fileimport_calibration[[a]],
-            plotlist_reg = plotlist_reg,
-            type = 2,
-            samplelocusname = rv$sample_locus_name,
-            locus_id = gsub("[[:punct:]]", "", b),
-            rv = rv,
-            plotdir = arguments$plotdir,
-            logfilename = arguments$logfilename,
-            minmax = rv$minmax,
-            plot_height = rv$plot_height,
-            plot_width = rv$plot_width,
-            plot_textsize = rv$plot_textsize
+              # save regression statistics to reactive value
+              rv$reg_stats[[b]] <- rBiasCorrection::statistics_list(
+                resultlist = rv$result_list,
+                minmax = rv$minmax)
+              rv$result_list_type2[[b]] <- rv$result_list
+              a <- a + 1
+            },
+            value = 1/2,
+            message = "Plotting calibration curves",
+            detail = b
           )
-
-          # save regression statistics to reactive value
-          rv$reg_stats[[b]] <- rBiasCorrection::statistics_list(
-            resultlist = rv$result_list,
-            minmax = rv$minmax)
-          rv$result_list_type2[[b]] <- rv$result_list
-          a <- a + 1
         }
         # on finished
         rv$plotting_finished <- TRUE

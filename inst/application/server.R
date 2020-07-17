@@ -52,13 +52,28 @@ shiny::shinyServer(function(input, output, session) {
     fileimport_cal_corrected = NULL,
     reg_stats_corrected = NULL,
     result_list_type2_corrected = NULL,
-    minmax = FALSE # initial minmax-value
+    minmax = FALSE, # initial minmax-value
+    row_callback = c(
+      "function(row, data) {",
+      "  for(var i=0; i<data.length; i++) {",
+      "    if(data[i] === null) {",
+      "      $('td:eq('+i+')', row).html('NA')",
+      "        .css({",
+      "'color': 'rgb(151,151,151)',",
+      "'font-style': 'italic'});",
+      "    }",
+      "  }",
+      "}"
+    )
   )
 
   # run start function
-  rBiasCorrection::on_start(plotdir,
-                            csvdir,
-                            logfilename)
+  rBiasCorrection::on_start(
+    plotdir = plotdir,
+    csvdir = csvdir,
+    logfilename = logfilename,
+    parallel = parallel
+  )
 
   print(plotdir)
   print(csvdir)

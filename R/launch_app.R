@@ -26,6 +26,8 @@
 #'   is being created inside tempdir.
 #' @param csvdir A character string. Defaults to 'csv'. This directory is
 #'   being created inside tempdir.
+#' @param parallel A boolean. If TRUE (default), initializing
+#'   `future::plan("multiprocess")` before running the code.
 #'
 #' @return BiasCorrector shiny application
 #'
@@ -39,7 +41,8 @@ launch_app <- function(port = 3838,
                        plotdir = "plots",
                        csvdir = "csv",
                        logfilename = "biascorrector.log",
-                       maxfilesize = 100) {
+                       maxfilesize = 100,
+                       parallel = TRUE) {
   #" stopifnot(
   #"   is.numeric(maxfilesize),
   #"   maxfilesize > 0,
@@ -76,6 +79,9 @@ launch_app <- function(port = 3838,
   # maximum filesize in MB
   global_env_hack("maxfilesize",
                   maxfilesize,
+                  1L)
+  global_env_hack("parallel",
+                  parallel,
                   1L)
 
   # set shiny option here

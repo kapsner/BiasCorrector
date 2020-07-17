@@ -36,7 +36,7 @@ module_correctedplots_server <- function(input,
       if (rv$type_locus_sample == "1") {
         withProgress(message = "BiasCorrecting calibration data", value = 0, {
           incProgress(
-            1 / 1,
+            1 / 2,
             detail = "... using hyperbolic regression parameters ...")
           # hyperbolic correction
           rv$choices_list <- rv$reg_stats[, c("Name"), with = F
@@ -121,7 +121,7 @@ module_correctedplots_server <- function(input,
       if (rv$type_locus_sample == "1") {
         withProgress(message = "BiasCorrecting calibration data", value = 0, {
           incProgress(
-            1 / 1,
+            1 / 2,
             detail = "... using cubic regression parameters ...")
           # cubic correction
           rv$choices_list <- rv$reg_stats[, c("Name"), with = F
@@ -174,9 +174,9 @@ module_correctedplots_server <- function(input,
         if (isFALSE(rv$corrected_finished)) {
           # plot hyperbolic
           withProgress(
-            message = "Plotting BiasCorrected calibration plot", value = 0, {
+            message = "Plotting BiasCorrected calibration plots", value = 0, {
               incProgress(
-                1 / 1,
+                1 / 2,
                 detail = "... working hard on hyperbolic correction ...")
               # calculate new calibration curves from corrected calibration data
               regression_results <- rBiasCorrection::regression_utility(
@@ -239,10 +239,10 @@ module_correctedplots_server <- function(input,
 
           # plot cubic
           withProgress(
-            message = "Plotting BiasCorrected calibration plot",
+            message = "Plotting BiasCorrected calibration plots",
             value = 0, {
               incProgress(
-                1 / 1,
+                1 / 2,
                 detail = "... working hard on cubic correction ...")
               # calculate new calibration curves from corrected calibration data
               regression_results <- rBiasCorrection::regression_utility(
@@ -318,7 +318,7 @@ module_correctedplots_server <- function(input,
             message = "Plotting BiasCorrected results",
             value = 0, {
               incProgress(
-                1 / 1,
+                1 / 2,
                 detail = "... working hard ...")
               for (locus in names(rv$fileimport_cal_corrected)) {
                 rv$vec_cal <- names(rv$fileimport_cal_corrected[[a]])[-1]
