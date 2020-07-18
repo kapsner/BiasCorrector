@@ -174,20 +174,6 @@ module_results_server <- function(input,
       }
 
       output$dtfinal <- DT::renderDataTable({
-        # https://stackoverflow.com/questions/58526047/customizing-how-
-        # datatables-displays-missing-values-in-shiny
-        row_callback <- c(
-          "function(row, data) {",
-          "  for(var i=0; i<data.length; i++) {",
-          "    if(data[i] === null) {",
-          "      $('td:eq('+i+')', row).html('NA')",
-          "        .css({",
-          "'color': 'rgb(151,151,151)',",
-          "'font-style': 'italic'});",
-          "    }",
-          "  }",
-          "}"
-        )
 
         # https://stackoverflow.com/questions/49636423/how-to-change-the-
         # cell-color-of-a-cell-of-an-r-shiny-data-table-dependent-on-it
@@ -195,7 +181,7 @@ module_results_server <- function(input,
                       options = list(scrollX = TRUE,
                                      pageLength = 20,
                                      dom = "ltip",
-                                     rowCallback = DT::JS(row_callback)),
+                                     rowCallback = DT::JS(rv$row_callback)),
                       rownames = F) %>%
           DT::formatRound(columns = c(2:ncol(rv$final_results)),
                           digits = 3)
@@ -254,6 +240,12 @@ module_results_server <- function(input,
               "raw_experimental_data.csv")
           )
           rBiasCorrection::write_csv(
+            rv$aggregated_experimental,
+            paste0(
+              arguments$csvdir,
+              "aggregated_experimental_data.csv")
+          )
+          rBiasCorrection::write_csv(
             rv$final_results,
             paste0(
               arguments$csvdir,
@@ -293,6 +285,12 @@ module_results_server <- function(input,
               paste0(
                 arguments$csvdir,
                 "raw_calibration_data.csv")
+            )
+            rBiasCorrection::write_csv(
+              rv$aggregated_calibration,
+              paste0(
+                arguments$csvdir,
+                "aggregated_calibration_data.csv")
             )
             rBiasCorrection::write_csv(
               rv$reg_stats,

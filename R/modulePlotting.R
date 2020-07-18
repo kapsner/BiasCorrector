@@ -400,9 +400,9 @@ module_plotting_ui <- function(id) {
               type = "text/css",
               paste0(
                 "#modulePlotting-plots img ",
-                     "{max-height: 100%; max-width: 100%; width: auto; ",
-                     "display: block; margin-left: auto; margin-right: auto;}")
-              )
+                "{max-height: 100%; max-width: 100%; width: auto; ",
+                "display: block; margin-left: auto; margin-right: auto;}")
+            )
           ),
           width = 12
         )

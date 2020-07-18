@@ -281,7 +281,8 @@ module_settings_ui <- function(id) {
               type = "text/css",
               paste0(
                 "#moduleSettings-settings_exampleplot img ",
-                "{max-height: 100%; max-width: 100%; width: auto}"))
+                "{max-height: 100%; max-width: 100%; width: auto; ",
+                "display: block; margin-left: auto; margin-right: auto;}"))
           ),
           div(class = "row",
               style = "text-align: center",
