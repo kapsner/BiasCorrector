@@ -379,17 +379,19 @@ module_fileupload_server <- function(input,
             }
           }
 
+          # nolint start
           # chech type 2 file requirements here
-          filecheck <- rBiasCorrection::type2_filereq(
-            filelist = rv$fileimport_list,
-            rv = rv,
-            logfilename = arguments$logfilename)
-
-          if (is.character(filecheck)) {
-            open_modal(filecheck, rv)
-          } else if (isTRUE(filecheck)) {
-            rv$type2cal_uploaded <- TRUE
-          }
+          # filecheck <- rBiasCorrection::type2_filereq(
+          #   filelist = rv$fileimport_list,
+          #   rv = rv,
+          #   logfilename = arguments$logfilename)
+          #
+          # if (is.character(filecheck)) {
+          #   open_modal(filecheck, rv)
+          # } else if (isTRUE(filecheck)) {
+          #   rv$type2cal_uploaded <- TRUE
+          # }
+          # nolint end
         }
       }
     }
