@@ -19,6 +19,22 @@
 #'
 #' @inheritParams module_calibrationfile_server
 #'
+#' @return The function returns a shiny server module.
+#'
+#' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
+#'
+#' @examples
+#' \dontrun{
+#' rv <- list()
+#' logfilename <- paste0(tempdir(), "/log.txt")
+#' shiny::callModule(
+#'   module_info_server,
+#'   "moduleInfo",
+#'   rv = rv,
+#'   logfilename = logfilename
+#' )
+#' }
+#'
 #' @export
 #'
 # module_info_server
@@ -40,6 +56,22 @@ module_info_server <- function(input,
 #' @title module_info_ui
 #'
 #' @param id A character. The identifier of the shiny object
+#'
+#' @return The function returns a shiny ui module.
+#'
+#' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
+#'
+#' @examples
+#' \dontrun{
+#' shinydashboard::tabItems(
+#'   shinydashboard::tabItem(
+#'     tabName = "info",
+#'     module_info_ui(
+#'       "moduleInfo"
+#'     )
+#'   )
+#' )
+#' }
 #'
 #' @export
 #'

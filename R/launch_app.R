@@ -29,11 +29,16 @@
 #' @param parallel A boolean. If TRUE (default), initializing
 #'   `future::plan("multiprocess")` before running the code.
 #'
-#' @return BiasCorrector shiny application
+#' @return The function returns the BiasCorrector shiny application.
 #'
 #' @import shiny shinydashboard
 #' @importFrom magrittr "%>%"
 #' @importFrom data.table .N ":="
+#'
+#' @examples
+#' \dontrun{
+#' launch_app()
+#' }
 #'
 #' @export
 #'

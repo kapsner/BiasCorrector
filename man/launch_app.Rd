@@ -32,8 +32,14 @@ for upload.}
 `future::plan("multiprocess")` before running the code.}
 }
 \value{
-BiasCorrector shiny application
+The function returns the BiasCorrector shiny application.
 }
 \description{
 Launch BiasCorrector
+}
+\examples{
+\dontrun{
+launch_app()
+}
+
 }

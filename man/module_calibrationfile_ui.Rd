@@ -9,6 +9,25 @@ module_calibrationfile_ui(id)
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
 }
+\value{
+The function returns a shiny ui module.
+}
 \description{
 module_calibrationfile_ui
+}
+\examples{
+\dontrun{
+shinydashboard::tabItems(
+  shinydashboard::tabItem(
+    tabName = "calibration",
+    module_calibrationfile_ui(
+      "moduleCalibrationFile"
+    )
+  )
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

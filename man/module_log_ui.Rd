@@ -9,6 +9,25 @@ module_log_ui(id)
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
 }
+\value{
+The function returns a shiny ui module.
+}
 \description{
 module_log_ui
+}
+\examples{
+\dontrun{
+shinydashboard::tabItems(
+  shinydashboard::tabItem(
+    tabName = "log",
+    module_log_ui(
+      "moduleLog"
+    )
+  )
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

@@ -20,6 +20,25 @@ expression: input_re = reactive({input})}
 
 \item{...}{Further arguments, such as `logfilename`, `csvdir` and `plotdir`}
 }
+\value{
+The function returns a shiny server module.
+}
 \description{
 module_plotting_server
+}
+\examples{
+\dontrun{
+rv <- list()
+logfilename <- paste0(tempdir(), "/log.txt")
+shiny::callModule(
+  module_plotting_server,
+  "modulePlotting",
+  rv = rv,
+  logfilename = logfilename
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

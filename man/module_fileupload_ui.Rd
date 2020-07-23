@@ -11,6 +11,26 @@ module_fileupload_ui(id, ...)
 
 \item{...}{Further arguments, such as `maxfilesize`}
 }
+\value{
+The function returns a shiny ui module.
+}
 \description{
 module_fileupload_ui
+}
+\examples{
+\dontrun{
+shinydashboard::tabItems(
+  shinydashboard::tabItem(
+    tabName = "fileupload",
+    module_fileupload_ui(
+      "moduleFileUpload",
+      maxfilesize = maxfilesize
+    )
+  )
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

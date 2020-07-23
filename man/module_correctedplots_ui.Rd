@@ -9,6 +9,25 @@ module_correctedplots_ui(id)
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
 }
+\value{
+The function returns a shiny ui module.
+}
 \description{
 module_correctedplots_ui
+}
+\examples{
+\dontrun{
+shinydashboard::tabItems(
+  shinydashboard::tabItem(
+    tabName = "correctedplots",
+    module_correctedplots_ui(
+      "moduleCorrectedPlots"
+    )
+  )
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

@@ -18,6 +18,25 @@ module_statistics_server(input, output, session, rv, input_re)
 \item{input_re}{The Shiny server input object, wrapped into a reactive
 expression: input_re = reactive({input})}
 }
+\value{
+The function returns a shiny server module.
+}
 \description{
 module_statistics_server
+}
+\examples{
+\dontrun{
+rv <- list()
+logfilename <- paste0(tempdir(), "/log.txt")
+shiny::callModule(
+  module_statistics_server,
+  "moduleStatistics",
+  rv = rv,
+  logfilename = logfilename
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

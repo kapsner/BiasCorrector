@@ -9,6 +9,25 @@ module_plotting_ui(id)
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
 }
+\value{
+The function returns a shiny ui module.
+}
 \description{
 module_plotting_ui
+}
+\examples{
+\dontrun{
+shinydashboard::tabItems(
+  shinydashboard::tabItem(
+    tabName = "plotting",
+    module_plotting_ui(
+      "modulePlotting"
+    )
+  )
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

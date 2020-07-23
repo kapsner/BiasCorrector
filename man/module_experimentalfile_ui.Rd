@@ -9,6 +9,25 @@ module_experimentalfile_ui(id)
 \arguments{
 \item{id}{A character. The identifier of the shiny object}
 }
+\value{
+The function returns a shiny ui module.
+}
 \description{
 module_experimentalfile_ui
+}
+\examples{
+\dontrun{
+shinydashboard::tabItems(
+  shinydashboard::tabItem(
+    tabName = "experimental",
+    module_experimentalfile_ui(
+      "moduleExperimentalFile"
+    )
+  )
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

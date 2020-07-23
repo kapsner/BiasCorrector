@@ -17,6 +17,25 @@ module_experimentalfile_server(input, output, session, rv, ...)
 
 \item{...}{Further arguments, such as `logfilename`, `csvdir` and `plotdir`}
 }
+\value{
+The function returns a shiny server module.
+}
 \description{
 module_experimentalfile_server
+}
+\examples{
+\dontrun{
+rv <- list()
+logfilename <- paste0(tempdir(), "/log.txt")
+shiny::callModule(
+  module_experimentalfile_server,
+  "moduleExperimentalFile",
+  rv = rv,
+  logfilename = logfilename
+)
+}
+
+}
+\seealso{
+\url{https://shiny.rstudio.com/articles/modules.html}
 }

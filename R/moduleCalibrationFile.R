@@ -24,6 +24,22 @@
 #'   expression: input_re = reactive({input})
 #' @param ... Further arguments, such as `logfilename`, `csvdir` and `plotdir`
 #'
+#' @return The function returns a shiny server module.
+#'
+#' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
+#'
+#' @examples
+#' \dontrun{
+#' rv <- list()
+#' logfilename <- paste0(tempdir(), "/log.txt")
+#' shiny::callModule(
+#'   module_calibrationfile_server,
+#'   "moduleCalibrationFile",
+#'   rv = rv,
+#'   logfilename = logfilename
+#' )
+#' }
+#'
 #' @export
 #'
 # module_calibrationfile_server
@@ -269,6 +285,22 @@ module_calibrationfile_server <- function(input,
 #' @title module_calibrationfile_ui
 #'
 #' @param id A character. The identifier of the shiny object
+#'
+#' @return The function returns a shiny ui module.
+#'
+#' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
+#'
+#' @examples
+#' \dontrun{
+#' shinydashboard::tabItems(
+#'   shinydashboard::tabItem(
+#'     tabName = "calibration",
+#'     module_calibrationfile_ui(
+#'       "moduleCalibrationFile"
+#'     )
+#'   )
+#' )
+#' }
 #'
 #' @export
 #'
