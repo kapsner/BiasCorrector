@@ -51,7 +51,7 @@ module_results_server <- function(input,
     req(rv$calculate_results)
 
     if (rv$calculate_results) {
-      cat("\nCalculate results\n")
+      message("\nCalculate results\n")
 
       if (rv$type_locus_sample == "1") {
         rv$choices_list <- tryCatch(
@@ -79,16 +79,17 @@ module_results_server <- function(input,
             o
           },
           error = function(e) {
-            print(e)
+            e
             o <- rv$better_model_stats[, c("Name",
                                            "better_model"
             ), with = F]
+            o
           },
           finally = function(f) {
             return(o)
           }
         )
-        print(rv$choices_list)
+        message(rv$choices_list)
 
         # calculating final results
         withProgress(
@@ -240,12 +241,12 @@ module_results_server <- function(input,
           ".zip"
         ),
         content = function(fname) {
-          print(getwd())
+          message(paste0("getwd(): ", getwd()))
 
           # temporarily set tempdir as wd
           oldwd <- getwd()
           setwd(tempdir())
-          print(getwd())
+          message(paste0("getwd(): ", getwd()))
 
           # create files where is no difference in export
           # between type 1 and 2
@@ -373,17 +374,13 @@ module_results_server <- function(input,
             }
           }
 
-
-          print(list.files("./csv/"))
-          print(list.files("./plots/"))
-
           utils::zip(
             zipfile = fname,
             files = c(
               paste0("csv/",
-                     list.files("./csv/")),
+                     list.files(arguments$csvdir)),
               paste0("plots/",
-                     list.files("./plots/"))
+                     list.files(arguments$plotdir))
             ))
 
           if (file.exists(paste0(tempdir(), "/", fname, ".zip"))) {
@@ -392,7 +389,7 @@ module_results_server <- function(input,
 
           # return to old wd
           setwd(oldwd)
-          print(getwd())
+          message(paste0("getwd(): ", getwd()))
         },
         contentType = "application/zip"
       )

@@ -200,7 +200,7 @@ module_fileupload_server <- function(input,
             #% updateTabItems(session, "tabs", "panel_1")
           },
           error = function(e) {
-            print(e)
+            e
             # error handling fileimport
             open_modal("experimentalFile", rv)
           }
@@ -280,7 +280,7 @@ module_fileupload_server <- function(input,
               }
             },
             error = function(e) {
-              print(e)
+              e
               # error handling fileimport
               open_modal("calibrationFile", rv)
             }
@@ -302,7 +302,7 @@ module_fileupload_server <- function(input,
                 }
               },
               error = function(e) {
-                print(e)
+                e
                 # error handling fileimport
                 open_modal("calibrationFile", rv)
               }

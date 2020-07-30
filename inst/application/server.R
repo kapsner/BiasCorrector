@@ -75,9 +75,9 @@ shiny::shinyServer(function(input, output, session) {
     parallel = parallel
   )
 
-  print(plotdir)
-  print(csvdir)
-  print(tempdir)
+  message(paste0("plotdir: ", plotdir))
+  message(paste0("csvdir: ", csvdir))
+  message(paste0("tempdir: ", tempdir))
 
   # TODO original selection of data type (hard coded to type 1 data)
   rv$type_locus_sample <- 1
@@ -523,11 +523,12 @@ shiny::shinyServer(function(input, output, session) {
         )
       })
     }
-    shinydashboard::updateTabItems(session, "tabs", "panel_6")
 
     # reset reactive values
     rv$calculate_results <- TRUE
     rv$final_results <- NULL
+
+    shinydashboard::updateTabItems(session, "tabs", "panel_6")
   })
 
   ###### Calcluate Results
@@ -537,7 +538,8 @@ shiny::shinyServer(function(input, output, session) {
     rv = rv,
     input_re = input_reactive,
     logfilename = logfilename,
-    csvdir = csvdir
+    csvdir = csvdir,
+    plotdir = plotdir
   )
 
   ###### Logs

@@ -74,7 +74,7 @@ module_calibrationfile_server <- function(input,
             rv$omitnas <- NULL
           },
           error = function(e) {
-            print(e)
+            e
           }
         )
         output$calibration_data <- renderUI({
@@ -219,7 +219,7 @@ module_calibrationfile_server <- function(input,
         )
       )
     })
-    print(rv$choices_list)
+    message(rv$choices_list)
     # assign rv$fileimport_calibration
     filecheck <- type2_fileconfirm(rv$fileimport_list,
                                    rv$choices_list,

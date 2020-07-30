@@ -248,7 +248,7 @@ module_plotting_server <- function(input,
       observeEvent(
         eventExpr = input_re()$selectPlot,
         handlerExpr = {
-          print(input_re()$selectPlot)
+          message(input_re()$selectPlot)
         })
 
       # render plots from local temporary file

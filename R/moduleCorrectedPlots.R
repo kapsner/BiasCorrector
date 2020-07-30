@@ -83,7 +83,7 @@ module_correctedplots_server <- function(input,
           )
         })
       } else if (rv$type_locus_sample == "2") {
-        cat("fileimport_cal_corrected_h: Not implemented yet.\n")
+        message("fileimport_cal_corrected_h: Not implemented yet.\n")
         # TODO
         # Calibration Data (to show corrected calibration curves)
         # initialize calibration results list
@@ -168,7 +168,7 @@ module_correctedplots_server <- function(input,
           )
         })
       } else if (rv$type_locus_sample == "2") {
-        cat("fileimport_cal_corrected_c: Not implemented yet.\n")
+        message("fileimport_cal_corrected_c: Not implemented yet.\n")
       }
     }
   })
@@ -518,7 +518,7 @@ module_correctedplots_server <- function(input,
       })
       # for debugging
       observeEvent(input_re()$selectPlot_corrected, {
-        print(input_re()$selectPlot_corrected)
+        message(input_re()$selectPlot_corrected)
       })
       # render plots from local temporary file
       output$plots_corrected_h <- renderImage(

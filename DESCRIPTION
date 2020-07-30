@@ -1,8 +1,8 @@
 Package: BiasCorrector
 Title: A GUI to Correct Measurement Bias in DNA Methylation
     Analyses
-Version: 0.1.0.9002
-Date: 2020-07-23
+Version: 0.1.0.9003
+Date: 2020-07-30
 Authors@R: 
     c(person(given = "Lorenz A.",
              family = "Kapsner",
@@ -36,4 +36,4 @@ Remotes:
     github::kapsner/rBiasCorrection@v0.2.1
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
