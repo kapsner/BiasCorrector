@@ -8,7 +8,7 @@ my_desc <- desc::description$new("!new")
 my_desc$set("Package", packagename)
 # Set your name
 my_desc$set_authors(c(
-  person("Lorenz A.", "Kapsner", email = "lorenz.kapsner@gmail.com", role = c("cre", "aut"),
+  person("Lorenz A.", "Kapsner", email = "lorenz.kapsner@gmail.com", role = c("cre", "aut", "cph"),
          comment = c(ORCID = "0000-0003-1866-860X")),
   person("Evgeny A.", "Moskalev", role = "aut")
 ))
@@ -20,9 +20,9 @@ my_desc$set_version("0.1.0.9003")
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
 my_desc$set(Description = paste0(
-  "A GUI to correct measurement bias in DNA methylation analyses. The `BiasCorrector` package ",
-  "just wraps the functions implemented in the R package `rBiasCorrection` into a ",
-  "shiny application in order to make them more easily accessible."
+  "A GUI to correct measurement bias in DNA methylation analyses. The 'BiasCorrector' package ",
+  "just wraps the functions implemented in the 'R' package 'rBiasCorrection' into a ",
+  "shiny web application in order to make them more easily accessible."
 ))
 # The description of your package
 my_desc$set("Date" = as.character(Sys.Date()))
