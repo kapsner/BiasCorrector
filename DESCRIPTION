@@ -1,21 +1,21 @@
 Package: BiasCorrector
 Title: A GUI to Correct Measurement Bias in DNA Methylation
     Analyses
-Version: 0.1.0.9003
-Date: 2020-07-30
+Version: 0.1.1
+Date: 2020-08-08
 Authors@R: 
     c(person(given = "Lorenz A.",
              family = "Kapsner",
-             role = c("cre", "aut"),
+             role = c("cre", "aut", "cph"),
              email = "lorenz.kapsner@gmail.com",
              comment = c(ORCID = "0000-0003-1866-860X")),
       person(given = "Evgeny A.",
              family = "Moskalev",
              role = "aut"))
 Description: A GUI to correct measurement bias in DNA
-    methylation analyses. The `BiasCorrector` package just wraps the
-    functions implemented in the R package `rBiasCorrection` into a shiny
-    application in order to make them more easily accessible.
+    methylation analyses. The 'BiasCorrector' package just wraps the
+    functions implemented in the 'R' package 'rBiasCorrection' into a
+    shiny web application in order to make them more easily accessible.
 License: GPL-3
 URL: https://github.com/kapsner/BiasCorrector
 BugReports: https://github.com/kapsner/BiasCorrector/issues
@@ -32,8 +32,6 @@ Imports:
 Suggests: 
     lintr,
     testthat
-Remotes: 
-    github::kapsner/rBiasCorrection@v0.2.1
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.0
