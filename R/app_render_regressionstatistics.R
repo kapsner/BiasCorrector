@@ -55,7 +55,7 @@ render_regressionstatistics <- function(dt,
     cols <- c(cols, "better_sse")
     t <- DT::datatable(dt,
                        colnames = cols,
-                       rownames = F,
+                       rownames = FALSE,
                        options = list(
                          scrollX = TRUE,
                          pageLength = 20,
@@ -95,7 +95,7 @@ render_regressionstatistics <- function(dt,
   } else if (mode == "corrected") {
     t <- DT::datatable(dt,
                        colnames = cols,
-                       rownames = F,
+                       rownames = FALSE,
                        options = list(
                          scrollX = TRUE,
                          pageLength = 20,

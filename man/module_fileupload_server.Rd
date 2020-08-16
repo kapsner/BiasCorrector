@@ -27,7 +27,7 @@ The function returns a shiny server module.
 module_fileupload_server
 }
 \examples{
-\dontrun{
+if (interactive()) {
 rv <- list()
 logfilename <- paste0(tempdir(), "/log.txt")
 shiny::callModule(

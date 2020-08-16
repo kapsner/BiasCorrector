@@ -28,7 +28,7 @@ type2_fileconfirm <- function(filelist,
 
   rv$calibr_steps <- choiceslist[, ("step") := as.numeric(
     get("step")
-  )][order(get("step"), decreasing = F)]
+  )][order(get("step"), decreasing = FALSE)]
 
   if (rv$calibr_steps[, min(get("step"))] < 0 |
       rv$calibr_steps[, max(get("step"))] > 100) {
@@ -54,7 +54,7 @@ type2_fileconfirm <- function(filelist,
     # has been checked anywhere else??!)
     gene_names <- unique(
       filelist[[rv$calibr_steps[1, get("name")]]][
-        , c("locus_id", "CpG_count"), with = F
+        , c("locus_id", "CpG_count"), with = FALSE
         ]
     )
     # get list of colnames
@@ -95,7 +95,7 @@ type2_fileconfirm <- function(filelist,
         vec2 <- c(vec[2:(gene_names[get("locus_id") == locus, get("CpG_count")]
                          + 1)],
                   "row_means")
-        add_df <- basefile[get("locus_id") == locus, (vec2), with = F]
+        add_df <- basefile[get("locus_id") == locus, (vec2), with = FALSE]
         final_calibs[[locus]] <- rbind(
           final_calibs[[locus]],
           cbind(true_methylation = rep(calstep, nrow(add_df)),

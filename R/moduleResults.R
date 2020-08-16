@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -82,7 +82,7 @@ module_results_server <- function(input,
             e
             o <- rv$better_model_stats[, c("Name",
                                            "better_model"
-            ), with = F]
+            ), with = FALSE]
             o
           },
           finally = function(f) {
@@ -145,8 +145,12 @@ module_results_server <- function(input,
               )] + 1)], "row_means")
               # solve equations for that locus and append temp_results
               solved_eq <- rBiasCorrection::solving_equations(
-                expdata[, vec, with = F],
-                rv$reg_stats[[locus]][, c("Name", "better_model"), with = F],
+                expdata[, vec, with = FALSE],
+                rv$reg_stats[[locus]][
+                  ,
+                  c("Name", "better_model"),
+                  with = FALSE
+                ],
                 type = 2,
                 rv = rv,
                 logfilename = arguments$logfilename,
@@ -168,10 +172,12 @@ module_results_server <- function(input,
                 # sites and!!
                 # the best fitting algorithm can be cubic or hyperbolic for
                 # the same CpG site-number of different loci
-                rv$final_results <- rbind(rv$final_results,
-                                          rv$temp_results[[i]],
-                                          use.names = T,
-                                          fill = T)
+                rv$final_results <- rbind(
+                  rv$final_results,
+                  rv$temp_results[[i]],
+                  use.names = TRUE,
+                  fill = TRUE
+                )
               }
             }
             vec <- colnames(rv$final_results)[grepl("row_means",
@@ -180,8 +186,8 @@ module_results_server <- function(input,
                                                     )
             )]
             # reorder the columns so that the rownames are at the end!
-            rv$final_results <- cbind(rv$final_results[, -vec, with = F],
-                                      rv$final_results[, vec, with = F],
+            rv$final_results <- cbind(rv$final_results[, -vec, with = FALSE],
+                                      rv$final_results[, vec, with = FALSE],
                                       CpG_sites = unique(
                                         rv$fileimport_experimental[, get(
                                           "CpG_count"
@@ -199,7 +205,7 @@ module_results_server <- function(input,
                                      pageLength = 20,
                                      dom = "ltip",
                                      rowCallback = DT::JS(rv$row_callback)),
-                      rownames = F) %>%
+                      rownames = FALSE) %>%
           DT::formatRound(columns = c(2:ncol(rv$final_results)),
                           digits = 3)
       })
@@ -245,6 +251,9 @@ module_results_server <- function(input,
 
           # temporarily set tempdir as wd
           oldwd <- getwd()
+          # fix for CRAN-submission!!
+          on.exit(setwd(oldwd))
+
           setwd(tempdir())
           message(paste0("getwd(): ", getwd()))
 
@@ -506,7 +515,7 @@ module_results_server <- function(input,
                     options = list(scrollX = TRUE,
                                    pageLength = 20,
                                    dom = "ltip"),
-                    rownames = F) %>%
+                    rownames = FALSE) %>%
         DT::formatRound(columns = c(3:4), digits = 3)
     })
 
@@ -541,7 +550,7 @@ module_results_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "results",

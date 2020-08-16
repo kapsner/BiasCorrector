@@ -16,7 +16,7 @@ The function returns a shiny ui module.
 module_plotting_ui
 }
 \examples{
-\dontrun{
+if (interactive()) {
 shinydashboard::tabItems(
   shinydashboard::tabItem(
     tabName = "plotting",

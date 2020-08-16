@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -142,7 +142,7 @@ module_statistics_server <- function(input,
         content = function(file) {
           rBiasCorrection::write_csv(
             table = rv$reg_stats[
-              , -which(colnames(rv$reg_stats) == "better_model"), with = F
+              , -which(colnames(rv$reg_stats) == "better_model"), with = FALSE
               ],
             filename = file)
         },
@@ -157,8 +157,8 @@ module_statistics_server <- function(input,
         selectInput(
           inputId = "selectRegStatsLocus",
           label = "Select locus:",
-          multiple = F,
-          selectize = F,
+          multiple = FALSE,
+          selectize = FALSE,
           choices = names(rv$fileimport_calibration))
       })
 
@@ -231,7 +231,7 @@ module_statistics_server <- function(input,
                 colnames(
                   rv$reg_stats[[input_re()$selectRegStatsLocus]]
                 ) == "better_model"
-              ), with = F
+              ), with = FALSE
               ],
             filename = file)
         },
@@ -251,7 +251,7 @@ module_statistics_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "statistics",

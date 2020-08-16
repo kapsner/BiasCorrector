@@ -16,7 +16,7 @@ The function returns a shiny ui module.
 module_experimentalfile_ui
 }
 \examples{
-\dontrun{
+if (interactive()) {
 shinydashboard::tabItems(
   shinydashboard::tabItem(
     tabName = "experimental",

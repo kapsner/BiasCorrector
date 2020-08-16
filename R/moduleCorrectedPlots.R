@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -55,7 +55,7 @@ module_correctedplots_server <- function(input,
             1 / 2,
             detail = "... using hyperbolic regression parameters ...")
           # hyperbolic correction
-          rv$choices_list <- rv$reg_stats[, c("Name"), with = F
+          rv$choices_list <- rv$reg_stats[, c("Name"), with = FALSE
           ][
             , ("better_model") := 0
           ]
@@ -140,7 +140,7 @@ module_correctedplots_server <- function(input,
             1 / 2,
             detail = "... using cubic regression parameters ...")
           # cubic correction
-          rv$choices_list <- rv$reg_stats[, c("Name"), with = F
+          rv$choices_list <- rv$reg_stats[, c("Name"), with = FALSE
           ][
             , ("better_model") := 1
           ]
@@ -422,8 +422,8 @@ module_correctedplots_server <- function(input,
       sel_in2 <- reactive({
         selectInput(inputId = "selectPlot_corrected",
                     label = "Select CpG site:",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = plot_output_list)
       })
       # create download button for each plot
@@ -602,8 +602,8 @@ module_correctedplots_server <- function(input,
       select_plotlocus <- reactive({
         selectInput(inputId = "select_plotlocus_corrected",
                     label = "Select locus:",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = list_plot_locus
         )
       })
@@ -625,8 +625,8 @@ module_correctedplots_server <- function(input,
       select_plot_cpg <- reactive({
         selectInput(inputId = "select_plot_type2_corrected",
                     label = "Select CpG site:",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = cpg_output())
       })
       # render second selectInput
@@ -811,7 +811,7 @@ module_correctedplots_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "correctedplots",

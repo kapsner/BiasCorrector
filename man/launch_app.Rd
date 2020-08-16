@@ -38,7 +38,7 @@ The function returns the BiasCorrector shiny application.
 Launch BiasCorrector
 }
 \examples{
-\dontrun{
+if (interactive()) {
 launch_app()
 }
 

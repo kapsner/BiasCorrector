@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -196,8 +196,8 @@ module_plotting_server <- function(input,
       sel_in2 <- reactive({
         selectInput(inputId = "selectPlot",
                     label = "Select CpG site",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = plot_output_list)
       })
 
@@ -280,8 +280,8 @@ module_plotting_server <- function(input,
       select_plotlocus <- reactive({
         selectInput(inputId = "select_plotlocus",
                     label = "Select locus:",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = list_plot_locus)
       })
 
@@ -307,8 +307,8 @@ module_plotting_server <- function(input,
       select_plot_cpg <- reactive({
         selectInput(inputId = "selectPlotType2",
                     label = "Select CpG site:",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = cpg_output())
       })
 
@@ -403,7 +403,7 @@ module_plotting_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "plotting",

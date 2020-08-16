@@ -27,7 +27,7 @@ The function returns a shiny server module.
 module_plotting_server
 }
 \examples{
-\dontrun{
+if (interactive()) {
 rv <- list()
 logfilename <- paste0(tempdir(), "/log.txt")
 shiny::callModule(

@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -68,7 +68,7 @@ module_experimentalfile_server <- function(input,
                                        pageLength = 20,
                                        dom = "ltip",
                                        rowCallback = DT::JS(rv$row_callback)),
-                        rownames = F) %>%
+                        rownames = FALSE) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_experimental)),
                             digits = 3)
         })
@@ -96,7 +96,7 @@ module_experimentalfile_server <- function(input,
                                        pageLength = 20,
                                        dom = "ltip",
                                        rowCallback = DT::JS(rv$row_callback)),
-                        rownames = F) %>%
+                        rownames = FALSE) %>%
             DT::formatRound(columns = c(3:ncol(rv$aggregated_experimental)),
                             digits = 3)
         })
@@ -112,7 +112,7 @@ module_experimentalfile_server <- function(input,
                                        pageLength = 20,
                                        dom = "ltip",
                                        rowCallback = DT::JS(rv$row_callback)),
-                        rownames = F) %>%
+                        rownames = FALSE) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_experimental)),
                             digits = 3)
         })
@@ -170,7 +170,7 @@ module_experimentalfile_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "experimental",

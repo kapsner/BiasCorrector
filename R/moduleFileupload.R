@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -113,7 +113,7 @@ module_fileupload_server <- function(input,
       rv$ending <- strsplit(
         input_re()[["moduleFileupload-experimentalFile"]]$name,
         ".",
-        fixed = T)[[1]]
+        fixed = TRUE)[[1]]
 
       # if type 1 data
       if (rv$type_locus_sample == "1") {
@@ -178,7 +178,7 @@ module_fileupload_server <- function(input,
       }
     }
 
-    if (rv$exp_filereq == T && is.null(rv$fileimport_experimental)) {
+    if (rv$exp_filereq == TRUE && is.null(rv$fileimport_experimental)) {
       #% removeUI(selector = "#tag1", immediate = T)
       #% shinyjs::disable("moduleFileupload-type_locus_sample")
 
@@ -186,7 +186,7 @@ module_fileupload_server <- function(input,
         file <- reactiveFileReader(1000, session,
           input_re()[["moduleFileupload-experimentalFile"]]$datapath,
           data.table::fread,
-          header = T
+          header = TRUE
         )
         tryCatch(
           expr = {
@@ -256,14 +256,14 @@ module_fileupload_server <- function(input,
         rv$ending <- strsplit(
           input_re()[["calibrationFile"]]$name,
           ".",
-          fixed = T)[[1]]
+          fixed = TRUE)[[1]]
 
         # if ending suggests it might be a csv file
         if (rv$ending[2] %in% c("csv", "CSV")) {
           file <- reactiveFileReader(1000, session,
             input_re()[["calibrationFile"]]$datapath,
             data.table::fread,
-            header = T
+            header = TRUE
           )
 
           # try to import file
@@ -371,13 +371,13 @@ module_fileupload_server <- function(input,
             rv$ending <- strsplit(
               input_re()[["calibrationFile"]]$name[i],
               ".",
-              fixed = T
+              fixed = TRUE
               )[[1]]
 
             file <- reactiveFileReader(1000, session,
               input_re()[["calibrationFile"]]$datapath[i],
               data.table::fread,
-              header = T
+              header = TRUE
             )
 
             if (rv$ending[2] %in% c("csv", "CSV")) {
@@ -425,7 +425,7 @@ module_fileupload_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "fileupload",

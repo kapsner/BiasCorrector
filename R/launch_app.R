@@ -36,7 +36,7 @@
 #' @importFrom data.table .N ":="
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' launch_app()
 #' }
 #'

@@ -24,7 +24,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -89,7 +89,7 @@ module_correctedstats_server <- function(input,
         rBiasCorrection::write_csv(
           table = rv$reg_stats_corrected_h[, -which(
             colnames(rv$reg_stats_corrected_h) == "better_model")
-            , with = F],
+            , with = FALSE],
           filename = file)
       },
       contentType = "text/csv"
@@ -107,7 +107,7 @@ module_correctedstats_server <- function(input,
         rBiasCorrection::write_csv(
           table = rv$reg_stats_corrected_c[, -which(
             colnames(rv$reg_stats_corrected_c) == "better_model")
-            , with = F],
+            , with = FALSE],
           filename = file)
       },
       contentType = "text/csv"
@@ -119,7 +119,7 @@ module_correctedstats_server <- function(input,
                     options = list(scrollX = TRUE,
                                    pageLength = 20,
                                    dom = "ltip"),
-                    rownames = F) %>%
+                    rownames = FALSE) %>%
         DT::formatRound(columns = c(3:4), digits = 3)
     })
     output$substitutions_corrected_c <- DT::renderDataTable({
@@ -127,7 +127,7 @@ module_correctedstats_server <- function(input,
                     options = list(scrollX = TRUE,
                                    pageLength = 20,
                                    dom = "ltip"),
-                    rownames = F) %>%
+                    rownames = FALSE) %>%
         DT::formatRound(columns = c(3:4), digits = 3)
     })
     output$download_subs_corrected_h <- downloadHandler(
@@ -169,7 +169,7 @@ module_correctedstats_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "correctedstats",

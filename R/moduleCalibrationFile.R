@@ -29,7 +29,7 @@
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' rv <- list()
 #' logfilename <- paste0(tempdir(), "/log.txt")
 #' shiny::callModule(
@@ -89,7 +89,7 @@ module_calibrationfile_server <- function(input,
                                        pageLength = 20,
                                        dom = "ltip",
                                        rowCallback = DT::JS(rv$row_callback)),
-                        rownames = F) %>%
+                        rownames = FALSE) %>%
             DT::formatRound(columns = c(2:ncol(rv$fileimport_calibration)),
                             digits = 3)
         })
@@ -117,7 +117,7 @@ module_calibrationfile_server <- function(input,
                                        pageLength = 20,
                                        dom = "ltip",
                                        rowCallback = DT::JS(rv$row_callback)),
-                        rownames = F) %>%
+                        rownames = FALSE) %>%
             DT::formatRound(columns = c(3:ncol(rv$aggregated_calibration)),
                             digits = 3)
         })
@@ -230,13 +230,13 @@ module_calibrationfile_server <- function(input,
       # store correct formatted calibration data in reactive list
       rv$fileimport_calibration <- filecheck
       removeUI(selector = "#moduleCalibrationFile-calibration_data",
-               immediate = T)
+               immediate = TRUE)
       # create reactive selectinput:
       sel_in <- reactive({
         selectInput(inputId = "selectType2",
                     label = "Select locus:",
-                    multiple = F,
-                    selectize = F,
+                    multiple = FALSE,
+                    selectize = FALSE,
                     choices = names(rv$fileimport_calibration))
       })
       # create reactive df-selection:
@@ -256,7 +256,7 @@ module_calibrationfile_server <- function(input,
                                        pageLength = 20,
                                        dom = "ltip",
                                        rowCallback = DT::JS(rv$row_callback)),
-                        rownames = F) %>%
+                        rownames = FALSE) %>%
             DT::formatRound(columns = c(2:ncol(temp)), digits = 3)
         })
         # merge selectInput and dataframe to list
@@ -291,7 +291,7 @@ module_calibrationfile_server <- function(input,
 #' @seealso \url{https://shiny.rstudio.com/articles/modules.html}
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' shinydashboard::tabItems(
 #'   shinydashboard::tabItem(
 #'     tabName = "calibration",
