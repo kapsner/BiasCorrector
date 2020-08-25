@@ -2,7 +2,7 @@ Package: BiasCorrector
 Title: A GUI to Correct Measurement Bias in DNA Methylation
     Analyses
 Version: 0.1.1
-Date: 2020-08-16
+Date: 2020-08-24
 Authors@R: 
     c(person(given = "Lorenz A.",
              family = "Kapsner",
@@ -34,4 +34,4 @@ Suggests:
     testthat
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
