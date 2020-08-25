@@ -8,7 +8,7 @@
 [![pipeline status](https://gitlab.com/kapsner/BiasCorrector/badges/master/pipeline.svg)](https://gitlab.com/kapsner/BiasCorrector/commits/master)
 [![coverage report](https://gitlab.com/kapsner/BiasCorrector/badges/master/coverage.svg)](https://gitlab.com/kapsner/BiasCorrector/commits/master)
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
-<!--[![Cran Checks](https://cranchecks.info/badges/worst/BiasCorrector)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)-->
+[![Cran Checks](https://cranchecks.info/badges/worst/BiasCorrector)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
 <!-- badges: end -->
 
 BiasCorrector is the user friendly implementation of the algorithms described by Moskalev et. al in their research article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press* (DOI: [https://doi.org/10.1093/nar/gkr213](https://doi.org/10.1093/nar/gkr213)).  
@@ -21,7 +21,19 @@ BiasCorrector is the user friendly implementation of the algorithms described by
     
     + https://cran.r-project.org/  
 
-- Then open your environment and install this R package:
+- Then open your development environment and install this R package:
+
+### CRAN version
+
+You can install `BiasCorrector` simply with via R's `install.packages` interface:
+
+```r
+install.packages("BiasCorrector")
+```
+
+### development version
+
+If you want to use the latest development version, you can install the github version of `BiasCorrector` with:
 
 ```r
 install.packages("devtools")
