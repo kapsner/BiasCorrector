@@ -1,4 +1,4 @@
-# BiasCorrector (!!!under development!!!)
+# BiasCorrector 
 
 <!-- badges: start -->
 [![R CMD Check via {tic}](https://github.com/kapsner/BiasCorrector/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
