@@ -8,3 +8,4 @@
 ^\.vscode$
 ^tic\.R$
 ^\.github$
+^CRAN-RELEASE$
