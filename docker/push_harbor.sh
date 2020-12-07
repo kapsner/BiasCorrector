@@ -1,3 +1,3 @@
 #! /bin/bash
 
-sh deploy_image.sh docker.miracum.org/biascorrector biascorrector_img 0.1.2
+sh deploy_image.sh docker.miracum.org/biascorrector biascorrector_img 0.1.2.9001

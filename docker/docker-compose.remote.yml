@@ -2,10 +2,10 @@ version: '3'
 
 services:
   biascorrector_container:
-    image: docker.miracum.org/biascorrector/biascorrector_img:0.1.2
+    image: docker.miracum.org/biascorrector/biascorrector_img:0.1.2.9001
     restart: unless-stopped
     ports:
-    - "3838:3838"
+    - "4038:3838"
 
 # login into container:
 # docker exec -it biascorrector_container bash
