@@ -1,5 +1,5 @@
 # BiasCorrector: A GUI to Correct Measurement Bias in DNA Methylation Analyses
-# Copyright (C) 2019-2020 Lorenz Kapsner
+# Copyright (C) 2019-2021 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -177,12 +177,8 @@ module_correctedplots_server <- function(input,
     eventExpr = {
       # this is needed, to start plotting, when we have the bias
       # corrected calibration values!
-      if (!is.null(rv$fileimport_cal_corrected_h) &
-          !is.null(rv$fileimport_cal_corrected_c)) {
-        TRUE
-      } else {
-        return()
-      }
+      req(!is.null(rv$fileimport_cal_corrected_h) &
+          !is.null(rv$fileimport_cal_corrected_c))
     },
     handlerExpr = {
       # type 1 data:

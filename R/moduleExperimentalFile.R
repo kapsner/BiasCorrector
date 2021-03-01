@@ -1,5 +1,5 @@
 # BiasCorrector: A GUI to Correct Measurement Bias in DNA Methylation Analyses
-# Copyright (C) 2019-2020 Lorenz Kapsner
+# Copyright (C) 2019-2021 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,11 +47,7 @@ module_experimentalfile_server <- function(input,
   # error handling with fileimport
   observeEvent(
     eventExpr = {
-      if (!is.null(rv$fileimport_experimental)) {
-        TRUE
-      } else {
-        return()
-      }
+      req(!is.null(rv$fileimport_experimental))
     },
     handlerExpr = {
 

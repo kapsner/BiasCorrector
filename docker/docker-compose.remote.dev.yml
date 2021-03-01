@@ -2,7 +2,7 @@ version: '3'
 
 services:
   biascorrector_container:
-    image: docker.miracum.org/biascorrector/biascorrector_img:latest
+    image: harbor.miracum.org/biascorrector/biascorrector_img:latest
     restart: unless-stopped
     ports:
     - "3838:3838"

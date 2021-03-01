@@ -1,5 +1,5 @@
 # BiasCorrector: A GUI to Correct Measurement Bias in DNA Methylation Analyses
-# Copyright (C) 2019-2020 Lorenz Kapsner
+# Copyright (C) 2019-2021 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -104,14 +104,14 @@ shiny::shinyServer(function(input, output, session) {
     rv$modal_closed <- T
     rv$modal_type <- NULL
     shiny::removeModal()
-    shinyjs::js$reset()
+    session$reload()
   })
 
   shiny::observeEvent(input$reset, {
     rBiasCorrection::write_log(message = "restarting app",
                                logfilename = logfilename)
     rBiasCorrection::clean_up(plotdir, csvdir)
-    shinyjs::js$reset()
+    session$reload()
   })
 
   output$samplelocus_out <- shiny::reactive({
@@ -175,11 +175,12 @@ shiny::shinyServer(function(input, output, session) {
     })
   })
 
-  shiny::observeEvent(if (isTRUE(rv$type2cal_uploaded) |
-                          isTRUE(rv$type1cal_uploaded))
-    TRUE
-    else
-      return(), {
+  shiny::observeEvent(
+    eventExpr = {
+      req(isTRUE(rv$type2cal_uploaded) ||
+          isTRUE(rv$type1cal_uploaded))
+    },
+    handlerExpr = {
         # error handling, when uploading new data in same session
         output$menu <- shinydashboard::renderMenu({
           shinydashboard::sidebarMenu(

@@ -1,5 +1,5 @@
 # BiasCorrector: A GUI to Correct Measurement Bias in DNA Methylation Analyses
-# Copyright (C) 2019-2020 Lorenz Kapsner
+# Copyright (C) 2019-2021 Lorenz Kapsner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ shiny::shinyUI(shiny::tagList(
     shinydashboard::dashboardSidebar(
       # shinyjs stuff
       shinyjs::useShinyjs(),
-      # Include shinyjs in the UI
 
       #Sidebar Panel
       shinydashboard::sidebarMenu(
@@ -80,11 +79,6 @@ shiny::shinyUI(shiny::tagList(
     shinydashboard::dashboardBody(
       # shinyjs stuff
       shinyjs::useShinyjs(),
-      # Include shinyjs in the UI
-      # https://stackoverflow.com/questions/25062422/restart-shiny-session
-      shinyjs::extendShinyjs(script = "reset.js",
-                             functions = "reset"),
-      # Add the js code to the page
 
       shinydashboard::tabItems(
         shinydashboard::tabItem(

@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/rocker/shiny/
-FROM rocker/shiny-verse:4.0.0
+FROM rocker/shiny-verse:4.0.4
 
 # install necessary system dependencies for r packages (e.g. devtools, RPostgres)
 RUN apt-get update && apt-get install -y --no-install-recommends \
