@@ -128,7 +128,7 @@ shiny::shinyServer(function(input, output, session) {
     module_fileupload_server,
     "moduleFileupload",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename
   )
 
@@ -219,7 +219,7 @@ shiny::shinyServer(function(input, output, session) {
     module_calibrationfile_server,
     "moduleCalibrationFile",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename
   )
 
@@ -288,7 +288,7 @@ shiny::shinyServer(function(input, output, session) {
     module_plotting_server,
     "modulePlotting",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename,
     plotdir = plotdir
   )
@@ -398,7 +398,7 @@ shiny::shinyServer(function(input, output, session) {
     module_statistics_server,
     "moduleStatistics",
     rv = force(rv),
-    input_re = input_reactive
+    input_re = force(input_reactive)
   )
 
   ###### Plot Corrected Results
@@ -406,7 +406,7 @@ shiny::shinyServer(function(input, output, session) {
     module_correctedplots_server,
     "moduleCorrectedPlots",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename,
     plotdir = plotdir
   )
@@ -416,7 +416,7 @@ shiny::shinyServer(function(input, output, session) {
     module_correctedstats_server,
     "moduleCorrectedStatistics",
     rv = force(rv),
-    input_re = input_reactive
+    input_re = force(input_reactive)
   )
 
   ###### Model Selection
@@ -424,7 +424,7 @@ shiny::shinyServer(function(input, output, session) {
     module_modelselection_server,
     "moduleModelSelection",
     rv = force(rv),
-    input_re = input_reactive
+    input_re = force(input_reactive)
   )
 
   # Calculate results for experimental data
@@ -537,7 +537,7 @@ shiny::shinyServer(function(input, output, session) {
     module_results_server,
     "moduleResults",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename,
     csvdir = csvdir,
     plotdir = plotdir
@@ -548,7 +548,7 @@ shiny::shinyServer(function(input, output, session) {
     module_log_server,
     "moduleLog",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename
   )
 
@@ -557,7 +557,7 @@ shiny::shinyServer(function(input, output, session) {
     module_settings_server,
     "moduleSettings",
     rv = force(rv),
-    input_re = input_reactive,
+    input_re = force(input_reactive),
     logfilename = logfilename,
     tempdir = tempdir
   )
@@ -566,5 +566,5 @@ shiny::shinyServer(function(input, output, session) {
   shiny::callModule(module_info_server,
                     "moduleInfo",
                     rv = force(rv),
-                    input_re = input_reactive)
+                    input_re = force(input_reactive))
 })
