@@ -30,7 +30,7 @@
 #' shiny::callModule(
 #'   module_plotting_server,
 #'   "modulePlotting",
-#'   rv = force(rv),
+#'   rv = rv,
 #'   logfilename = logfilename
 #' )
 #' }
@@ -62,7 +62,7 @@ module_plotting_server <- function(input,
             regression_results <- rBiasCorrection::regression_utility(
               data = rv$fileimport_calibration,
               samplelocusname = rv$sample_locus_name,
-              rv = force(rv),
+              rv = rv,
               logfilename = arguments$logfilename,
               minmax = rv$minmax,
               seed = rv$seed
@@ -79,10 +79,10 @@ module_plotting_server <- function(input,
           expr  = {
             rBiasCorrection::plotting_utility(
               data = rv$fileimport_calibration,
-              plotlist_reg = force(plotlist_reg),
+              plotlist_reg = plotlist_reg,
               type = 1,
               samplelocusname = rv$sample_locus_name,
-              rv = force(rv),
+              rv = rv,
               plotdir = arguments$plotdir,
               logfilename = arguments$logfilename,
               minmax = rv$minmax,
@@ -124,7 +124,7 @@ module_plotting_server <- function(input,
                 data = rv$fileimport_calibration[[a]],
                 samplelocusname = rv$sample_locus_name,
                 locus_id = gsub("[[:punct:]]", "", b),
-                rv = force(rv),
+                rv = rv,
                 logfilename = arguments$logfilename,
                 minmax = rv$minmax,
                 seed = rv$seed
@@ -146,7 +146,7 @@ module_plotting_server <- function(input,
                 type = 2,
                 samplelocusname = rv$sample_locus_name,
                 locus_id = gsub("[[:punct:]]", "", b),
-                rv = force(rv),
+                rv = rv,
                 plotdir = arguments$plotdir,
                 logfilename = arguments$logfilename,
                 minmax = rv$minmax,

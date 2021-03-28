@@ -35,7 +35,7 @@
 #' shiny::callModule(
 #'   module_calibrationfile_server,
 #'   "moduleCalibrationFile",
-#'   rv = force(rv),
+#'   rv = rv,
 #'   logfilename = logfilename
 #' )
 #' }

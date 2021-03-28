@@ -31,7 +31,7 @@ logfilename <- paste0(tempdir(), "/log.txt")
 shiny::callModule(
   module_correctedstats_server,
   "moduleCorrectedStats",
-  rv = force(rv),
+  rv = rv,
   logfilename = logfilename
 )
 }

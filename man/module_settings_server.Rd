@@ -33,7 +33,7 @@ logfilename <- paste0(tempdir(), "/log.txt")
 shiny::callModule(
   module_settings_server,
   "moduleSettings",
-  rv = force(rv),
+  rv = rv,
   logfilename = logfilename
 )
 }
