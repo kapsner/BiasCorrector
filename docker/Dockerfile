@@ -18,7 +18,8 @@ ENV RSESSION_USER=shiny
 # set cran repo
 RUN echo "options('repos' = 'https://cloud.r-project.org/')" >> /usr/local/lib/R/etc/Rprofile.site
 
-ARG p_base="devtools"
+ARG p_base="devtools \
+    ggpubr"
 
 RUN for package in $p_base; do \
     R -q -e "p <- \"$package\"; remotes::update_packages(packages = p, upgrade = \"always\")"; \
