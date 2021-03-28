@@ -79,7 +79,7 @@ module_plotting_server <- function(input,
           expr  = {
             rBiasCorrection::plotting_utility(
               data = rv$fileimport_calibration,
-              plotlist_reg = plotlist_reg,
+              plotlist_reg = force(plotlist_reg),
               type = 1,
               samplelocusname = rv$sample_locus_name,
               rv = force(rv),
