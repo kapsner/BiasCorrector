@@ -30,7 +30,7 @@
 #' shiny::callModule(
 #'   module_fileupload_server,
 #'   "moduleEileUpload",
-#'   rv = rv,
+#'   rv = force(rv),
 #'   logfilename = logfilename
 #' )
 #' }
@@ -399,7 +399,7 @@ module_fileupload_server <- function(input,
           # chech type 2 file requirements here
           # filecheck <- rBiasCorrection::type2_filereq(
           #   filelist = rv$fileimport_list,
-          #   rv = rv,
+          #   rv = force(rv),
           #   logfilename = arguments$logfilename)
           #
           # if (is.character(filecheck)) {

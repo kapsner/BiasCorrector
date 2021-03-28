@@ -30,7 +30,7 @@
 #' shiny::callModule(
 #'   module_results_server,
 #'   "moduleResults",
-#'   rv = rv,
+#'   rv = force(rv),
 #'   logfilename = logfilename
 #' )
 #' }
@@ -104,7 +104,7 @@ module_results_server <- function(input,
               rv$fileimport_experimental,
               rv$choices_list,
               type = 1,
-              rv = rv,
+              rv = force(rv),
               logfilename = arguments$logfilename,
               minmax = rv$minmax
             )
@@ -152,7 +152,7 @@ module_results_server <- function(input,
                   with = FALSE
                 ],
                 type = 2,
-                rv = rv,
+                rv = force(rv),
                 logfilename = arguments$logfilename,
                 minmax = rv$minmax
               )

@@ -30,7 +30,7 @@
 #' shiny::callModule(
 #'   module_modelselection_server,
 #'   "moduleModelSelection",
-#'   rv = rv,
+#'   rv = force(rv),
 #'   logfilename = logfilename
 #' )
 #' }

@@ -30,7 +30,7 @@
 #' shiny::callModule(
 #'   module_plotting_server,
 #'   "modulePlotting",
-#'   rv = rv,
+#'   rv = force(rv),
 #'   logfilename = logfilename
 #' )
 #' }
@@ -62,7 +62,7 @@ module_plotting_server <- function(input,
             regression_results <- rBiasCorrection::regression_utility(
               data = rv$fileimport_calibration,
               samplelocusname = rv$sample_locus_name,
-              rv = rv,
+              rv = force(rv),
               logfilename = arguments$logfilename,
               minmax = rv$minmax,
               seed = rv$seed
@@ -82,7 +82,7 @@ module_plotting_server <- function(input,
               plotlist_reg = plotlist_reg,
               type = 1,
               samplelocusname = rv$sample_locus_name,
-              rv = rv,
+              rv = force(rv),
               plotdir = arguments$plotdir,
               logfilename = arguments$logfilename,
               minmax = rv$minmax,
@@ -124,7 +124,7 @@ module_plotting_server <- function(input,
                 data = rv$fileimport_calibration[[a]],
                 samplelocusname = rv$sample_locus_name,
                 locus_id = gsub("[[:punct:]]", "", b),
-                rv = rv,
+                rv = force(rv),
                 logfilename = arguments$logfilename,
                 minmax = rv$minmax,
                 seed = rv$seed
@@ -146,7 +146,7 @@ module_plotting_server <- function(input,
                 type = 2,
                 samplelocusname = rv$sample_locus_name,
                 locus_id = gsub("[[:punct:]]", "", b),
-                rv = rv,
+                rv = force(rv),
                 plotdir = arguments$plotdir,
                 logfilename = arguments$logfilename,
                 minmax = rv$minmax,
@@ -158,7 +158,8 @@ module_plotting_server <- function(input,
               # save regression statistics to reactive value
               rv$reg_stats[[b]] <- rBiasCorrection::statistics_list(
                 resultlist = rv$result_list,
-                minmax = rv$minmax)
+                minmax = rv$minmax
+              )
               rv$result_list_type2[[b]] <- rv$result_list
               a <- a + 1
             },
