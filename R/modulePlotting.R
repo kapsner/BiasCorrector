@@ -77,6 +77,7 @@ module_plotting_server <- function(input,
 
         withProgress(
           expr  = {
+            print("we arrived here")
             rBiasCorrection::plotting_utility(
               data = rv$fileimport_calibration,
               plotlist_reg = plotlist_reg,
