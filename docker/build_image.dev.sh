@@ -5,8 +5,8 @@ mkdir addfolder
 cd addfolder
 
 # clone repository
-git clone -b latest https://github.com/kapsner/rBiasCorrection.git
-git clone -b latest https://github.com/kapsner/BiasCorrector.git
+git clone -b development https://github.com/kapsner/rBiasCorrection.git
+git clone -b development https://github.com/kapsner/BiasCorrector.git
 
 # build image
 cd ..

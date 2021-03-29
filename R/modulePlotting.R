@@ -67,7 +67,6 @@ module_plotting_server <- function(input,
               minmax = rv$minmax,
               seed = rv$seed
             )
-            message("we arrived here #1")
 
             plotlist_reg <- regression_results[["plot_list"]]
             rv$result_list <- regression_results[["result_list"]]
@@ -78,7 +77,6 @@ module_plotting_server <- function(input,
 
         withProgress(
           expr  = {
-            message("we arrived here #2")
             rBiasCorrection::plotting_utility(
               data = rv$fileimport_calibration,
               plotlist_reg = plotlist_reg,
