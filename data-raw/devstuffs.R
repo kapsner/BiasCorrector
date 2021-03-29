@@ -14,6 +14,7 @@ my_desc$set_authors(c(
 ))
 # Remove some author fields
 my_desc$del("Maintainer")
+my_desc$del("LazyData")
 # Set the version
 my_desc$set_version("0.1.4")
 # The title of your package
