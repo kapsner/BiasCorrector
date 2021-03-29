@@ -8,8 +8,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libssl-dev \
     libpq-dev \
-    pandoc \
-    pandoc-citeproc \
     gpg-agent \
     git
 
@@ -54,6 +52,8 @@ RUN cd /home/${RSESSION_USER}/${REPO_NAME}/docker && \
 # fix permissions of directories, where R/ the app need rights to write
 RUN chown -R ${RSESSION_USER}:${RSESSION_USER} /srv/shiny-server/
 RUN chmod +x show-log.sh
+
+USER shiny
 
 # https://stackoverflow.com/questions/51080857/preserve-environment-variables-when-spawning-shiny-processes-within-a-container?rq=1
 ENTRYPOINT env >> /home/${RSESSION_USER}/.Renviron && \
