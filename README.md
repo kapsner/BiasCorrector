@@ -120,7 +120,6 @@ FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/
 # More Infos
 
 - Original work by Moskalev et al.: https://doi.org/10.1093/nar/gkr213
-- about RStudio: https://www.rstudio.com/products/rstudio/
 - about Shiny: https://www.rstudio.com/products/shiny/
 - about Shiny Server: https://www.rstudio.com/products/shiny/shiny-server/
 - RStudio and Shiny are trademarks of RStudio, Inc.
