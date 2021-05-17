@@ -16,14 +16,15 @@ my_desc$set_authors(c(
 my_desc$del("Maintainer")
 my_desc$del("LazyData")
 # Set the version
-my_desc$set_version("0.1.4")
+my_desc$set_version("0.2.0")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
 my_desc$set(Description = paste0(
   "A GUI to correct measurement bias in DNA methylation analyses. The 'BiasCorrector' package ",
   "just wraps the functions implemented in the 'R' package 'rBiasCorrection' into a ",
-  "shiny web application in order to make them more easily accessible."
+  "shiny web application in order to make them more easily accessible. ",
+  "Publication: Kapsner et al. (2021) <doi:10.1002/ijc.33681>."
 ))
 # The description of your package
 my_desc$set("Date" = as.character(Sys.Date()))
