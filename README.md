@@ -33,7 +33,7 @@ You can install `BiasCorrector` simply with via R's `install.packages` interface
 install.packages("BiasCorrector")
 ```
 
-### development version
+### Development version
 
 If you want to use the latest development version, you can install the github version of `BiasCorrector` with:
 
@@ -103,9 +103,7 @@ FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/
 
 # Citation of Kapsner et al. (2021)   
 
-```
 L.A. Kapsner, M.G. Zavgorodnij, S.P. Majorova, A. Hotz‐Wagenblatt, O.V. Kolychev, I.N. Lebedev, J.D. Hoheisel, A. Hartmann, A. Bauer, S. Mate, H. Prokosch, F. Haller, and E.A. Moskalev, BiasCorrector: fast and accurate correction of all types of experimental biases in quantitative DNA methylation data derived by different technologies, Int. J. Cancer. (2021) ijc.33681. doi:10.1002/ijc.33681.
-```
 
 ```
 @article{kapsner2021,
