@@ -15,9 +15,9 @@
 
 `BiasCorrector` is the user friendly implementation of the algorithms described by Moskalev et. al in their research article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press* (DOI: [https://doi.org/10.1093/nar/gkr213](https://doi.org/10.1093/nar/gkr213)).  
 
-# Installation  
+## Installation  
 
-## Using R 
+### Using R 
 
 - Make sure, you have R installed on your system:  
     
@@ -25,7 +25,7 @@
 
 - Then open your development environment and install this R package:
 
-### CRAN version
+#### CRAN version
 
 You can install `BiasCorrector` simply with via R's `install.packages` interface:
 
@@ -33,7 +33,7 @@ You can install `BiasCorrector` simply with via R's `install.packages` interface
 install.packages("BiasCorrector")
 ```
 
-### Development version
+#### Development version
 
 If you want to use the latest development version, you can install the github version of `BiasCorrector` with:
 
@@ -49,11 +49,11 @@ library(BiasCorrector)
 launch_app()
 ```
 
-## Using Docker
+### Using Docker
 
 To simplify installation an deployment of `BiasCorrector` you can clone this repository and build your own docker image. Make sure, you have Docker and docker-compose installed on your system.
 
-### Build Docker Image Manually
+#### Build Docker Image Manually
 
 ```
 # clone the repository
@@ -69,7 +69,7 @@ cd BiasCorrector/docker/
 docker-compose -f docker-compose.local.yml up -d
 ```
 
-### Using a Remote Docker Image
+#### Using a Remote Docker Image
 
 ```
 # clone the repository
@@ -89,21 +89,23 @@ Type the URL "localhost:3838/" in your browser and start working with `BiasCorre
 `BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurement biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.  
 `rBiasCorrection` is available at [https://github.com/kapsner/rBiasCorrection](https://github.com/kapsner/rBiasCorrection). 
 
-# Video Tutorial 
+## Video Tutorial 
 
 A video tutorial describing the workflow of how to use `BiasCorrector` in order to correct measurement bias in DNA methylation data is available [on youtube](https://youtu.be/xOf8uDbUrms). 
 
-# Demo Version
+## Demo Version
 
 A demo version of `BiasCorrector` is available [here](https://biascorrector.diz.uk-erlangen.de/).
 
-# Frequently Asked Questions 
+## Frequently Asked Questions 
 
 FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
 
-# Citation of Kapsner et al. (2021)   
+## Citation of Kapsner et al. (2021)   
 
-L.A. Kapsner, M.G. Zavgorodnij, S.P. Majorova, A. Hotz‐Wagenblatt, O.V. Kolychev, I.N. Lebedev, J.D. Hoheisel, A. Hartmann, A. Bauer, S. Mate, H. Prokosch, F. Haller, and E.A. Moskalev, BiasCorrector: fast and accurate correction of all types of experimental biases in quantitative DNA methylation data derived by different technologies, Int. J. Cancer. (2021) ijc.33681. doi:10.1002/ijc.33681.
+## Citation 
+
+L.A. Kapsner, M.G. Zavgorodnij, S.P. Majorova, A. Hotz‐Wagenblatt, O.V. Kolychev, I.N. Lebedev, J.D. Hoheisel, A. Hartmann, A. Bauer, S. Mate, H. Prokosch, F. Haller, and E.A. Moskalev, BiasCorrector: fast and accurate correction of all types of experimental biases in quantitative DNA methylation data derived by different technologies, Int. J. Cancer. (2021) ijc.33681. doi:[10.1002/ijc.33681](https://onlinelibrary.wiley.com/doi/10.1002/ijc.33681).
 
 ```
 @article{kapsner2021,
@@ -119,7 +121,7 @@ L.A. Kapsner, M.G. Zavgorodnij, S.P. Majorova, A. Hotz‐Wagenblatt, O.V. Kolych
 }
 ```
 
-# More Infos
+## More Infos
 
 - Original work by Moskalev et al.: https://doi.org/10.1093/nar/gkr213
 - about Shiny: https://www.rstudio.com/products/shiny/
