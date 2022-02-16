@@ -4,9 +4,9 @@
 [![R CMD Check via {tic}](https://github.com/kapsner/BiasCorrector/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
 [![linting](https://github.com/kapsner/BiasCorrector/workflows/lint/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
 [![test-coverage](https://github.com/kapsner/BiasCorrector/workflows/test-coverage/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
-[![codecov](https://codecov.io/gh/kapsner/BiasCorrector/branch/master/graph/badge.svg)](https://codecov.io/gh/kapsner/BiasCorrector)
-[![pipeline status](https://gitlab.com/kapsner/BiasCorrector/badges/master/pipeline.svg)](https://gitlab.com/kapsner/BiasCorrector/commits/master)
-[![coverage report](https://gitlab.com/kapsner/BiasCorrector/badges/master/coverage.svg)](https://gitlab.com/kapsner/BiasCorrector/commits/master)
+[![codecov](https://codecov.io/gh/kapsner/BiasCorrector/branch/master/graph/badge.svg)](https://app.codecov.io/gh/kapsner/BiasCorrector)
+<!--[![pipeline status](https://gitlab.com/kapsner/BiasCorrector/badges/master/pipeline.svg)](https://gitlab.com/kapsner/BiasCorrector/-/commits/master)
+[![coverage report](https://gitlab.com/kapsner/BiasCorrector/badges/master/coverage.svg)](https://gitlab.com/kapsner/BiasCorrector/-/commits/master)-->
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
 [![CRAN Checks](https://cranchecks.info/badges/worst/BiasCorrector)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
 <!-- badges: end -->
@@ -38,8 +38,8 @@ install.packages("BiasCorrector")
 If you want to use the latest development version, you can install the github version of `BiasCorrector` with:
 
 ```r
-install.packages("devtools")
-devtools::install_github("kapsner/BiasCorrector")
+install.packages("remotes")
+remotes::install_github("kapsner/BiasCorrector")
 ```
 
 - To start BiasCorrector, just run the following command in R. A browser tab should open displaying BiasCorrector. Alternatively you can type the URL "localhost:3838/" in your browser.
@@ -100,8 +100,6 @@ A demo version of `BiasCorrector` is available [here](https://biascorrector.diz.
 ## Frequently Asked Questions 
 
 FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
-
-## Citation of Kapsner et al. (2021)   
 
 ## Citation 
 
