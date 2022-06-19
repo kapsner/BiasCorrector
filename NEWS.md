@@ -2,8 +2,11 @@
 
 ## Unreleased (2022-06-19)
 
+#### Others
 
-Full set of changes: [`v0.2.1...c359f65`](https://github.com/kapsner/BiasCorrector/compare/v0.2.1...c359f65)
+* updated news.md; updated reamde badges
+
+Full set of changes: [`v0.2.1...17e9aa8`](https://github.com/kapsner/BiasCorrector/compare/v0.2.1...17e9aa8)
 
 ## v0.2.1 (2022-02-16)
 
