@@ -1,14 +1,15 @@
 # BiasCorrector 
 
 <!-- badges: start -->
+[![](https://img.shields.io/badge/doi-10.1002/ijc.33681-yellow.svg)](https://doi.org/10.1002/ijc.33681)
+[![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
+[![CRAN Checks](https://cranchecks.info/badges/worst/BiasCorrector)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/BiasCorrector?color=blue)](https://cran.r-project.org/package=BiasCorrector)
+[![](http://cranlogs.r-pkg.org/badges/last-month/BiasCorrector?color=blue)](https://cran.r-project.org/package=BiasCorrector)
 [![R CMD Check via {tic}](https://github.com/kapsner/BiasCorrector/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
 [![linting](https://github.com/kapsner/BiasCorrector/workflows/lint/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
 [![test-coverage](https://github.com/kapsner/BiasCorrector/workflows/test-coverage/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
 [![codecov](https://codecov.io/gh/kapsner/BiasCorrector/branch/master/graph/badge.svg)](https://app.codecov.io/gh/kapsner/BiasCorrector)
-<!--[![pipeline status](https://gitlab.com/kapsner/BiasCorrector/badges/master/pipeline.svg)](https://gitlab.com/kapsner/BiasCorrector/-/commits/master)
-[![coverage report](https://gitlab.com/kapsner/BiasCorrector/badges/master/coverage.svg)](https://gitlab.com/kapsner/BiasCorrector/-/commits/master)-->
-[![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
-[![CRAN Checks](https://cranchecks.info/badges/worst/BiasCorrector)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
 <!-- badges: end -->
 
 `BiasCorrector` is published in *'BiasCorrector: fast and accurate correction of all types of experimental biases in quantitative DNA methylation data derived by different technologies' (2021)* in the *International Journal of Cancer* (DOI: [https://onlinelibrary.wiley.com/doi/10.1002/ijc.33681](https://doi.org/10.1002/ijc.33681)).
@@ -99,7 +100,7 @@ A demo version of `BiasCorrector` is available [here](https://biascorrector.diz.
 
 ## Frequently Asked Questions 
 
-FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
+More detailed information on how to use the backend-package `rBiasCorrection` can be found in its [vignette](https://cran.r-project.org/web/packages/rBiasCorrection/vignettes/rBiasCorrection_howto.html). The FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
 
 ## Citation 
 

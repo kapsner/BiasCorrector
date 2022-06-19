@@ -10,3 +10,5 @@
 ^\.github$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
+^README\.md$
+^NEWS\.md$

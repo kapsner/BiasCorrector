@@ -16,7 +16,7 @@ my_desc$set_authors(c(
 my_desc$del("Maintainer")
 my_desc$del("LazyData")
 # Set the version
-my_desc$set_version("0.2.1")
+my_desc$set_version("0.2.2")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
@@ -70,6 +70,8 @@ usethis::use_build_ignore(".lintr")
 usethis::use_build_ignore(".vscode")
 usethis::use_build_ignore("tic.R")
 usethis::use_build_ignore(".github")
+usethis::use_build_ignore("README.md")
+usethis::use_build_ignore("NEWS.md")
 
 # gitignore
 usethis::use_git_ignore("/*")
@@ -87,6 +89,7 @@ usethis::use_git_ignore("!NAMESPACE")
 usethis::use_git_ignore("!/R/")
 usethis::use_git_ignore("!/docker/")
 usethis::use_git_ignore("!/README.md")
+usethis::use_git_ignore("!/NEWS.md")
 usethis::use_git_ignore("!/tests/")
 usethis::use_git_ignore("/.Rhistory")
 usethis::use_git_ignore("!/*.Rproj")
@@ -102,3 +105,22 @@ usethis::use_git_ignore("!/tic.R")
 # lintr::lint_package()
 
 usethis::use_tidy_description()
+
+
+# create NEWS.md using the python-package "auto-changelog" (must be installed)
+# https://www.conventionalcommits.org/en/v1.0.0/
+# build|ci|docs|feat|fix|perf|refactor|test
+
+# https://github.com/gitpython-developers/GitPython/issues/1016#issuecomment-1104114129
+system(
+  command = paste0("git config --global --add safe.directory ", getwd())
+)
+system(
+  command = 'auto-changelog -u -t "BiasCorrector NEWS" --tag-prefix "v" -o "NEWS.md"'
+)
+
+# eventually move to nloptr for non linear optimization
+badger::badge_doi("10.1002/ijc.33681", "yellow")
+badger::badge_cran_download("BiasCorrector", "grand-total", "blue")
+badger::badge_cran_download("BiasCorrector", "last-month", "blue")
+
