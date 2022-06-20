@@ -123,4 +123,4 @@ system(
 badger::badge_doi("10.1002/ijc.33681", "yellow")
 badger::badge_cran_download("BiasCorrector", "grand-total", "blue")
 badger::badge_cran_download("BiasCorrector", "last-month", "blue")
-
+badger::badge_dependencies("BiasCorrector")
