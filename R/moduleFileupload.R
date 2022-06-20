@@ -68,7 +68,7 @@ module_fileupload_server <- function(input,
     handlerExpr = {
     # mimic normal fileimport
     # experimental file
-    rv$exp_filereq <- T
+    rv$exp_filereq <- TRUE
     rv$sample_locus_name <- "Example_Locus"
     rBiasCorrection::write_log(
       message = paste0("Locus name: Example_Locus\n(--> stored as: ",
@@ -131,7 +131,7 @@ module_fileupload_server <- function(input,
         if (input_re()[["moduleFileupload-locusname"]] == "") {
           open_modal("locusname", rv)
         } else {
-          rv$exp_filereq <- T
+          rv$exp_filereq <- TRUE
           rv$sample_locus_name <- rBiasCorrection::handle_text_input(
             input_re()[["moduleFileupload-locusname"]])
           rBiasCorrection::write_log(
@@ -162,7 +162,7 @@ module_fileupload_server <- function(input,
         if (input_re()[["moduleFileupload-samplename"]] == "") {
           open_modal("samplename", rv)
         } else {
-          rv$exp_filereq <- T
+          rv$exp_filereq <- TRUE
           rv$sample_locus_name <- rBiasCorrection::handle_text_input(
             input_re()[["moduleFileupload-samplename"]]
             )

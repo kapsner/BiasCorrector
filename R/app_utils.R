@@ -16,7 +16,7 @@
 
 # open modal help function -> handling reactive values
 open_modal <- function(description, rv) {
-  rv$modal_closed <- F
+  rv$modal_closed <- FALSE
   rv$modal_type <- description
   requirements_error(description)
 }

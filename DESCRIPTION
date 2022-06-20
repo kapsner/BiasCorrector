@@ -1,7 +1,7 @@
 Package: BiasCorrector
 Title: A GUI to Correct Measurement Bias in DNA Methylation Analyses
 Version: 0.2.2
-Date: 2022-06-19
+Date: 2022-06-20
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@gmail.com", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0003-1866-860X")),
@@ -21,7 +21,7 @@ Imports:
     data.table,
     DT,
     magrittr,
-    rBiasCorrection,
+    rBiasCorrection (>= 0.3.4),
     shiny,
     shinydashboard,
     shinyjs

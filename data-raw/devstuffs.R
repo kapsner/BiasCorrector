@@ -1,3 +1,5 @@
+# nolint start
+
 packagename <- "BiasCorrector"
 
 # remove existing description object
@@ -53,7 +55,7 @@ usethis::use_package("shinyjs", type = "Imports")
 usethis::use_package("shinydashboard", type = "Imports")
 usethis::use_package("magrittr", type = "Imports")
 usethis::use_package("DT", type = "Imports")
-usethis::use_package("rBiasCorrection", type = "Imports")
+usethis::use_package("rBiasCorrection", type = "Imports", min_version = "0.3.4")
 
 # Suggests
 usethis::use_package("testthat", type = "Suggests")
@@ -124,3 +126,5 @@ badger::badge_doi("10.1002/ijc.33681", "yellow")
 badger::badge_cran_download("BiasCorrector", "grand-total", "blue")
 badger::badge_cran_download("BiasCorrector", "last-month", "blue")
 badger::badge_dependencies("BiasCorrector")
+
+# nolint end

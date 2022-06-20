@@ -17,7 +17,7 @@
 shiny::shinyServer(function(input, output, session) {
   rv <- shiny::reactiveValues(
     ending = NULL,
-    exp_filereq = F,
+    exp_filereq = FALSE,
     type_locus_sampe = NULL,
     # 1
     # currently there is only type 1 correction implemented
@@ -25,7 +25,7 @@ shiny::shinyServer(function(input, output, session) {
     fileimport_calibration = NULL,
     fileimport_list = NULL,
     reg_stats = NULL,
-    modal_closed = T,
+    modal_closed = TRUE,
     modal_type = NULL,
     calculate_results = FALSE,
     final_results = NULL,
@@ -101,7 +101,7 @@ shiny::shinyServer(function(input, output, session) {
   shiny::observeEvent(input$dismiss_modal, {
     rBiasCorrection::write_log(message = "dismiss modal",
                                logfilename = logfilename)
-    rv$modal_closed <- T
+    rv$modal_closed <- TRUE
     rv$modal_type <- NULL
     shiny::removeModal()
     session$reload()
@@ -247,12 +247,12 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Regression Results",
             icon = icon("chart-line"),
-            startExpanded = T,
+            startExpanded = TRUE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
               icon = icon("chart-line"),
-              selected = T
+              selected = TRUE
             )
           )
         )
@@ -313,12 +313,12 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Regression Results",
             icon = icon("chart-line"),
-            startExpanded = F,
+            startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
               icon = icon("chart-line"),
-              selected = T
+              selected = TRUE
             ),
             shinydashboard::menuSubItem(
               "Regression Statistics",
@@ -369,12 +369,12 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Regression Results",
             icon = icon("chart-line"),
-            startExpanded = F,
+            startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
               icon = icon("chart-line"),
-              selected = T
+              selected = TRUE
             ),
             shinydashboard::menuSubItem(
               "Regression Statistics",
@@ -448,7 +448,7 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Regression Results",
             icon = icon("chart-line"),
-            startExpanded = F,
+            startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
@@ -499,7 +499,7 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Regression Results",
             icon = icon("chart-line"),
-            startExpanded = F,
+            startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",

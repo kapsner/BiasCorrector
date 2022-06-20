@@ -30,7 +30,7 @@ type2_fileconfirm <- function(filelist,
     get("step")
   )][order(get("step"), decreasing = FALSE)]
 
-  if (rv$calibr_steps[, min(get("step"))] < 0 |
+  if (rv$calibr_steps[, min(get("step"))] < 0 ||
       rv$calibr_steps[, max(get("step"))] > 100) {
     rBiasCorrection::write_log(
       message = paste0("### ERROR ###\nCalibration steps must be ",

@@ -1,12 +1,16 @@
 # BiasCorrector NEWS
 
-## Unreleased (2022-06-19)
+## Unreleased (2022-06-20)
 
 #### Others
 
+* added dependencies badge
+* updated lintr
+* updated news.md
 * updated news.md; updated reamde badges
+* removed context from unittests
 
-Full set of changes: [`v0.2.1...17e9aa8`](https://github.com/kapsner/BiasCorrector/compare/v0.2.1...17e9aa8)
+Full set of changes: [`v0.2.1...e2affe4`](https://github.com/kapsner/BiasCorrector/compare/v0.2.1...e2affe4)
 
 ## v0.2.1 (2022-02-16)
 
