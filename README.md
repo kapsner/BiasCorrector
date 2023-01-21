@@ -3,7 +3,7 @@
 <!-- badges: start -->
 [![](https://img.shields.io/badge/doi-10.1002/ijc.33681-yellow.svg)](https://doi.org/10.1002/ijc.33681)
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
-[![CRAN Checks](https://cranchecks.info/badges/worst/BiasCorrector)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
+[![CRAN Checks](https://badges.cranchecks.info/worst/BiasCorrector.svg)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/BiasCorrector?color=blue)](https://cran.r-project.org/package=BiasCorrector)
 [![](http://cranlogs.r-pkg.org/badges/last-month/BiasCorrector?color=blue)](https://cran.r-project.org/package=BiasCorrector)
 [![Dependencies](https://tinyverse.netlify.com/badge/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
