@@ -1,7 +1,7 @@
 Package: BiasCorrector
 Title: A GUI to Correct Measurement Bias in DNA Methylation Analyses
 Version: 0.2.2.9002
-Date: 2024-05-17
+Date: 2024-05-24
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@gmail.com", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0003-1866-860X")),
@@ -29,4 +29,3 @@ Suggests:
     lintr,
     testthat
 Encoding: UTF-8
-RoxygenNote: 7.3.1

@@ -1,63 +1,86 @@
-# BiasCorrector 
+
+
+# BiasCorrector
 
 <!-- badges: start -->
-[![](https://img.shields.io/badge/doi-10.1002/ijc.33681-yellow.svg)](https://doi.org/10.1002/ijc.33681)
-[![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
-[![CRAN Checks](https://badges.cranchecks.info/worst/BiasCorrector.svg)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
+
+[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![](https://www.r-pkg.org/badges/version/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
+[![CRAN
+checks](https://badges.cranchecks.info/worst/BiasCorrector.svg)](https://cran.r-project.org/web/checks/check_results_BiasCorrector.html)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/BiasCorrector?color=blue)](https://cran.r-project.org/package=BiasCorrector)
 [![](http://cranlogs.r-pkg.org/badges/last-month/BiasCorrector?color=blue)](https://cran.r-project.org/package=BiasCorrector)
-[![Dependencies](https://tinyverse.netlify.com/badge/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
-[![R CMD Check via {tic}](https://github.com/kapsner/BiasCorrector/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
-[![linting](https://github.com/kapsner/BiasCorrector/workflows/lint/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
-[![test-coverage](https://github.com/kapsner/BiasCorrector/workflows/test-coverage/badge.svg?branch=master)](https://github.com/kapsner/BiasCorrector/actions)
-[![codecov](https://codecov.io/gh/kapsner/BiasCorrector/branch/master/graph/badge.svg)](https://app.codecov.io/gh/kapsner/BiasCorrector)
+[![Dependencies](https://tinyverse.netlify.app/badge/BiasCorrector)](https://cran.r-project.org/package=BiasCorrector)
+[![R build
+status](https://github.com/kapsner/BiasCorrector/workflows/R%20CMD%20Check%20via%20%7Btic%7D/badge.svg)](https://github.com/kapsner/BiasCorrector/actions)
+[![R build
+status](https://github.com/kapsner/BiasCorrector/workflows/lint/badge.svg)](https://github.com/kapsner/BiasCorrector/actions)
+[![R build
+status](https://github.com/kapsner/BiasCorrector/workflows/test-coverage/badge.svg)](https://github.com/kapsner/BiasCorrector/actions)
+[![](https://codecov.io/gh/https://github.com/kapsner/BiasCorrector/branch/master/graph/badge.svg)](https://codecov.io/gh/https://github.com/kapsner/BiasCorrector)
+[![](https://img.shields.io/badge/doi-10.1002/ijc.33681-yellow.svg)](https://doi.org/10.1002/ijc.33681)
+
 <!-- badges: end -->
 
-`BiasCorrector` is published in *'BiasCorrector: fast and accurate correction of all types of experimental biases in quantitative DNA methylation data derived by different technologies' (2021)* in the *International Journal of Cancer* (DOI: [https://onlinelibrary.wiley.com/doi/10.1002/ijc.33681](https://doi.org/10.1002/ijc.33681)).
+`BiasCorrector` is published in *‘BiasCorrector: fast and accurate
+correction of all types of experimental biases in quantitative DNA
+methylation data derived by different technologies’ (2021)* in the
+*International Journal of Cancer* (DOI:
+[https://onlinelibrary.wiley.com/doi/10.1002/ijc.33681](https://doi.org/10.1002/ijc.33681)).
 
-`BiasCorrector` is the user friendly implementation of the algorithms described by Moskalev et. al in their research article *'Correction of PCR-bias in quantitative DNA methylation studies by means of cubic polynomial regression'*, published 2011 in *Nucleic acids research, Oxford University Press* (DOI: [https://doi.org/10.1093/nar/gkr213](https://doi.org/10.1093/nar/gkr213)).  
+`BiasCorrector` is the user friendly implementation of the algorithms
+described by Moskalev et. al in their research article *‘Correction of
+PCR-bias in quantitative DNA methylation studies by means of cubic
+polynomial regression’*, published 2011 in *Nucleic acids research,
+Oxford University Press* (DOI: <https://doi.org/10.1093/nar/gkr213>).
 
-## Installation  
+## Installation
 
-### Using R 
+### Using R
 
-- Make sure, you have R installed on your system:  
-    
-    + https://cran.r-project.org/  
+- Make sure, you have R installed on your system:
+
+  - https://cran.r-project.org/
 
 - Then open your development environment and install this R package:
 
 #### CRAN version
 
-You can install `BiasCorrector` simply with via R's `install.packages` interface:
+You can install `BiasCorrector` simply with via R’s `install.packages`
+interface:
 
-```r
+``` r
 install.packages("BiasCorrector")
 ```
 
 #### Development version
 
-If you want to use the latest development version, you can install the github version of `BiasCorrector` with:
+If you want to use the latest development version, you can install the
+github version of `BiasCorrector` with:
 
-```r
+``` r
 install.packages("remotes")
 remotes::install_github("kapsner/BiasCorrector")
 ```
 
-- To start BiasCorrector, just run the following command in R. A browser tab should open displaying BiasCorrector. Alternatively you can type the URL "localhost:3838/" in your browser.
+- To start BiasCorrector, just run the following command in R. A browser
+  tab should open displaying BiasCorrector. Alternatively you can type
+  the URL “localhost:3838/” in your browser.
 
-```r
+``` r
 library(BiasCorrector)
 launch_app()
 ```
 
 ### Using Docker
 
-To simplify installation an deployment of `BiasCorrector` you can clone this repository and build your own docker image. Make sure, you have Docker and docker-compose installed on your system.
+To simplify installation an deployment of `BiasCorrector` you can clone
+this repository and build your own docker image. Make sure, you have
+Docker and docker-compose installed on your system.
 
 #### Build Docker Image Manually
 
-```
+``` bash
 # clone the repository
 git clone https://github.com/kapsner/BiasCorrector
 
@@ -73,7 +96,7 @@ docker-compose -f docker-compose.local.yml up -d
 
 #### Using a Remote Docker Image
 
-```
+``` bash
 # clone the repository
 git clone https://github.com/kapsner/BiasCorrector
 
@@ -84,30 +107,48 @@ cd BiasCorrector/docker/
 docker-compose -f docker-compose.remote.yml up -d
 ```
 
-Type the URL "localhost:3838/" in your browser and start working with `BiasCorrector`. 
+Type the URL “localhost:3838/” in your browser and start working with
+`BiasCorrector`.
 
 ## rBiasCorrection
 
-`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the implementation of the core functionality to correct measurement biases in DNA methylation analyses. `BiasCorrector` brings this functionality to a user-friendly shiny web application.  
-`rBiasCorrection` is available at [https://github.com/kapsner/rBiasCorrection](https://github.com/kapsner/rBiasCorrection). 
+`BiasCorrector` depends on the `rBiasCorrection` R-package, which is the
+implementation of the core functionality to correct measurement biases
+in DNA methylation analyses. `BiasCorrector` brings this functionality
+to a user-friendly shiny web application.  
+`rBiasCorrection` is available at
+<https://github.com/kapsner/rBiasCorrection>.
 
-## Video Tutorial 
+## Video Tutorial
 
-A video tutorial describing the workflow of how to use `BiasCorrector` in order to correct measurement bias in DNA methylation data is available [on youtube](https://youtu.be/xOf8uDbUrms). 
+A video tutorial describing the workflow of how to use `BiasCorrector`
+in order to correct measurement bias in DNA methylation data is
+available [on youtube](https://youtu.be/xOf8uDbUrms).
 
 ## Demo Version
 
-A demo version of `BiasCorrector` is available [here](https://biascorrector.diz.uk-erlangen.de/).
+A demo version of `BiasCorrector` is available
+[here](https://biascorrector.diz.uk-erlangen.de/).
 
-## Frequently Asked Questions 
+## Frequently Asked Questions
 
-More detailed information on how to use the backend-package `rBiasCorrection` can be found in its [vignette](https://cran.r-project.org/web/packages/rBiasCorrection/vignettes/rBiasCorrection_howto.html). The FAQs can be found [here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
+More detailed information on how to use the backend-package
+`rBiasCorrection` can be found in its
+[vignette](https://cran.r-project.org/web/packages/rBiasCorrection/vignettes/rBiasCorrection_howto.html).
+The FAQs can be found
+[here](https://github.com/kapsner/rBiasCorrection/blob/master/FAQ.md).
 
-## Citation 
+## Citation
 
-L.A. Kapsner, M.G. Zavgorodnij, S.P. Majorova, A. Hotz‐Wagenblatt, O.V. Kolychev, I.N. Lebedev, J.D. Hoheisel, A. Hartmann, A. Bauer, S. Mate, H. Prokosch, F. Haller, and E.A. Moskalev, BiasCorrector: fast and accurate correction of all types of experimental biases in quantitative DNA methylation data derived by different technologies, Int. J. Cancer. (2021) ijc.33681. doi:[10.1002/ijc.33681](https://onlinelibrary.wiley.com/doi/10.1002/ijc.33681).
+L.A. Kapsner, M.G. Zavgorodnij, S.P. Majorova, A. Hotz‐Wagenblatt, O.V.
+Kolychev, I.N. Lebedev, J.D. Hoheisel, A. Hartmann, A. Bauer, S. Mate,
+H. Prokosch, F. Haller, and E.A. Moskalev, BiasCorrector: fast and
+accurate correction of all types of experimental biases in quantitative
+DNA methylation data derived by different technologies, Int. J. Cancer.
+(2021) ijc.33681.
+doi:[10.1002/ijc.33681](https://onlinelibrary.wiley.com/doi/10.1002/ijc.33681).
 
-```
+``` bibtex
 @article{kapsner2021,
   title = {{{BiasCorrector}}: Fast and Accurate Correction of All Types of Experimental Biases in Quantitative {{DNA}} Methylation Data Derived by Different Technologies},
   author = {Kapsner, Lorenz A. and Zavgorodnij, Mikhail G. and Majorova, Svetlana P. and Hotz-Wagenblatt, Agnes and Kolychev, Oleg V. and Lebedev, Igor N. and Hoheisel, J{\"o}rg D. and Hartmann, Arndt and Bauer, Andrea and Mate, Sebastian and Prokosch, Hans-Ulrich and Haller, Florian and Moskalev, Evgeny A.},

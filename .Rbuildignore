@@ -12,3 +12,4 @@
 ^CRAN-SUBMISSION$
 ^README\.md$
 ^NEWS\.md$
+^README\.qmd$

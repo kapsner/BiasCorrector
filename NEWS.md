@@ -1,7 +1,6 @@
-
 # BiasCorrector NEWS
 
-## Unreleased (2023-01-21)
+## Unreleased (2024-05-17)
 
 #### Tests
 
@@ -19,6 +18,8 @@
 
 #### Other changes
 
+-   fixed issue with tools::checkRd
+    ([d11ad06](https://github.com/kapsner/BiasCorrector/tree/d11ad06f3654ae56f562bcaa0759f251978b01b2))
 -   updated cran errors url
     ([c3efb8e](https://github.com/kapsner/BiasCorrector/tree/c3efb8e27e77286e78578682acc0793a4699e9fd))
 -   added dependencies badge
@@ -31,7 +32,7 @@
     ([17e9aa8](https://github.com/kapsner/BiasCorrector/tree/17e9aa81f6589032e4d031da1c40fabdec5e09fe))
 
 Full set of changes:
-[`v0.2.0...c3efb8e`](https://github.com/kapsner/BiasCorrector/compare/v0.2.0...c3efb8e)
+[`v0.2.0...d11ad06`](https://github.com/kapsner/BiasCorrector/compare/v0.2.0...d11ad06)
 
 ## v0.2.0 (2021-05-17)
 
