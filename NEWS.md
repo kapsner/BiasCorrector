@@ -1,6 +1,6 @@
 # BiasCorrector NEWS
 
-## Unreleased (2024-10-17)
+## v0.2.3 (2024-10-17)
 
 #### Tests
 
@@ -18,6 +18,8 @@
 
 #### Other changes
 
+-   added cran-comments.md
+    ([9de62b4](https://github.com/kapsner/BiasCorrector/tree/9de62b429f8ecde04ab87ee00b922598f53ca071))
 -   updated news.md
     ([3f33318](https://github.com/kapsner/BiasCorrector/tree/3f33318c431ee173565f4a600e25bbc3a919aa78))
 -   automated gen of readme
@@ -36,7 +38,7 @@
     ([17e9aa8](https://github.com/kapsner/BiasCorrector/tree/17e9aa81f6589032e4d031da1c40fabdec5e09fe))
 
 Full set of changes:
-[`v0.2.0...3f33318`](https://github.com/kapsner/BiasCorrector/compare/v0.2.0...3f33318)
+[`v0.2.0...v0.2.3`](https://github.com/kapsner/BiasCorrector/compare/v0.2.0...v0.2.3)
 
 ## v0.2.0 (2021-05-17)
 

@@ -1,6 +1,6 @@
 Package: BiasCorrector
 Title: A GUI to Correct Measurement Bias in DNA Methylation Analyses
-Version: 0.2.3
+Version: 0.2.3.9001
 Date: 2024-10-17
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@gmail.com", role = c("cre", "aut", "cph"),

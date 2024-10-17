@@ -17,7 +17,7 @@ status](https://github.com/kapsner/BiasCorrector/workflows/R%20CMD%20Check%20via
 status](https://github.com/kapsner/BiasCorrector/workflows/lint/badge.svg)](https://github.com/kapsner/BiasCorrector/actions)
 [![R build
 status](https://github.com/kapsner/BiasCorrector/workflows/test-coverage/badge.svg)](https://github.com/kapsner/BiasCorrector/actions)
-[![](https://codecov.io/gh/https://github.com/kapsner/BiasCorrector/branch/master/graph/badge.svg)](https://codecov.io/gh/https://github.com/kapsner/BiasCorrector)
+[![](https://codecov.io/gh/https://github.com/kapsner/BiasCorrector/branch/main/graph/badge.svg)](https://codecov.io/gh/https://github.com/kapsner/BiasCorrector)
 [![](https://img.shields.io/badge/doi-10.1002/ijc.33681-yellow.svg)](https://doi.org/10.1002/ijc.33681)
 
 <!-- badges: end -->
