@@ -75,6 +75,7 @@ usethis::use_build_ignore(".github")
 usethis::use_build_ignore("README.md")
 usethis::use_build_ignore("README.qmd")
 usethis::use_build_ignore("NEWS.md")
+usethis::use_build_ignore("cran-comments.md")
 
 # gitignore
 usethis::use_git_ignore("/*")
@@ -103,6 +104,7 @@ usethis::use_git_ignore("/.vscode")
 usethis::use_git_ignore("!/.lintr")
 usethis::use_git_ignore("!/.github/")
 usethis::use_git_ignore("!/tic.R")
+usethis::use_git_ignore("!/cran-comments.md")
 
 # BiasCorrection(experimental = "../19_PCR-bias/data/example_data/type1/example_data_type1_experimentaldata.csv", calibration = "../19_PCR-bias/data/example_data/type1/example_data_type1_calibrationdata.csv", samplelocusname = "Test")
 # covr::package_coverage()
