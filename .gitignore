@@ -26,3 +26,4 @@
 !/.github/
 !/tic.R
 !/NEWS.md
+!/.pre-commit-config.yaml

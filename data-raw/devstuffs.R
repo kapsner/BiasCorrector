@@ -18,7 +18,7 @@ my_desc$set_authors(c(
 my_desc$del("Maintainer")
 my_desc$del("LazyData")
 # Set the version
-my_desc$set_version("0.2.2.9001")
+my_desc$set_version("0.2.2.9002")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
@@ -74,6 +74,7 @@ usethis::use_build_ignore("tic.R")
 usethis::use_build_ignore(".github")
 usethis::use_build_ignore("README.md")
 usethis::use_build_ignore("NEWS.md")
+usethis::use_build_ignore(".pre-commit-config.yaml")
 
 # gitignore
 usethis::use_git_ignore("/*")
@@ -101,6 +102,7 @@ usethis::use_git_ignore("/.vscode")
 usethis::use_git_ignore("!/.lintr")
 usethis::use_git_ignore("!/.github/")
 usethis::use_git_ignore("!/tic.R")
+usethis::use_git_ignore("!/.pre-commit-config.yaml")
 
 # BiasCorrection(experimental = "../19_PCR-bias/data/example_data/type1/example_data_type1_experimentaldata.csv", calibration = "../19_PCR-bias/data/example_data/type1/example_data_type1_calibrationdata.csv", samplelocusname = "Test")
 # covr::package_coverage()
@@ -114,14 +116,14 @@ usethis::use_tidy_description()
 # build|ci|docs|feat|fix|perf|refactor|test
 
 # https://github.com/gitpython-developers/GitPython/issues/1016#issuecomment-1104114129
-an <- autonewsmd::autonewsmd$new(repo_name = packagename)
-an$generate()
-an$write(force = TRUE)
+# an <- autonewsmd::autonewsmd$new(repo_name = packagename)
+# an$generate()
+# an$write(force = TRUE)
 
-# eventually move to nloptr for non linear optimization
-badger::badge_doi("10.1002/ijc.33681", "yellow")
-badger::badge_cran_download("BiasCorrector", "grand-total", "blue")
-badger::badge_cran_download("BiasCorrector", "last-month", "blue")
-badger::badge_dependencies("BiasCorrector")
+# # eventually move to nloptr for non linear optimization
+# badger::badge_doi("10.1002/ijc.33681", "yellow")
+# badger::badge_cran_download("BiasCorrector", "grand-total", "blue")
+# badger::badge_cran_download("BiasCorrector", "last-month", "blue")
+# badger::badge_dependencies("BiasCorrector")
 
 # nolint end
