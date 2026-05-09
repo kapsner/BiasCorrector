@@ -27,3 +27,5 @@
 !/tic.R
 !/NEWS.md
 !/.pre-commit-config.yaml
+!/README.qmd
+!/cran-comments.md

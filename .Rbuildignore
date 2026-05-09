@@ -13,3 +13,5 @@
 ^README\.md$
 ^NEWS\.md$
 ^\.pre-commit-config\.yaml$
+^README\.qmd$
+^cran-comments\.md$

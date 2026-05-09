@@ -21,7 +21,7 @@
 #' @param session Shiny session object
 #' @param rv The global 'reactiveValues()' object, defined in server.R
 #' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#'   expression: \code{input_re = reactive({input})}
 #' @param ... Further arguments, such as `logfilename`, `csvdir` and `plotdir`
 #'
 #' @return The function returns a shiny server module.

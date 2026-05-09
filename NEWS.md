@@ -1,18 +1,6 @@
 # BiasCorrector NEWS
 
-## Unreleased (2022-06-21)
-
-#### CI
-
--   updated lint-stage
-    ([7291cff](https://github.com/kapsner/BiasCorrector/tree/7291cffe0a647fcbc42fbd5cde8bc6231263aea8))
--   updated gha
-    ([e3796b9](https://github.com/kapsner/BiasCorrector/tree/e3796b954a97a8bd319eeb1836b89f4636fee99f))
-
-Full set of changes:
-[`v0.2.2...7291cff`](https://github.com/kapsner/BiasCorrector/compare/v0.2.2...7291cff)
-
-## v0.2.2 (2022-06-20)
+## v0.2.3 (2024-10-17)
 
 #### Tests
 
@@ -21,8 +9,25 @@ Full set of changes:
 -   removed context from unittests
     ([5ee7bc6](https://github.com/kapsner/BiasCorrector/tree/5ee7bc6ba3e92f5a92448873dcea54015cc667c6))
 
+#### CI
+
+-   updated lint-stage
+    ([7291cff](https://github.com/kapsner/BiasCorrector/tree/7291cffe0a647fcbc42fbd5cde8bc6231263aea8))
+-   updated gha
+    ([e3796b9](https://github.com/kapsner/BiasCorrector/tree/e3796b954a97a8bd319eeb1836b89f4636fee99f))
+
 #### Other changes
 
+-   added cran-comments.md
+    ([9de62b4](https://github.com/kapsner/BiasCorrector/tree/9de62b429f8ecde04ab87ee00b922598f53ca071))
+-   updated news.md
+    ([3f33318](https://github.com/kapsner/BiasCorrector/tree/3f33318c431ee173565f4a600e25bbc3a919aa78))
+-   automated gen of readme
+    ([d6d38b7](https://github.com/kapsner/BiasCorrector/tree/d6d38b78cdf86cb951483e9fd72d6870bc41dfd4))
+-   fixed issue with tools::checkRd
+    ([d11ad06](https://github.com/kapsner/BiasCorrector/tree/d11ad06f3654ae56f562bcaa0759f251978b01b2))
+-   updated cran errors url
+    ([c3efb8e](https://github.com/kapsner/BiasCorrector/tree/c3efb8e27e77286e78578682acc0793a4699e9fd))
 -   added dependencies badge
     ([e2affe4](https://github.com/kapsner/BiasCorrector/tree/e2affe4e2da5838a391f666e0a2ab4613de6adf3))
 -   updated lintr
@@ -33,12 +38,7 @@ Full set of changes:
     ([17e9aa8](https://github.com/kapsner/BiasCorrector/tree/17e9aa81f6589032e4d031da1c40fabdec5e09fe))
 
 Full set of changes:
-[`v0.2.1...v0.2.2`](https://github.com/kapsner/BiasCorrector/compare/v0.2.1...v0.2.2)
-
-## v0.2.1 (2022-02-16)
-
-Full set of changes:
-[`v0.2.0...v0.2.1`](https://github.com/kapsner/BiasCorrector/compare/v0.2.0...v0.2.1)
+[`v0.2.0...v0.2.3`](https://github.com/kapsner/BiasCorrector/compare/v0.2.0...v0.2.3)
 
 ## v0.2.0 (2021-05-17)
 
@@ -60,12 +60,12 @@ Full set of changes:
 Full set of changes:
 [`v0.1.1...v0.1.2`](https://github.com/kapsner/BiasCorrector/compare/v0.1.1...v0.1.2)
 
-## v0.1.1 (2020-08-16)
+## v0.1.1 (2020-08-25)
 
 Full set of changes:
 [`v0.1.0...v0.1.1`](https://github.com/kapsner/BiasCorrector/compare/v0.1.0...v0.1.1)
 
-## v0.1.0 (2020-07-18)
+## v0.1.0 (2020-07-17)
 
 Full set of changes:
 [`v0.0.7...v0.1.0`](https://github.com/kapsner/BiasCorrector/compare/v0.0.7...v0.1.0)
@@ -85,7 +85,7 @@ Full set of changes:
 Full set of changes:
 [`v0.0.4...v0.0.5`](https://github.com/kapsner/BiasCorrector/compare/v0.0.4...v0.0.5)
 
-## v0.0.4 (2019-12-09)
+## v0.0.4 (2019-11-29)
 
 Full set of changes:
 [`v0.0.3...v0.0.4`](https://github.com/kapsner/BiasCorrector/compare/v0.0.3...v0.0.4)
@@ -108,26 +108,4 @@ Full set of changes:
 ## v0.0.899 (2019-06-20)
 
 Full set of changes:
-[`v0.9.4...v0.0.899`](https://github.com/kapsner/BiasCorrector/compare/v0.9.4...v0.0.899)
-
-## v0.9.4 (2019-04-24)
-
-Full set of changes:
-[`v0.9.3...v0.9.4`](https://github.com/kapsner/BiasCorrector/compare/v0.9.3...v0.9.4)
-
-## v0.9.3 (2019-04-18)
-
-## v0.9.2 (2019-04-18)
-
-Full set of changes:
-[`v0.9.1...v0.9.2`](https://github.com/kapsner/BiasCorrector/compare/v0.9.1...v0.9.2)
-
-## v0.9.1 (2019-03-02)
-
-Full set of changes:
-[`v0.9.0...v0.9.1`](https://github.com/kapsner/BiasCorrector/compare/v0.9.0...v0.9.1)
-
-## v0.9.0 (2019-01-26)
-
-Full set of changes:
-[`575732f...v0.9.0`](https://github.com/kapsner/BiasCorrector/compare/575732f...v0.9.0)
+[`575732f...v0.0.899`](https://github.com/kapsner/BiasCorrector/compare/575732f...v0.0.899)

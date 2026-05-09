@@ -18,7 +18,7 @@ my_desc$set_authors(c(
 my_desc$del("Maintainer")
 my_desc$del("LazyData")
 # Set the version
-my_desc$set_version("0.2.2.9002")
+my_desc$set_version("0.2.3.9002")
 # The title of your package
 my_desc$set(Title = "A GUI to Correct Measurement Bias in DNA Methylation Analyses")
 # The description of your package
@@ -73,8 +73,10 @@ usethis::use_build_ignore(".vscode")
 usethis::use_build_ignore("tic.R")
 usethis::use_build_ignore(".github")
 usethis::use_build_ignore("README.md")
+usethis::use_build_ignore("README.qmd")
 usethis::use_build_ignore("NEWS.md")
 usethis::use_build_ignore(".pre-commit-config.yaml")
+usethis::use_build_ignore("cran-comments.md")
 
 # gitignore
 usethis::use_git_ignore("/*")
@@ -92,6 +94,7 @@ usethis::use_git_ignore("!NAMESPACE")
 usethis::use_git_ignore("!/R/")
 usethis::use_git_ignore("!/docker/")
 usethis::use_git_ignore("!/README.md")
+usethis::use_git_ignore("!/README.qmd")
 usethis::use_git_ignore("!/NEWS.md")
 usethis::use_git_ignore("!/tests/")
 usethis::use_git_ignore("/.Rhistory")
@@ -103,6 +106,7 @@ usethis::use_git_ignore("!/.lintr")
 usethis::use_git_ignore("!/.github/")
 usethis::use_git_ignore("!/tic.R")
 usethis::use_git_ignore("!/.pre-commit-config.yaml")
+usethis::use_git_ignore("!/cran-comments.md")
 
 # BiasCorrection(experimental = "../19_PCR-bias/data/example_data/type1/example_data_type1_experimentaldata.csv", calibration = "../19_PCR-bias/data/example_data/type1/example_data_type1_calibrationdata.csv", samplelocusname = "Test")
 # covr::package_coverage()
@@ -110,6 +114,7 @@ usethis::use_git_ignore("!/.pre-commit-config.yaml")
 
 usethis::use_tidy_description()
 
+quarto::quarto_render(input = "README.qmd")
 
 # create NEWS.md using the python-package "auto-changelog" (must be installed)
 # https://www.conventionalcommits.org/en/v1.0.0/
