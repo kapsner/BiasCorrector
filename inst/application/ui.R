@@ -92,7 +92,7 @@ shiny::shinyUI(shiny::tagList(
           tabName = "dashboard",
           BiasCorrector::module_fileupload_ui(
             "moduleFileupload",
-            maxfilesize = maxfilesize
+            maxfilesize = getOption("biascorrector.maxfilesize", default = 100)
           )
         ),
 

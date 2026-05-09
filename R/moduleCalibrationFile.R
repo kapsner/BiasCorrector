@@ -211,7 +211,8 @@ module_calibrationfile_server <- function(input,
         rv$choices_list,
         cbind("name" = rv$calibr_steps[g, get("name")],
               "step" = as.numeric(
-                eval(parse(text = paste0("input_re()$", selectname))))
+                input_re()[[selectname]]
+              )
         )
       )
     })

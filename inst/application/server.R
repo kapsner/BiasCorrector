@@ -15,6 +15,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 shiny::shinyServer(function(input, output, session) {
+
+  # Generate session-specific temporary directories
+  session_id <- session$token
+  session_tempdir <- file.path(tempdir(), session_id)
+  dir.create(session_tempdir, showWarnings = FALSE)
+
+  # Get defaults from options set in launch_app
+  opt_plotdir <- getOption("biascorrector.plotdir", default = "plots")
+  opt_csvdir <- getOption("biascorrector.csvdir", default = "csv")
+  opt_logfilename <- getOption("biascorrector.logfilename",
+                               default = "biascorrector.log")
+  opt_parallel <- getOption("biascorrector.parallel", default = TRUE)
+
+  # Create session-specific subdirectories
+  session_plotdir <- file.path(session_tempdir, opt_plotdir)
+  session_csvdir <- file.path(session_tempdir, opt_csvdir)
+  session_logfile <- file.path(session_tempdir, opt_logfilename)
+
+  dir.create(session_plotdir, showWarnings = FALSE)
+  dir.create(session_csvdir, showWarnings = FALSE)
+
   rv <- shiny::reactiveValues(
     ending = NULL,
     exp_filereq = FALSE,
@@ -41,9 +62,10 @@ shiny::shinyServer(function(input, output, session) {
     result_list = NULL,
     temp_results = NULL,
     vec_cal = NULL,
-    plotdir = NULL,
-    csvdir = NULL,
-    tempdir = NULL,
+    plotdir = session_plotdir,
+    csvdir = session_csvdir,
+    tempdir = session_tempdir,
+    logfilename = session_logfile,
     b = NULL,
     omitnas = NULL,
     calibr_steps = NULL,
@@ -69,15 +91,16 @@ shiny::shinyServer(function(input, output, session) {
 
   # run start function
   rBiasCorrection::on_start(
-    plotdir = plotdir,
-    csvdir = csvdir,
-    logfilename = logfilename,
-    parallel = parallel
+    plotdir = session_plotdir,
+    csvdir = session_csvdir,
+    logfilename = session_logfile,
+    parallel = opt_parallel
   )
 
-  message(paste0("plotdir: ", plotdir))
-  message(paste0("csvdir: ", csvdir))
-  message(paste0("tempdir: ", tempdir))
+  message(paste0("session plotdir: ", session_plotdir))
+  message(paste0("session csvdir: ", session_csvdir))
+  message(paste0("session tempdir: ", session_tempdir))
+  message(paste0("session logfile: ", session_logfile))
 
   # TODO original selection of data type (hard coded to type 1 data)
   rv$type_locus_sample <- 1
@@ -99,8 +122,10 @@ shiny::shinyServer(function(input, output, session) {
   ))
 
   shiny::observeEvent(input$dismiss_modal, {
-    rBiasCorrection::write_log(message = "dismiss modal",
-                               logfilename = logfilename)
+    rBiasCorrection::write_log(
+      message = "dismiss modal",
+      logfilename = session_logfile
+    )
     rv$modal_closed <- TRUE
     rv$modal_type <- NULL
     shiny::removeModal()
@@ -108,9 +133,11 @@ shiny::shinyServer(function(input, output, session) {
   })
 
   shiny::observeEvent(input$reset, {
-    rBiasCorrection::write_log(message = "restarting app",
-                               logfilename = logfilename)
-    rBiasCorrection::clean_up(plotdir, csvdir)
+    rBiasCorrection::write_log(
+      message = "restarting app",
+      logfilename = session_logfile
+    )
+    rBiasCorrection::clean_up(session_plotdir, session_csvdir)
     session$reload()
   })
 
@@ -129,7 +156,7 @@ shiny::shinyServer(function(input, output, session) {
     "moduleFileupload",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename
+    logfilename = session_logfile
   )
 
   # table rendering module
@@ -137,7 +164,7 @@ shiny::shinyServer(function(input, output, session) {
     BiasCorrector::module_experimentalfile_server,
     "moduleExperimentalFile",
     rv = rv,
-    logfilename = logfilename
+    logfilename = session_logfile
   )
 
   # some ui stuff
@@ -220,7 +247,7 @@ shiny::shinyServer(function(input, output, session) {
     "moduleCalibrationFile",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename
+    logfilename = session_logfile
   )
 
   shiny::observe({
@@ -289,8 +316,8 @@ shiny::shinyServer(function(input, output, session) {
     "modulePlotting",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename,
-    plotdir = plotdir
+    logfilename = session_logfile,
+    plotdir = session_plotdir
   )
 
   # when plotting has finished
@@ -407,8 +434,8 @@ shiny::shinyServer(function(input, output, session) {
     "moduleCorrectedPlots",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename,
-    plotdir = plotdir
+    logfilename = session_logfile,
+    plotdir = session_plotdir
   )
 
   ###### Statistics Corrected Results
@@ -538,9 +565,9 @@ shiny::shinyServer(function(input, output, session) {
     "moduleResults",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename,
-    csvdir = csvdir,
-    plotdir = plotdir
+    logfilename = session_logfile,
+    csvdir = session_csvdir,
+    plotdir = session_plotdir
   )
 
   ###### Logs
@@ -549,7 +576,7 @@ shiny::shinyServer(function(input, output, session) {
     "moduleLog",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename
+    logfilename = session_logfile
   )
 
   ###### Settings
@@ -558,8 +585,8 @@ shiny::shinyServer(function(input, output, session) {
     "moduleSettings",
     rv = rv,
     input_re = input_reactive,
-    logfilename = logfilename,
-    tempdir = tempdir
+    logfilename = session_logfile,
+    tempdir = session_tempdir
   )
 
   ###### Info

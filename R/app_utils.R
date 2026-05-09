@@ -20,3 +20,18 @@ open_modal <- function(description, rv) {
   rv$modal_type <- description
   requirements_error(description)
 }
+
+#' @title Sanitize Filenames
+#' @description Replaces non-alphanumeric characters with underscores to prevent
+#'   path traversal and other file-related issues.
+#' @param filename A character string.
+#' @return A sanitized character string.
+#' @export
+sanitize_filename <- function(filename) {
+  if (is.null(filename) || is.na(filename)) {
+    return(NULL)
+  }
+  # Allow only alphanumeric, underscores, and hyphens
+  sanitized <- gsub("[^[:alnum:]_-]", "_", filename)
+  return(sanitized)
+}

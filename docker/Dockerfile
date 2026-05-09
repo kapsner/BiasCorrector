@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/rocker/shiny/
-FROM rocker/shiny-verse:4.0.4
+FROM rocker/shiny-verse:latest
 
 # install necessary system dependencies for r packages (e.g. devtools, RPostgres)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -55,8 +55,5 @@ RUN chmod +x show-log.sh
 
 USER shiny
 
-# https://stackoverflow.com/questions/51080857/preserve-environment-variables-when-spawning-shiny-processes-within-a-container?rq=1
-ENTRYPOINT env >> /home/${RSESSION_USER}/.Renviron && \
-    chown ${RSESSION_USER}.${RSESSION_USER} /home/${RSESSION_USER}/.Renviron && \
-    /usr/bin/shiny-server
-
+# Start shiny server
+ENTRYPOINT ["/usr/bin/shiny-server"]

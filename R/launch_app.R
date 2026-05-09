@@ -48,50 +48,16 @@ launch_app <- function(port = 3838,
                        logfilename = "biascorrector.log",
                        maxfilesize = 100,
                        parallel = TRUE) {
-  #" stopifnot(
-  #"   is.numeric(maxfilesize),
-  #"   maxfilesize > 0,
-  #"   is.character(logfilename),
-  #"   is.character(plotdir),
-  #"   is.character(csvdir),
-  #"   is.numeric(port)
-  #" )
-  tempdir <- tempdir()
 
-  global_env_hack <- function(key,
-                              val,
-                              pos) {
-    assign(
-      key,
-      val,
-      envir = as.environment(pos)
-    )
-  }
-
-  global_env_hack("tempdir",
-                  tempdir,
-                  1L)
-  global_env_hack("plotdir",
-                  paste0(tempdir, "/", plotdir, "/"),
-                  1L)
-  global_env_hack("csvdir",
-                  paste0(tempdir, "/", csvdir, "/"),
-                  1L)
-  # logfilename
-  global_env_hack("logfilename",
-                  paste0(tempdir, "/", logfilename),
-                  1L)
-  # maximum filesize in MB
-  global_env_hack("maxfilesize",
-                  maxfilesize,
-                  1L)
-  global_env_hack("parallel",
-                  parallel,
-                  1L)
-
-  # set shiny option here
+  # set shiny options here
+  # These are global to the R process, but non-sensitive
   options(shiny.maxRequestSize = maxfilesize * 1024^2)
   options(shiny.port = port)
+  options(biascorrector.maxfilesize = maxfilesize)
+  options(biascorrector.parallel = parallel)
+  options(biascorrector.logfilename = logfilename)
+  options(biascorrector.plotdir = plotdir)
+  options(biascorrector.csvdir = csvdir)
 
   shiny::shinyAppDir(
     appDir = system.file("application",
