@@ -125,7 +125,7 @@ shiny::shinyServer(function(input, output, session) {
   ###### Experimental data
   # Fileupload module
   shiny::callModule(
-    module_fileupload_server,
+    BiasCorrector::module_fileupload_server,
     "moduleFileupload",
     rv = rv,
     input_re = input_reactive,
@@ -134,7 +134,7 @@ shiny::shinyServer(function(input, output, session) {
 
   # table rendering module
   shiny::callModule(
-    module_experimentalfile_server,
+    BiasCorrector::module_experimentalfile_server,
     "moduleExperimentalFile",
     rv = rv,
     logfilename = logfilename
@@ -216,7 +216,7 @@ shiny::shinyServer(function(input, output, session) {
   # ###### Calibration data
   # table rendering module
   shiny::callModule(
-    module_calibrationfile_server,
+    BiasCorrector::module_calibrationfile_server,
     "moduleCalibrationFile",
     rv = rv,
     input_re = input_reactive,
@@ -237,21 +237,21 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Experimental Data",
             tabName = "panel_1",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Calibration Data",
             tabName = "panel_2",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Regression Results",
-            icon = icon("chart-line"),
+            icon = shiny::icon("chart-line"),
             startExpanded = TRUE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
-              icon = icon("chart-line"),
+              icon = shiny::icon("chart-line"),
               selected = TRUE
             )
           )
@@ -285,7 +285,7 @@ shiny::shinyServer(function(input, output, session) {
     }
   })
   shiny::callModule(
-    module_plotting_server,
+    BiasCorrector::module_plotting_server,
     "modulePlotting",
     rv = rv,
     input_re = input_reactive,
@@ -303,42 +303,42 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Experimental Data",
             tabName = "panel_1",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Calibration Data",
             tabName = "panel_2",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Regression Results",
-            icon = icon("chart-line"),
+            icon = shiny::icon("chart-line"),
             startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
-              icon = icon("chart-line"),
+              icon = shiny::icon("chart-line"),
               selected = TRUE
             ),
             shinydashboard::menuSubItem(
               "Regression Statistics",
               tabName = "panel_4",
-              icon = icon("angellist")
+              icon = shiny::icon("angellist")
             ),
             shinydashboard::menuSubItem(
               "Corrected Regression Plots",
               tabName = "panel_7",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shinydashboard::menuSubItem(
               "Corrected Regression Statistics",
               tabName = "panel_8",
-              icon = icon("angellist")
+              icon = shiny::icon("angellist")
             ),
             shinydashboard::menuSubItem(
               "Select Regression Model",
               tabName = "panel_5",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shiny::actionButton(
               "results",
@@ -359,32 +359,32 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Experimental Data",
             tabName = "panel_1",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Calibration Data",
             tabName = "panel_2",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Regression Results",
-            icon = icon("chart-line"),
+            icon = shiny::icon("chart-line"),
             startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
-              icon = icon("chart-line"),
+              icon = shiny::icon("chart-line"),
               selected = TRUE
             ),
             shinydashboard::menuSubItem(
               "Regression Statistics",
               tabName = "panel_4",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shinydashboard::menuSubItem(
               "Corrected Regression Plots",
               tabName = "panel_7",
-              icon = icon("angellist")
+              icon = shiny::icon("angellist")
             )
           )
         )
@@ -395,7 +395,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Regression Statistics
   shiny::callModule(
-    module_statistics_server,
+    BiasCorrector::module_statistics_server,
     "moduleStatistics",
     rv = rv,
     input_re = input_reactive
@@ -403,7 +403,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Plot Corrected Results
   shiny::callModule(
-    module_correctedplots_server,
+    BiasCorrector::module_correctedplots_server,
     "moduleCorrectedPlots",
     rv = rv,
     input_re = input_reactive,
@@ -413,7 +413,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Statistics Corrected Results
   shiny::callModule(
-    module_correctedstats_server,
+    BiasCorrector::module_correctedstats_server,
     "moduleCorrectedStatistics",
     rv = rv,
     input_re = input_reactive
@@ -421,7 +421,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Model Selection
   shiny::callModule(
-    module_modelselection_server,
+    BiasCorrector::module_modelselection_server,
     "moduleModelSelection",
     rv = rv,
     input_re = input_reactive
@@ -438,47 +438,47 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Experimental Data",
             tabName = "panel_1",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Calibration Data",
             tabName = "panel_2",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Regression Results",
-            icon = icon("chart-line"),
+            icon = shiny::icon("chart-line"),
             startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shinydashboard::menuSubItem(
               "Regression Statistics",
               tabName = "panel_4",
-              icon = icon("angellist")
+              icon = shiny::icon("angellist")
             ),
             shinydashboard::menuSubItem(
               "Corrected Regression Plots",
               tabName = "panel_7",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shinydashboard::menuSubItem(
               "Corrected Regression Statistics",
               tabName = "panel_8",
-              icon = icon("angellist")
+              icon = shiny::icon("angellist")
             ),
             shinydashboard::menuSubItem(
               "Select Regression Model",
               tabName = "panel_5",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             )
           ),
           shinydashboard::menuItem(
             "BiasCorrected Results",
             tabName = "panel_6",
-            icon = icon("angellist")
+            icon = shiny::icon("angellist")
           )
         )
       })
@@ -489,37 +489,37 @@ shiny::shinyServer(function(input, output, session) {
           shinydashboard::menuItem(
             "Experimental Data",
             tabName = "panel_1",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Calibration Data",
             tabName = "panel_2",
-            icon = icon("table")
+            icon = shiny::icon("table")
           ),
           shinydashboard::menuItem(
             "Regression Results",
-            icon = icon("chart-line"),
+            icon = shiny::icon("chart-line"),
             startExpanded = FALSE,
             shinydashboard::menuSubItem(
               "Regression Plots",
               tabName = "panel_3",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shinydashboard::menuSubItem(
               "Regression Statistics",
               tabName = "panel_4",
-              icon = icon("chart-line")
+              icon = shiny::icon("chart-line")
             ),
             shinydashboard::menuSubItem(
               "Corrected Regression Plots",
               tabName = "panel_7",
-              icon = icon("angellist")
+              icon = shiny::icon("angellist")
             )
           ),
           shinydashboard::menuItem(
             "BiasCorrected Results",
             tabName = "panel_6",
-            icon = icon("angellist")
+            icon = shiny::icon("angellist")
           )
         )
       })
@@ -534,7 +534,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Calcluate Results
   shiny::callModule(
-    module_results_server,
+    BiasCorrector::module_results_server,
     "moduleResults",
     rv = rv,
     input_re = input_reactive,
@@ -545,7 +545,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Logs
   shiny::callModule(
-    module_log_server,
+    BiasCorrector::module_log_server,
     "moduleLog",
     rv = rv,
     input_re = input_reactive,
@@ -554,7 +554,7 @@ shiny::shinyServer(function(input, output, session) {
 
   ###### Settings
   shiny::callModule(
-    module_settings_server,
+    BiasCorrector::module_settings_server,
     "moduleSettings",
     rv = rv,
     input_re = input_reactive,
@@ -563,8 +563,10 @@ shiny::shinyServer(function(input, output, session) {
   )
 
   ###### Info
-  shiny::callModule(module_info_server,
-                    "moduleInfo",
-                    rv = rv,
-                    input_re = input_reactive)
+  shiny::callModule(
+    BiasCorrector::module_info_server,
+    "moduleInfo",
+    rv = rv,
+    input_re = input_reactive
+  )
 })

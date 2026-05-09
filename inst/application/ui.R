@@ -40,23 +40,29 @@ shiny::shinyUI(shiny::tagList(
       #Sidebar Panel
       shinydashboard::sidebarMenu(
         id = "tabs",
-        shinydashboard::menuItem("File Upload",
-                                 tabName = "dashboard",
-                                 icon = icon("file")),
+        shinydashboard::menuItem(
+          "File Upload",
+          tabName = "dashboard",
+          icon = shiny::icon("file")
+        ),
         shinydashboard::sidebarMenuOutput("menu"),
-        shinydashboard::menuItem("Log",
-                                 tabName = "panel_9",
-                                 icon = icon("file-alt")),
+        shinydashboard::menuItem(
+          "Log",
+          tabName = "panel_9",
+          icon = shiny::icon("file-alt")
+        ),
         shiny::tags$hr(),
-        shinydashboard::menuItem("Settings",
-                                 tabName = "settings",
-                                 icon = icon("user-cog")),
-        shinydashboard::menuItem("Info",
-                                 tabName = "info",
-                                 icon = icon("info-circle")),
-        shiny::actionButton("reset",
-                            "Reset App",
-                            width = "80%") # Restart session
+        shinydashboard::menuItem(
+          "Settings",
+          tabName = "settings",
+          icon = shiny::icon("user-cog")
+        ),
+        shinydashboard::menuItem(
+          "Info",
+          tabName = "info",
+          icon = shiny::icon("info-circle")
+        ),
+        shiny::actionButton("reset", "Reset App", width = "80%") # Restart session
       ),
       shiny::div(
         style = paste0(
@@ -69,8 +75,10 @@ shiny::shinyUI(shiny::tagList(
         ),
         shiny::HTML(paste0(
           "Version:",
-          "<br/>rBiasCorrection: ", utils::packageVersion("rBiasCorrection"),
-          "<br/>BiasCorrector: ", utils::packageVersion("BiasCorrector")
+          "<br/>rBiasCorrection: ",
+          utils::packageVersion("rBiasCorrection"),
+          "<br/>BiasCorrector: ",
+          utils::packageVersion("BiasCorrector")
         ))
       )
     ),
@@ -82,71 +90,75 @@ shiny::shinyUI(shiny::tagList(
       shinydashboard::tabItems(
         shinydashboard::tabItem(
           tabName = "dashboard",
-          module_fileupload_ui("moduleFileupload",
-                               maxfilesize = maxfilesize)
+          BiasCorrector::module_fileupload_ui(
+            "moduleFileupload",
+            maxfilesize = maxfilesize
+          )
         ),
 
         # experimental data panels
         shinydashboard::tabItem(
           tabName = "panel_1",
-          module_experimentalfile_ui("moduleExperimentalFile")
+          BiasCorrector::module_experimentalfile_ui("moduleExperimentalFile")
         ),
 
         # calibration data panel
         shinydashboard::tabItem(
           tabName = "panel_2",
-          module_calibrationfile_ui("moduleCalibrationFile")
+          BiasCorrector::module_calibrationfile_ui("moduleCalibrationFile")
         ),
 
         # regression plots
         shinydashboard::tabItem(
           tabName = "panel_3",
-          module_plotting_ui("modulePlotting")
+          BiasCorrector::module_plotting_ui("modulePlotting")
         ),
 
         # regression statistics
         shinydashboard::tabItem(
           tabName = "panel_4",
-          module_statistics_ui("moduleStatistics")
+          BiasCorrector::module_statistics_ui("moduleStatistics")
         ),
 
         # select regression model
         shinydashboard::tabItem(
           tabName = "panel_5",
-          module_modelselection_ui("moduleModelSelection")
+          BiasCorrector::module_modelselection_ui("moduleModelSelection")
         ),
 
         # select regression model
         shinydashboard::tabItem(
           tabName = "panel_6",
-          module_results_ui("moduleResults")
+          BiasCorrector::module_results_ui("moduleResults")
         ),
 
         # select regression model
         shinydashboard::tabItem(
           tabName = "panel_7",
-          module_correctedplots_ui("moduleCorrectedPlots")
+          BiasCorrector::module_correctedplots_ui("moduleCorrectedPlots")
         ),
 
         # select regression model
         shinydashboard::tabItem(
           tabName = "panel_8",
-          module_correctedstatistics_ui("moduleCorrectedStatistics")
+          BiasCorrector::module_correctedstatistics_ui(
+            "moduleCorrectedStatistics"
+          )
         ),
 
         shinydashboard::tabItem(
           tabName = "panel_9",
-          module_log_ui("moduleLog")
+          BiasCorrector::module_log_ui("moduleLog")
         ),
 
         shinydashboard::tabItem(
           tabName = "settings",
-          module_settings_ui("moduleSettings")
+          BiasCorrector::module_settings_ui("moduleSettings")
         ),
 
         shinydashboard::tabItem(
           tabName = "info",
-          module_info_ui("moduleInfo")
+          BiasCorrector::module_info_ui("moduleInfo")
         )
       )
     )
